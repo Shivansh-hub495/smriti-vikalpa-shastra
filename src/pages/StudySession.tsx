@@ -244,16 +244,38 @@ const StudySession: React.FC = () => {
           difficulty: card.difficulty > 10 ? card.difficulty / 100 : Math.max(2.5, card.difficulty || 2.5)
         }));
 
-        const sortedCards = sortCardsByPriority(cardsWithDecimalDifficulty);
-        setFlashcards(sortedCards);
+        let finalCards = sortCardsByPriority(cardsWithDecimalDifficulty);
+
+        // Handle shuffle option
+        const shuffle = searchParams.get('shuffle');
+        if (shuffle === 'true') {
+          finalCards = [...finalCards].sort(() => Math.random() - 0.5);
+        }
+
+        setFlashcards(finalCards);
+
+        // Handle startFrom option
+        const startFrom = searchParams.get('startFrom');
+        let startIndex = 0;
+        if (startFrom) {
+          const startFromNumber = parseInt(startFrom);
+          if (!isNaN(startFromNumber) && startFromNumber >= 1 && startFromNumber <= finalCards.length) {
+            startIndex = startFromNumber - 1; // Convert to 0-based index
+          }
+        }
 
         // Update card state stats
         cardState.setStats(prev => ({
           ...prev,
-          totalCards: sortedCards.length,
-          currentIndex: 0,
+          totalCards: finalCards.length,
+          currentIndex: startIndex,
           learningCardIds: []
         }));
+
+        // Set current index if starting from specific card
+        if (startIndex > 0) {
+          cardState.setCurrentIndex(startIndex);
+        }
 
         // Reset card start time
         cardState.resetCardStartTime();

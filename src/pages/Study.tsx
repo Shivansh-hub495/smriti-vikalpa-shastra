@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import StudyOptionsModal, { StudyOptions } from '@/components/StudyOptionsModal';
 
 interface Deck {
   id: string;
@@ -42,6 +43,9 @@ const Study = () => {
     accuracy: 0
   });
   const [loading, setLoading] = useState(true);
+  const [showStudyModal, setShowStudyModal] = useState(false);
+  const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
+  const [deckCardCount, setDeckCardCount] = useState(0);
 
   useEffect(() => {
     if (user) {
@@ -155,8 +159,55 @@ const Study = () => {
   };
 
   const startStudySession = async (deckId: string) => {
-    // Navigate to study session for this deck
-    navigate(`/study/${deckId}`);
+    // Find the deck and get card count
+    const deck = decks.find(d => d.id === deckId);
+    if (!deck) return;
+
+    try {
+      // Get card count for this deck
+      const { count, error } = await supabase
+        .from('flashcards')
+        .select('*', { count: 'exact', head: true })
+        .eq('deck_id', deckId);
+
+      if (error) throw error;
+
+      setSelectedDeck(deck);
+      setDeckCardCount(count || 0);
+      setShowStudyModal(true);
+    } catch (error) {
+      console.error('Error getting deck card count:', error);
+      // Fallback to direct navigation if error
+      navigate(`/study/${deckId}`);
+    }
+  };
+
+  const handleStudyStart = (options: StudyOptions) => {
+    if (!selectedDeck) return;
+
+    let url = `/study/${selectedDeck.id}`;
+
+    // Add query parameters based on options
+    const params = new URLSearchParams();
+
+    if (options.mode === 'shuffle') {
+      params.set('shuffle', 'true');
+    } else if (options.mode === 'startFrom' && options.startFromCard) {
+      params.set('startFrom', options.startFromCard.toString());
+    }
+
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    setShowStudyModal(false);
+    setSelectedDeck(null);
+    navigate(url);
+  };
+
+  const handleModalClose = () => {
+    setShowStudyModal(false);
+    setSelectedDeck(null);
   };
 
   if (loading) {
@@ -329,6 +380,17 @@ const Study = () => {
           </div>
         </div>
       </div>
+
+      {/* Study Options Modal */}
+      {selectedDeck && (
+        <StudyOptionsModal
+          isOpen={showStudyModal}
+          onClose={handleModalClose}
+          onStartStudy={handleStudyStart}
+          deckName={selectedDeck.name}
+          totalCards={deckCardCount}
+        />
+      )}
     </div>
   );
 };

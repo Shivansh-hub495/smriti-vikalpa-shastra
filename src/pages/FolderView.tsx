@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import CreateFolderModal from '@/components/CreateFolderModal';
 import FolderCard from '@/components/FolderCard';
+import StudyOptionsModal, { StudyOptions } from '@/components/StudyOptionsModal';
 
 interface Folder {
   id: string;
@@ -52,6 +53,9 @@ const FolderView = () => {
   const [loading, setLoading] = useState(true);
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
+  const [showStudyModal, setShowStudyModal] = useState(false);
+  const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
+  const [deckCardCount, setDeckCardCount] = useState(0);
 
   useEffect(() => {
     if (user && folderId) {
@@ -172,8 +176,56 @@ const FolderView = () => {
     }
   };
 
-  const startStudySession = (deckId: string) => {
-    navigate(`/study/${deckId}`);
+  const startStudySession = async (deckId: string) => {
+    // Find the deck and get card count
+    const deck = decks.find(d => d.id === deckId);
+    if (!deck) return;
+
+    try {
+      // Get card count for this deck
+      const { count, error } = await supabase
+        .from('flashcards')
+        .select('*', { count: 'exact', head: true })
+        .eq('deck_id', deckId);
+
+      if (error) throw error;
+
+      setSelectedDeck(deck);
+      setDeckCardCount(count || 0);
+      setShowStudyModal(true);
+    } catch (error) {
+      console.error('Error getting deck card count:', error);
+      // Fallback to direct navigation if error
+      navigate(`/study/${deckId}`);
+    }
+  };
+
+  const handleStudyStart = (options: StudyOptions) => {
+    if (!selectedDeck) return;
+
+    let url = `/study/${selectedDeck.id}`;
+
+    // Add query parameters based on options
+    const params = new URLSearchParams();
+
+    if (options.mode === 'shuffle') {
+      params.set('shuffle', 'true');
+    } else if (options.mode === 'startFrom' && options.startFromCard) {
+      params.set('startFrom', options.startFromCard.toString());
+    }
+
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    setShowStudyModal(false);
+    setSelectedDeck(null);
+    navigate(url);
+  };
+
+  const handleModalClose = () => {
+    setShowStudyModal(false);
+    setSelectedDeck(null);
   };
 
   // Folder management handlers
@@ -539,6 +591,17 @@ const FolderView = () => {
         editingFolder={editingFolder}
         availableFolders={subfolders}
       />
+
+      {/* Study Options Modal */}
+      {selectedDeck && (
+        <StudyOptionsModal
+          isOpen={showStudyModal}
+          onClose={handleModalClose}
+          onStartStudy={handleStudyStart}
+          deckName={selectedDeck.name}
+          totalCards={deckCardCount}
+        />
+      )}
     </div>
   );
 };
