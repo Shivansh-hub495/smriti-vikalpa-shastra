@@ -59,12 +59,7 @@ const ImageZoomModal: React.FC<ImageZoomModalProps> = ({
             </motion.div>
           </div>
 
-          {/* Instruction text */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-[10000]">
-            <div className="bg-white bg-opacity-20 text-white px-6 py-3 rounded-full text-sm font-medium backdrop-blur-sm">
-              Scroll to view full image • Tap anywhere to close
-            </div>
-          </div>
+
         </motion.div>
       )}
     </AnimatePresence>
