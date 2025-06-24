@@ -236,6 +236,9 @@ const DeckEdit = () => {
     setFrontImageUrl(card.front_image_url || "");
     setBackImageUrl(card.back_image_url || "");
     setIsCreatingCard(false);
+
+    // Scroll to top for better mobile experience
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleCancelEdit = () => {
@@ -349,7 +352,11 @@ const DeckEdit = () => {
                 <span className="sm:hidden">{showAnswers ? 'Hide' : 'Show'}</span>
               </Button>
               <Button
-                onClick={() => setIsCreatingCard(true)}
+                onClick={() => {
+                  setIsCreatingCard(true);
+                  // Scroll to top for better mobile experience
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white touch-manipulation text-xs sm:text-sm px-2 sm:px-3 flex-1 sm:flex-none"
               >
                 <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
@@ -551,7 +558,11 @@ const DeckEdit = () => {
                   Get started by creating your first flashcard
                 </p>
                 <Button
-                  onClick={() => setIsCreatingCard(true)}
+                  onClick={() => {
+                    setIsCreatingCard(true);
+                    // Scroll to top for better mobile experience
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
                 >
                   <Plus className="h-4 w-4 mr-2" />
