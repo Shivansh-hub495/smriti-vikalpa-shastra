@@ -26,20 +26,28 @@ const StudyOptionsModal: React.FC<StudyOptionsModalProps> = ({
   totalCards
 }) => {
   const [selectedMode, setSelectedMode] = useState<'normal' | 'shuffle' | 'startFrom'>('normal');
-  const [startFromCard, setStartFromCard] = useState<number>(1);
+  const [startFromCard, setStartFromCard] = useState<number | string>(1);
 
   const handleStartStudy = () => {
+    let finalStartFromCard = undefined;
+
+    if (selectedMode === 'startFrom') {
+      const cardNumber = typeof startFromCard === 'string' ? parseInt(startFromCard) : startFromCard;
+      // If empty or invalid, default to 1
+      finalStartFromCard = isNaN(cardNumber) || cardNumber < 1 || cardNumber > totalCards ? 1 : cardNumber;
+    }
+
     const options: StudyOptions = {
       mode: selectedMode,
-      startFromCard: selectedMode === 'startFrom' ? startFromCard : undefined
+      startFromCard: finalStartFromCard
     };
     onStartStudy(options);
   };
 
   const handleStartFromCardChange = (value: string) => {
-    // Allow empty string for user to clear and type new number
+    // Allow empty string so user can clear and type new number
     if (value === '') {
-      setStartFromCard(1); // Reset to 1 when empty
+      setStartFromCard(''); // Keep empty instead of resetting to 1
       return;
     }
 
@@ -172,6 +180,7 @@ const StudyOptionsModal: React.FC<StudyOptionsModalProps> = ({
                         min="1"
                         max={totalCards}
                         value={startFromCard}
+                        placeholder="1"
                         onChange={(e) => handleStartFromCardChange(e.target.value)}
                         className="w-20 h-8 text-sm"
                         onClick={(e) => e.stopPropagation()}
