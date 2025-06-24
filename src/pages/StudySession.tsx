@@ -350,11 +350,20 @@ const StudySession: React.FC = () => {
    * Handle undo last card action
    */
   const handleUndo = useCallback(() => {
-    if (cardState.cardHistory.length === 0) return;
+    // If there's history, undo the last card
+    if (cardState.cardHistory.length > 0) {
+      swipeGesture.resetSwipeState();
+      cardState.undoLastCard();
+      return;
+    }
 
-    swipeGesture.resetSwipeState();
-    cardState.undoLastCard();
-  }, [cardState.cardHistory.length, cardState.undoLastCard, swipeGesture.resetSwipeState]);
+    // If no history but not at first card, go to previous card
+    if (cardState.currentIndex > 0) {
+      swipeGesture.resetSwipeState();
+      cardState.setCurrentIndex(cardState.currentIndex - 1);
+      cardState.resetCardStartTime();
+    }
+  }, [cardState.cardHistory.length, cardState.currentIndex, cardState.undoLastCard, cardState.setCurrentIndex, cardState.resetCardStartTime, swipeGesture.resetSwipeState]);
 
   /**
    * Handle restart session
@@ -411,7 +420,7 @@ const StudySession: React.FC = () => {
             variant="ghost"
             size="sm"
             onClick={handleUndo}
-            disabled={cardState.cardHistory.length === 0}
+            disabled={cardState.cardHistory.length === 0 && cardState.currentIndex === 0}
             className="p-1.5 sm:p-2 touch-manipulation disabled:opacity-50"
           >
             <Undo2 className="h-4 w-4 sm:h-5 sm:w-5" />

@@ -37,6 +37,12 @@ const StudyOptionsModal: React.FC<StudyOptionsModalProps> = ({
   };
 
   const handleStartFromCardChange = (value: string) => {
+    // Allow empty string for user to clear and type new number
+    if (value === '') {
+      setStartFromCard(1); // Reset to 1 when empty
+      return;
+    }
+
     const num = parseInt(value);
     if (!isNaN(num) && num >= 1 && num <= totalCards) {
       setStartFromCard(num);
@@ -169,6 +175,7 @@ const StudyOptionsModal: React.FC<StudyOptionsModalProps> = ({
                         onChange={(e) => handleStartFromCardChange(e.target.value)}
                         className="w-20 h-8 text-sm"
                         onClick={(e) => e.stopPropagation()}
+                        onFocus={(e) => e.target.select()}
                       />
                       <span className="text-sm text-gray-500">of {totalCards}</span>
                     </div>
