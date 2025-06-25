@@ -525,14 +525,14 @@ const DeckEdit = () => {
               </Card>
             )}
 
-            {/* Flashcards Grid */}
+            {/* Flashcards List */}
             <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable droppableId="flashcards" direction="horizontal">
+              <Droppable droppableId="flashcards">
                 {(provided) => (
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6"
+                    className="space-y-4"
                   >
                     {flashcards.map((card, index) => (
                       <Draggable key={card.id} draggableId={card.id} index={index}>
@@ -540,8 +540,10 @@ const DeckEdit = () => {
                           <Card
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className={`group relative overflow-hidden bg-white/80 backdrop-blur-lg border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl w-full min-w-0 ${
-                              snapshot.isDragging ? 'rotate-3 scale-105 shadow-2xl z-50' : 'hover:-translate-y-1 hover:scale-105'
+                            className={`group relative overflow-hidden bg-white/80 backdrop-blur-lg border-white/20 shadow-xl transition-all duration-300 rounded-2xl w-full ${
+                              snapshot.isDragging
+                                ? 'rotate-1 scale-105 shadow-2xl z-50 bg-purple-50 border-purple-300'
+                                : 'hover:shadow-2xl hover:-translate-y-1'
                             }`}
                           >
                   <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
@@ -577,45 +579,47 @@ const DeckEdit = () => {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-3 sm:space-y-4 px-3 sm:px-6 pb-3 sm:pb-6 min-w-0">
-                    <div>
-                      <div className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">Front:</div>
-                      <div className="text-gray-800 bg-gray-50 p-2 sm:p-3 rounded-lg min-h-[50px] sm:min-h-[60px] space-y-2 break-words">
-                        {card.front_image_url && (
-                          <img
-                            src={card.front_image_url}
-                            alt="Front image"
-                            className="max-w-full h-auto rounded-lg max-h-24 sm:max-h-32 object-cover"
-                          />
-                        )}
-                        <div
-                          className="prose prose-xs sm:prose-sm max-w-none text-xs sm:text-sm break-words overflow-hidden"
-                          dangerouslySetInnerHTML={{
-                            __html: card.front_content_html || card.front_content
-                          }}
-                        />
-                      </div>
-                    </div>
-                    {showAnswers && (
+                  <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6 min-w-0">
+                    <div className={`${showAnswers ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : ''}`}>
                       <div>
-                        <div className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">Back:</div>
-                        <div className="text-gray-800 bg-green-50 p-2 sm:p-3 rounded-lg min-h-[50px] sm:min-h-[60px] space-y-2 break-words">
-                          {card.back_image_url && (
+                        <div className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">Front:</div>
+                        <div className="text-gray-800 bg-gray-50 p-2 sm:p-3 rounded-lg min-h-[50px] sm:min-h-[60px] space-y-2 break-words">
+                          {card.front_image_url && (
                             <img
-                              src={card.back_image_url}
-                              alt="Back image"
+                              src={card.front_image_url}
+                              alt="Front image"
                               className="max-w-full h-auto rounded-lg max-h-24 sm:max-h-32 object-cover"
                             />
                           )}
                           <div
                             className="prose prose-xs sm:prose-sm max-w-none text-xs sm:text-sm break-words overflow-hidden"
                             dangerouslySetInnerHTML={{
-                              __html: card.back_content_html || card.back_content
+                              __html: card.front_content_html || card.front_content
                             }}
                           />
                         </div>
                       </div>
-                    )}
+                      {showAnswers && (
+                        <div>
+                          <div className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">Back:</div>
+                          <div className="text-gray-800 bg-green-50 p-2 sm:p-3 rounded-lg min-h-[50px] sm:min-h-[60px] space-y-2 break-words">
+                            {card.back_image_url && (
+                              <img
+                                src={card.back_image_url}
+                                alt="Back image"
+                                className="max-w-full h-auto rounded-lg max-h-24 sm:max-h-32 object-cover"
+                              />
+                            )}
+                            <div
+                              className="prose prose-xs sm:prose-sm max-w-none text-xs sm:text-sm break-words overflow-hidden"
+                              dangerouslySetInnerHTML={{
+                                __html: card.back_content_html || card.back_content
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     <div className="flex justify-between text-xs text-gray-500 min-w-0">
                       <span className="truncate">Reviews: {card.review_count}</span>
                       <span className="truncate">Accuracy: {card.review_count > 0 ? Math.round((card.correct_count / card.review_count) * 100) : 0}%</span>
