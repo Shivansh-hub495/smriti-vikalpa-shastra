@@ -19,6 +19,7 @@ import Settings from './pages/Settings';
 import CreateDeck from './pages/CreateDeck';
 import FolderView from './pages/FolderView';
 import DeckEdit from './pages/DeckEdit';
+import CardEdit from './pages/CardEdit';
 import FlashcardSetup from './pages/FlashcardSetup';
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="/folder/:folderId" element={<Layout><FolderView /></Layout>} />
               <Route path="/deck/:deckId/edit" element={<Layout><DeckEdit /></Layout>} />
               <Route path="/deck/:deckId/flashcards" element={<Layout><FlashcardSetup /></Layout>} />
+              <Route path="/study/:deckId/card/:cardId/edit" element={<CardEdit />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Volume2, Star, StarOff, Expand } from 'lucide-react';
+import { Volume2, Star, StarOff, Expand, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ImageZoomModal from './ImageZoomModal';
 import TextExpandModal from './TextExpandModal';
@@ -17,6 +17,7 @@ interface FlashcardProps {
   isFlipped: boolean;
   onFlip: () => void;
   onStar?: (id: string, isStarred: boolean) => void;
+  onEdit?: (id: string) => void;
   isStarred?: boolean;
   className?: string;
   style?: React.CSSProperties;
@@ -34,6 +35,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
   isFlipped,
   onFlip,
   onStar,
+  onEdit,
   isStarred = false,
   className = '',
   style = {},
@@ -131,6 +133,12 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
     }
   };
 
+  const handleEditClick = () => {
+    if (onEdit) {
+      onEdit(id);
+    }
+  };
+
   // Long press handlers for images
   const frontImageLongPress = useLongPress({
     onLongPress: () => {
@@ -221,23 +229,39 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
                 <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-gray-600'}`} />
               </Button>
 
-              {onStar && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="p-1.5 sm:p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors touch-manipulation"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleStarToggle();
-                  }}
-                >
-                  {isStarred ? (
-                    <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current" />
-                  ) : (
-                    <StarOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
-                  )}
-                </Button>
-              )}
+              <div className="flex space-x-2">
+                {onEdit && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-1.5 sm:p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors touch-manipulation"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditClick();
+                    }}
+                  >
+                    <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                  </Button>
+                )}
+
+                {onStar && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-1.5 sm:p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors touch-manipulation"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleStarToggle();
+                    }}
+                  >
+                    {isStarred ? (
+                      <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current" />
+                    ) : (
+                      <StarOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
 
             {/* Front Image */}
@@ -328,23 +352,39 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
                 <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-blue-700'}`} />
               </Button>
 
-              {onStar && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="p-1.5 sm:p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors touch-manipulation"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleStarToggle();
-                  }}
-                >
-                  {isStarred ? (
-                    <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current" />
-                  ) : (
-                    <StarOff className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700" />
-                  )}
-                </Button>
-              )}
+              <div className="flex space-x-2">
+                {onEdit && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-1.5 sm:p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors touch-manipulation"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditClick();
+                    }}
+                  >
+                    <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700" />
+                  </Button>
+                )}
+
+                {onStar && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-1.5 sm:p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors touch-manipulation"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleStarToggle();
+                    }}
+                  >
+                    {isStarred ? (
+                      <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current" />
+                    ) : (
+                      <StarOff className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700" />
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
 
             {/* Back Image */}

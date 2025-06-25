@@ -20,6 +20,7 @@ interface SwipeableCardProps {
   isSwipeDisabled?: boolean;
   onFlip: () => void;
   onStar: (cardId: string, isStarred: boolean) => void;
+  onEdit?: (cardId: string) => void;
   onPanStart: () => void;
   onPanEnd: (event: any, info: PanInfo) => void;
   onModalStateChange?: (isModalOpen: boolean) => void;
@@ -37,6 +38,7 @@ const SwipeableCard: React.FC<SwipeableCardProps> = ({
   isSwipeDisabled = false,
   onFlip,
   onStar,
+  onEdit,
   onPanStart,
   onPanEnd,
   onModalStateChange,
@@ -102,6 +104,7 @@ const SwipeableCard: React.FC<SwipeableCardProps> = ({
           isFlipped={isFlipped}
           onFlip={onFlip}
           onStar={onStar}
+          onEdit={onEdit}
           isStarred={isStarred}
           className="w-full h-full"
           onModalStateChange={onModalStateChange}

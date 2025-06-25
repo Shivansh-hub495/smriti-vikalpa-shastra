@@ -373,6 +373,13 @@ const StudySession: React.FC = () => {
     cardState.restartSession();
   }, [cardState.restartSession, swipeGesture.resetSwipeState]);
 
+  /**
+   * Handle edit card - navigate to card edit page
+   */
+  const handleEditCard = useCallback((cardId: string) => {
+    navigate(`/study/${deckId}/card/${cardId}/edit`);
+  }, [navigate, deckId]);
+
   if (loading) {
     return (
       <div className="fixed inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 flex items-center justify-center">
@@ -455,6 +462,7 @@ const StudySession: React.FC = () => {
                 isSwipeDisabled={isModalOpen}
                 onFlip={cardState.flipCard}
                 onStar={cardState.toggleStarCard}
+                onEdit={handleEditCard}
                 onPanStart={swipeGesture.handlePanStart}
                 onPanEnd={swipeGesture.handlePanEnd}
                 onModalStateChange={setIsModalOpen}
