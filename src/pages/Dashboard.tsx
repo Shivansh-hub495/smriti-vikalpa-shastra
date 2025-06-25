@@ -261,12 +261,20 @@ const Dashboard = () => {
 
   const handleFolderOpen = (folderId: string) => {
     navigate(`/folder/${folderId}`);
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   const handleCreateSubfolder = (parentId: string) => {
     // For dashboard, we don't create subfolders directly
     // Navigate to the parent folder where subfolder creation is handled
     navigate(`/folder/${parentId}`);
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   const handleCreateDeck = (folderId: string) => {

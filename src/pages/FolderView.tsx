@@ -329,6 +329,10 @@ const FolderView = () => {
 
   const handleFolderOpen = (folderId: string) => {
     navigate(`/folder/${folderId}`);
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   const handleCreateSubfolder = (parentId: string) => {
@@ -388,6 +392,10 @@ const FolderView = () => {
                 } else {
                   navigate('/');
                 }
+                // Scroll to top after navigation
+                setTimeout(() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 100);
               }}
               className="p-2 flex-shrink-0 mt-0.5"
             >
