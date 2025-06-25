@@ -58,12 +58,12 @@ const DeckCard = ({ deck, onStudy, onEdit, onDelete }: DeckCardProps) => {
               <BookOpen className="h-6 w-6 text-white" />
             </div>
           </div>
-          <div>
-            <CardTitle className="text-lg font-bold text-gray-800 group-hover:text-gray-900 transition-colors">
+          <div className="min-w-0 flex-1">
+            <CardTitle className="text-base sm:text-lg font-bold text-gray-800 group-hover:text-gray-900 transition-colors break-words leading-tight">
               {deck.name}
             </CardTitle>
             {deck.description && (
-              <p className="text-sm text-gray-600 mt-1">{deck.description}</p>
+              <p className="text-sm text-gray-600 mt-1 break-words leading-relaxed">{deck.description}</p>
             )}
           </div>
         </div>

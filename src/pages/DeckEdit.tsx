@@ -316,7 +316,7 @@ const DeckEdit = () => {
       {/* Header */}
       <header className="border-b border-white/20 bg-white/80 backdrop-blur-lg shadow-lg">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 py-3 sm:py-0 sm:h-16">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 py-3 sm:py-4 min-h-16">
             <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1 w-full sm:w-auto">
               <SidebarTrigger className="text-gray-600 hover:text-gray-900 transition-colors touch-manipulation flex-shrink-0" />
               <Button
@@ -334,7 +334,7 @@ const DeckEdit = () => {
                 <span className="hidden sm:inline">Back</span>
               </Button>
               <div className="min-w-0 flex-1">
-                <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent truncate">
+                <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent break-words leading-tight">
                   {deck.name}
                 </h2>
                 <p className="text-xs sm:text-sm text-gray-600">{flashcards.length} flashcards</p>

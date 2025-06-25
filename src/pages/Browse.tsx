@@ -272,7 +272,7 @@ const Browse = () => {
                       )}
                     </div>
                     
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2 group-hover:text-purple-600 transition-colors">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 group-hover:text-purple-600 transition-colors break-words leading-tight">
                       {deck.name}
                     </h3>
                     

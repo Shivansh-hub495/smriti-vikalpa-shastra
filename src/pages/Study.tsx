@@ -274,7 +274,7 @@ const Study = () => {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
-                            <h3 className="text-lg sm:text-xl font-semibold text-gray-800 truncate">{deck.name}</h3>
+                            <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 break-words leading-tight">{deck.name}</h3>
                             {deck.folder && (
                               <Badge variant="secondary" className="bg-purple-100 text-purple-800 w-fit">
                                 {deck.folder.name}

@@ -527,7 +527,7 @@ const FolderView = () => {
                   </div>
 
                   <div className="min-w-0 mb-2">
-                    <h3 className="text-base md:text-lg font-semibold text-gray-800 group-hover:text-purple-600 transition-colors line-clamp-1 break-words overflow-hidden">
+                    <h3 className="text-base md:text-lg font-semibold text-gray-800 group-hover:text-purple-600 transition-colors break-words leading-tight">
                       {deck.name}
                     </h3>
                   </div>
