@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,7 +16,8 @@ import {
   Eye,
   EyeOff,
   BookOpen,
-  Settings
+  Settings,
+  GripVertical
 } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useToast } from "@/hooks/use-toast";
@@ -222,6 +224,61 @@ const DeckEdit = () => {
       toast({
         title: "Error",
         description: "Failed to delete flashcard",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Drag and drop handler
+  const handleDragEnd = async (result: DropResult) => {
+    if (!result.destination) return;
+
+    const sourceIndex = result.source.index;
+    const destinationIndex = result.destination.index;
+
+    if (sourceIndex === destinationIndex) return;
+
+    try {
+      // Create new array with reordered cards
+      const newFlashcards = Array.from(flashcards);
+      const [reorderedCard] = newFlashcards.splice(sourceIndex, 1);
+      newFlashcards.splice(destinationIndex, 0, reorderedCard);
+
+      // Update local state immediately for smooth UX
+      setFlashcards(newFlashcards);
+
+      // Update created_at timestamps to reflect new order
+      const updates = newFlashcards.map((card, index) => {
+        const baseTime = new Date('2020-01-01').getTime();
+        const newTimestamp = new Date(baseTime + (index * 1000)).toISOString();
+        return {
+          id: card.id,
+          created_at: newTimestamp
+        };
+      });
+
+      // Update all cards in database
+      for (const update of updates) {
+        const { error } = await supabase
+          .from('flashcards')
+          .update({ created_at: update.created_at })
+          .eq('id', update.id);
+
+        if (error) throw error;
+      }
+
+      toast({
+        title: "Success! ✨",
+        description: "Card order updated successfully",
+      });
+
+    } catch (err) {
+      console.error('Error reordering cards:', err);
+      // Revert local state on error
+      await fetchFlashcards();
+      toast({
+        title: "Error",
+        description: "Failed to reorder cards",
         variant: "destructive"
       });
     }
@@ -469,13 +526,36 @@ const DeckEdit = () => {
             )}
 
             {/* Flashcards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
-              {flashcards.map((card, index) => (
-                <Card key={card.id} className="group relative overflow-hidden bg-white/80 backdrop-blur-lg border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:scale-105 rounded-2xl w-full min-w-0">
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="flashcards" direction="horizontal">
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6"
+                  >
+                    {flashcards.map((card, index) => (
+                      <Draggable key={card.id} draggableId={card.id} index={index}>
+                        {(provided, snapshot) => (
+                          <Card
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className={`group relative overflow-hidden bg-white/80 backdrop-blur-lg border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-2xl w-full min-w-0 ${
+                              snapshot.isDragging ? 'rotate-3 scale-105 shadow-2xl z-50' : 'hover:-translate-y-1 hover:scale-105'
+                            }`}
+                          >
                   <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
                     <div className="flex justify-between items-start">
-                      <div className="text-xs sm:text-sm text-gray-500 font-medium">
-                        Card #{index + 1}
+                      <div className="flex items-center space-x-2">
+                        <div
+                          {...provided.dragHandleProps}
+                          className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 rounded transition-colors"
+                        >
+                          <GripVertical className="h-4 w-4 text-gray-400" />
+                        </div>
+                        <div className="text-xs sm:text-sm text-gray-500 font-medium">
+                          Card #{index + 1}
+                        </div>
                       </div>
                       <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <Button
@@ -541,9 +621,15 @@ const DeckEdit = () => {
                       <span className="truncate">Accuracy: {card.review_count > 0 ? Math.round((card.correct_count / card.review_count) * 100) : 0}%</span>
                     </div>
                   </CardContent>
-                </Card>
-              ))}
-            </div>
+                          </Card>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
 
             {flashcards.length === 0 && (
               <div className="text-center py-12">
