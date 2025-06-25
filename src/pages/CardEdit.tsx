@@ -6,8 +6,6 @@ import { ArrowLeft, Save, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import RichTextEditor from '@/components/RichTextEditor';
-import ImageUpload from '@/components/ImageUpload';
 
 interface Flashcard {
   id: string;
@@ -29,10 +27,6 @@ const CardEdit: React.FC = () => {
   // Form state
   const [frontContent, setFrontContent] = useState("");
   const [backContent, setBackContent] = useState("");
-  const [frontContentHtml, setFrontContentHtml] = useState("");
-  const [backContentHtml, setBackContentHtml] = useState("");
-  const [frontImageUrl, setFrontImageUrl] = useState("");
-  const [backImageUrl, setBackImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -57,10 +51,6 @@ const CardEdit: React.FC = () => {
       if (data) {
         setFrontContent(data.front_content);
         setBackContent(data.back_content);
-        setFrontContentHtml(data.front_content_html || "");
-        setBackContentHtml(data.back_content_html || "");
-        setFrontImageUrl(data.front_image_url || "");
-        setBackImageUrl(data.back_image_url || "");
       }
     } catch (err) {
       console.error('Error fetching card:', err);
@@ -91,11 +81,7 @@ const CardEdit: React.FC = () => {
         .from('flashcards')
         .update({
           front_content: frontContent.trim(),
-          back_content: backContent.trim(),
-          front_content_html: frontContentHtml,
-          back_content_html: backContentHtml,
-          front_image_url: frontImageUrl || null,
-          back_image_url: backImageUrl || null
+          back_content: backContent.trim()
         })
         .eq('id', cardId);
 
@@ -106,7 +92,6 @@ const CardEdit: React.FC = () => {
         description: "Card updated successfully",
       });
 
-      // Navigate back to study session
       navigate(`/study/${deckId}`);
     } catch (err) {
       console.error('Error updating card:', err);
@@ -137,7 +122,6 @@ const CardEdit: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50">
-      {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -152,7 +136,7 @@ const CardEdit: React.FC = () => {
               </Button>
               <h1 className="text-xl font-bold text-gray-800">Edit Card</h1>
             </div>
-            
+
             <div className="flex space-x-2">
               <Button
                 variant="outline"
@@ -176,7 +160,6 @@ const CardEdit: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-6">
         <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
           <CardHeader>
@@ -186,58 +169,28 @@ const CardEdit: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Front Side */}
               <div className="space-y-4">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Front (Question)
                 </label>
-                <RichTextEditor
-                  content={frontContentHtml || frontContent}
-                  onChange={(text, html) => {
-                    setFrontContent(text);
-                    setFrontContentHtml(html);
-                  }}
+                <textarea
+                  value={frontContent}
+                  onChange={(e) => setFrontContent(e.target.value)}
                   placeholder="Enter the question or prompt..."
-                  className="bg-white/80 backdrop-blur-lg border-white/20 rounded-xl shadow-lg"
+                  className="w-full min-h-[120px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">
-                    Front Image (Optional)
-                  </label>
-                  <ImageUpload
-                    imageUrl={frontImageUrl}
-                    onImageUpload={setFrontImageUrl}
-                    onImageRemove={() => setFrontImageUrl("")}
-                    placeholder="Add an image to the front of the card"
-                  />
-                </div>
               </div>
 
-              {/* Back Side */}
               <div className="space-y-4">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Back (Answer)
                 </label>
-                <RichTextEditor
-                  content={backContentHtml || backContent}
-                  onChange={(text, html) => {
-                    setBackContent(text);
-                    setBackContentHtml(html);
-                  }}
+                <textarea
+                  value={backContent}
+                  onChange={(e) => setBackContent(e.target.value)}
                   placeholder="Enter the answer or explanation..."
-                  className="bg-white/80 backdrop-blur-lg border-white/20 rounded-xl shadow-lg"
+                  className="w-full min-h-[120px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-2">
-                    Back Image (Optional)
-                  </label>
-                  <ImageUpload
-                    imageUrl={backImageUrl}
-                    onImageUpload={setBackImageUrl}
-                    onImageRemove={() => setBackImageUrl("")}
-                    placeholder="Add an image to the back of the card"
-                  />
-                </div>
               </div>
             </div>
           </CardContent>
