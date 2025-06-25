@@ -177,7 +177,7 @@ const CardEdit: React.FC = () => {
                   value={frontContent}
                   onChange={(e) => setFrontContent(e.target.value)}
                   placeholder="Enter the question or prompt..."
-                  className="w-full min-h-[120px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full min-h-[200px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
                 />
               </div>
 
@@ -189,7 +189,7 @@ const CardEdit: React.FC = () => {
                   value={backContent}
                   onChange={(e) => setBackContent(e.target.value)}
                   placeholder="Enter the answer or explanation..."
-                  className="w-full min-h-[120px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full min-h-[200px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
                 />
               </div>
             </div>
