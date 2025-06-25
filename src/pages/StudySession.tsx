@@ -377,8 +377,8 @@ const StudySession: React.FC = () => {
    * Handle edit card - navigate to card edit page
    */
   const handleEditCard = useCallback((cardId: string) => {
-    navigate(`/study/${deckId}/card/${cardId}/edit`);
-  }, [navigate, deckId]);
+    navigate(`/study/${deckId}/card/${cardId}/edit?currentIndex=${cardState.currentIndex}`);
+  }, [navigate, deckId, cardState.currentIndex]);
 
   if (loading) {
     return (

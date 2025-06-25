@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Save, X } from 'lucide-react';
@@ -23,8 +23,12 @@ interface Flashcard {
 const CardEdit: React.FC = () => {
   const { deckId, cardId } = useParams<{ deckId: string; cardId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { toast } = useToast();
+
+  // Get current index from URL params
+  const currentIndex = searchParams.get('currentIndex');
 
   // Form state
   const [frontContent, setFrontContent] = useState("");
@@ -69,7 +73,9 @@ const CardEdit: React.FC = () => {
         description: "Failed to load card data",
         variant: "destructive"
       });
-      navigate(`/study/${deckId}`);
+      // Navigate back to study session with current index
+      const url = currentIndex ? `/study/${deckId}?startFrom=${parseInt(currentIndex) + 1}` : `/study/${deckId}`;
+      navigate(url);
     } finally {
       setLoading(false);
     }
@@ -106,7 +112,9 @@ const CardEdit: React.FC = () => {
         description: "Card updated successfully",
       });
 
-      navigate(`/study/${deckId}`);
+      // Navigate back to study session with current index
+      const url = currentIndex ? `/study/${deckId}?startFrom=${parseInt(currentIndex) + 1}` : `/study/${deckId}`;
+      navigate(url);
     } catch (err) {
       console.error('Error updating card:', err);
       toast({
@@ -120,7 +128,9 @@ const CardEdit: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate(`/study/${deckId}`);
+    // Navigate back to study session with current index
+    const url = currentIndex ? `/study/${deckId}?startFrom=${parseInt(currentIndex) + 1}` : `/study/${deckId}`;
+    navigate(url);
   };
 
   if (loading) {
