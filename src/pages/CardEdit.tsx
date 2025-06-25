@@ -6,6 +6,8 @@ import { ArrowLeft, Save, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import RichTextEditor from '@/components/RichTextEditor';
+import ImageUpload from '@/components/ImageUpload';
 
 interface Flashcard {
   id: string;
@@ -27,6 +29,10 @@ const CardEdit: React.FC = () => {
   // Form state
   const [frontContent, setFrontContent] = useState("");
   const [backContent, setBackContent] = useState("");
+  const [frontContentHtml, setFrontContentHtml] = useState("");
+  const [backContentHtml, setBackContentHtml] = useState("");
+  const [frontImageUrl, setFrontImageUrl] = useState("");
+  const [backImageUrl, setBackImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -51,6 +57,10 @@ const CardEdit: React.FC = () => {
       if (data) {
         setFrontContent(data.front_content);
         setBackContent(data.back_content);
+        setFrontContentHtml(data.front_content_html || "");
+        setBackContentHtml(data.back_content_html || "");
+        setFrontImageUrl(data.front_image_url || "");
+        setBackImageUrl(data.back_image_url || "");
       }
     } catch (err) {
       console.error('Error fetching card:', err);
@@ -81,7 +91,11 @@ const CardEdit: React.FC = () => {
         .from('flashcards')
         .update({
           front_content: frontContent.trim(),
-          back_content: backContent.trim()
+          back_content: backContent.trim(),
+          front_content_html: frontContentHtml,
+          back_content_html: backContentHtml,
+          front_image_url: frontImageUrl || null,
+          back_image_url: backImageUrl || null
         })
         .eq('id', cardId);
 
@@ -173,24 +187,52 @@ const CardEdit: React.FC = () => {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Front (Question)
                 </label>
-                <textarea
-                  value={frontContent}
-                  onChange={(e) => setFrontContent(e.target.value)}
+                <RichTextEditor
+                  content={frontContentHtml || frontContent}
+                  onChange={(text, html) => {
+                    setFrontContent(text);
+                    setFrontContentHtml(html);
+                  }}
                   placeholder="Enter the question or prompt..."
-                  className="w-full min-h-[200px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
+                  className="bg-white/80 backdrop-blur-lg border-white/20 rounded-xl shadow-lg"
                 />
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Front Image (Optional)
+                  </label>
+                  <ImageUpload
+                    imageUrl={frontImageUrl}
+                    onImageUpload={setFrontImageUrl}
+                    onImageRemove={() => setFrontImageUrl("")}
+                    placeholder="Add an image to the front of the card"
+                  />
+                </div>
               </div>
 
               <div className="space-y-4">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Back (Answer)
                 </label>
-                <textarea
-                  value={backContent}
-                  onChange={(e) => setBackContent(e.target.value)}
+                <RichTextEditor
+                  content={backContentHtml || backContent}
+                  onChange={(text, html) => {
+                    setBackContent(text);
+                    setBackContentHtml(html);
+                  }}
                   placeholder="Enter the answer or explanation..."
-                  className="w-full min-h-[200px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
+                  className="bg-white/80 backdrop-blur-lg border-white/20 rounded-xl shadow-lg"
                 />
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
+                    Back Image (Optional)
+                  </label>
+                  <ImageUpload
+                    imageUrl={backImageUrl}
+                    onImageUpload={setBackImageUrl}
+                    onImageRemove={() => setBackImageUrl("")}
+                    placeholder="Add an image to the back of the card"
+                  />
+                </div>
               </div>
             </div>
           </CardContent>
