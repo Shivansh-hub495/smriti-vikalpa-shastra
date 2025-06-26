@@ -1,8 +1,6 @@
-# Welcome to your Lovable project
+# Welcome to your Memory Palace
 
 ## Project info
-
-**URL**: https://lovable.dev/projects/a137d00d-5033-4751-907d-a4b79d89dc2d
 
 ## How can I edit this code?
 
