@@ -63,9 +63,9 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
     let lineThreshold: number;
 
     if (hasImage) {
-      // Much more conservative when image is present - less space available
-      charThreshold = isBack ? 200 : 250;  // Reduced for image cards
-      lineThreshold = isBack ? 3 : 4;      // Fewer lines when image present
+      // More conservative when image is present - less space available
+      charThreshold = isBack ? 120 : 150;  // Lower threshold for image cards
+      lineThreshold = isBack ? 2 : 3;      // Fewer lines when image present
     } else {
       // More generous when no image - full card space available
       charThreshold = isBack ? 400 : 500;  // Normal thresholds
@@ -89,7 +89,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
     // Adjust max length based on image presence
     let maxLength: number;
     if (hasImage) {
-      maxLength = isBack ? 180 : 220;  // Shorter when image present
+      maxLength = isBack ? 100 : 130;  // Much shorter when image present
     } else {
       maxLength = isBack ? 350 : 400;  // Normal length when no image
     }
