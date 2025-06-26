@@ -122,13 +122,40 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
 
     const content = html || text;
 
+    // Helper function to truncate at word boundary
+    const truncateAtWordBoundary = (str: string, maxLen: number) => {
+      if (str.length <= maxLen) return str;
+
+      let truncated = str.substring(0, maxLen);
+      const lastSpaceIndex = truncated.lastIndexOf(' ');
+
+      // Only truncate at word boundary if it's not too far back (80% threshold)
+      if (lastSpaceIndex > maxLen * 0.8) {
+        truncated = truncated.substring(0, lastSpaceIndex);
+      }
+
+      return truncated;
+    };
+
     if (html) {
-      // For HTML content, truncate and add ellipsis
-      const truncated = content.substring(0, maxLength) + '...';
-      return { text: text.substring(0, maxLength) + '...', html: truncated, isTruncated: true };
+      // For HTML content, truncate at word boundary and add ellipsis
+      const truncatedHtml = truncateAtWordBoundary(content, maxLength);
+      const truncatedText = truncateAtWordBoundary(text, maxLength);
+
+      return {
+        text: truncatedText + '...',
+        html: truncatedHtml + '...',
+        isTruncated: true
+      };
     } else {
-      // For plain text
-      return { text: text.substring(0, maxLength) + '...', html: undefined, isTruncated: true };
+      // For plain text, truncate at word boundary
+      const truncatedText = truncateAtWordBoundary(text, maxLength);
+
+      return {
+        text: truncatedText + '...',
+        html: undefined,
+        isTruncated: true
+      };
     }
   }, [needsTruncation, contentThresholds]);
 
@@ -376,45 +403,40 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
             {/* Front Content */}
             <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0 max-h-full overflow-hidden">
               <div className="text-center w-full flex-1 flex flex-col justify-center min-h-0 max-h-full overflow-hidden">
-                {(() => {
-                  const truncated = getTruncatedText(frontContent, frontContentHtml, false, !!frontImageUrl);
-                  return (
-                    <>
-                      <div className="flex-1 flex items-center justify-center overflow-hidden min-h-0">
-                        <div className="w-full overflow-hidden">
-                          {truncated.html ? (
-                            <div
-                              className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none overflow-hidden"
-                              dangerouslySetInnerHTML={{ __html: truncated.html }}
-                            />
-                          ) : (
-                            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words overflow-hidden">
-                              {truncated.text}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* View More button - guaranteed to stay within card */}
-                      {truncated.isTruncated && (
-                        <div className="flex-shrink-0 mt-1 pb-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-gray-500 hover:text-gray-700 touch-manipulation text-xs sm:text-sm h-6 px-2"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleExpandFrontText();
-                            }}
-                          >
-                            <Expand className="h-3 w-3 mr-1" />
-                            <span>View More</span>
-                          </Button>
-                        </div>
+                <>
+                  <div className="flex-1 flex items-center justify-center overflow-hidden min-h-0">
+                    <div className="w-full overflow-hidden">
+                      {processedContent.front.html ? (
+                        <div
+                          className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none overflow-hidden"
+                          dangerouslySetInnerHTML={{ __html: processedContent.front.html }}
+                        />
+                      ) : (
+                        <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words overflow-hidden">
+                          {processedContent.front.text}
+                        </p>
                       )}
-                    </>
-                  );
-                })()}
+                    </div>
+                  </div>
+
+                  {/* View More button - guaranteed to stay within card */}
+                  {processedContent.front.isTruncated && (
+                    <div className="flex-shrink-0 mt-1 pb-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-gray-500 hover:text-gray-700 touch-manipulation text-xs sm:text-sm h-6 px-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleExpandFrontText();
+                        }}
+                      >
+                        <Expand className="h-3 w-3 mr-1" />
+                        <span>View More</span>
+                      </Button>
+                    </div>
+                  )}
+                </>
               </div>
             </div>
 
@@ -514,45 +536,40 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
             {/* Back Content */}
             <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0 max-h-full overflow-hidden">
               <div className="text-center w-full flex-1 flex flex-col justify-center min-h-0 max-h-full overflow-hidden">
-                {(() => {
-                  const truncated = getTruncatedText(backContent, backContentHtml, true, !!backImageUrl); // Pass true for back content and image presence
-                  return (
-                    <>
-                      <div className="flex-1 flex items-center justify-center overflow-hidden min-h-0">
-                        <div className="w-full overflow-hidden">
-                          {truncated.html ? (
-                            <div
-                              className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none text-left overflow-hidden"
-                              dangerouslySetInnerHTML={{ __html: truncated.html }}
-                            />
-                          ) : (
-                            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words text-left overflow-hidden">
-                              {truncated.text}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* View More button - guaranteed to stay within card */}
-                      {truncated.isTruncated && (
-                        <div className="flex-shrink-0 mt-1 pb-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-blue-600 hover:text-blue-800 touch-manipulation text-xs sm:text-sm h-6 px-2"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleExpandBackText();
-                            }}
-                          >
-                            <Expand className="h-3 w-3 mr-1" />
-                            <span>View More</span>
-                          </Button>
-                        </div>
+                <>
+                  <div className={`flex-1 flex ${processedContent.back.isTruncated ? 'items-start' : 'items-center'} justify-center overflow-hidden min-h-0`}>
+                    <div className="w-full overflow-hidden">
+                      {processedContent.back.html ? (
+                        <div
+                          className={`text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none ${processedContent.back.isTruncated ? 'text-left' : 'text-center'} overflow-hidden`}
+                          dangerouslySetInnerHTML={{ __html: processedContent.back.html }}
+                        />
+                      ) : (
+                        <p className={`text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words ${processedContent.back.isTruncated ? 'text-left' : 'text-center'} overflow-hidden`}>
+                          {processedContent.back.text}
+                        </p>
                       )}
-                    </>
-                  );
-                })()}
+                    </div>
+                  </div>
+
+                  {/* View More button - guaranteed to stay within card */}
+                  {processedContent.back.isTruncated && (
+                    <div className="flex-shrink-0 mt-1 pb-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-blue-600 hover:text-blue-800 touch-manipulation text-xs sm:text-sm h-6 px-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleExpandBackText();
+                        }}
+                      >
+                        <Expand className="h-3 w-3 mr-1" />
+                        <span>View More</span>
+                      </Button>
+                    </div>
+                  )}
+                </>
               </div>
             </div>
 

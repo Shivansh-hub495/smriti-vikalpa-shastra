@@ -305,20 +305,21 @@ const StudySession: React.FC = () => {
 
     switch (event.key) {
       case A11Y.SHORTCUTS.FLIP: // Spacebar
+      case 'Enter': // Enter key also flips
         event.preventDefault();
         cardState.flipCard();
         break;
       case A11Y.SHORTCUTS.KNOW: // Right arrow
         event.preventDefault();
-        if (cardState.isFlipped) {
-          handleCardResponse(true);
-        }
+        handleCardResponse(true);
         break;
       case A11Y.SHORTCUTS.LEARNING: // Left arrow
         event.preventDefault();
-        if (cardState.isFlipped) {
-          handleCardResponse(false);
-        }
+        handleCardResponse(false);
+        break;
+      case 'ArrowDown': // Down arrow for undo (previous card)
+        event.preventDefault();
+        cardState.undoLastCard();
         break;
       case A11Y.SHORTCUTS.STAR: // 's' key
         event.preventDefault();
@@ -536,28 +537,7 @@ const StudySession: React.FC = () => {
     }
   }, [deckId, user, searchParams, toast, navigate]);
 
-  // Keyboard support for desktop
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      // Disable keyboard shortcuts when modal is open
-      if (isModalOpen) return;
 
-      if (event.key === 'ArrowLeft') {
-        // Left arrow = Still Learning
-        handleCardResponse(false);
-      } else if (event.key === 'ArrowRight') {
-        // Right arrow = Know
-        handleCardResponse(true);
-      } else if (event.key === ' ' || event.key === 'Enter') {
-        // Space or Enter = Flip card
-        event.preventDefault();
-        cardState.flipCard();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [handleCardResponse, cardState.flipCard, isModalOpen]);
 
   /**
    * Handle exit from study session
@@ -704,6 +684,7 @@ const StudySession: React.FC = () => {
               <span>← Still Learning</span>
               <span>Space/Enter: Flip</span>
               <span>Know →</span>
+              <span>↓ Undo</span>
             </div>
           </div>
         </div>
