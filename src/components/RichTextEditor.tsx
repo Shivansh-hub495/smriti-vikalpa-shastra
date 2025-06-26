@@ -6,6 +6,7 @@ import TextStyle from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import Underline from '@tiptap/extension-underline';
+import TextAlign from '@tiptap/extension-text-align';
 import { Button } from '@/components/ui/button';
 import {
   Bold,
@@ -15,7 +16,10 @@ import {
   Highlighter,
   List,
   Image as ImageIcon,
-  Type
+  Type,
+  AlignLeft,
+  AlignCenter,
+  AlignRight
 } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,6 +52,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         multicolor: true,
       }),
       Underline,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
     ],
     content,
     onUpdate: ({ editor }) => {
@@ -193,6 +200,37 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           className="h-7 w-7 sm:h-8 sm:w-8 p-0 touch-manipulation"
         >
           <List className="h-3 w-3 sm:h-4 sm:w-4" />
+        </Button>
+
+        {/* Text Alignment Options */}
+        <Button
+          variant={editor.isActive({ textAlign: 'left' }) ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          className="h-7 w-7 sm:h-8 sm:w-8 p-0 touch-manipulation"
+          title="Align Left"
+        >
+          <AlignLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+        </Button>
+
+        <Button
+          variant={editor.isActive({ textAlign: 'center' }) ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          className="h-7 w-7 sm:h-8 sm:w-8 p-0 touch-manipulation"
+          title="Align Center"
+        >
+          <AlignCenter className="h-3 w-3 sm:h-4 sm:w-4" />
+        </Button>
+
+        <Button
+          variant={editor.isActive({ textAlign: 'right' }) ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          className="h-7 w-7 sm:h-8 sm:w-8 p-0 touch-manipulation"
+          title="Align Right"
+        >
+          <AlignRight className="h-3 w-3 sm:h-4 sm:w-4" />
         </Button>
 
         <Button

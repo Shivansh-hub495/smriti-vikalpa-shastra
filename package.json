@@ -50,6 +50,7 @@
     "@tiptap/extension-italic": "^2.22.3",
     "@tiptap/extension-list-item": "^2.22.3",
     "@tiptap/extension-strike": "^2.22.3",
+    "@tiptap/extension-text-align": "^2.22.3",
     "@tiptap/extension-text-style": "^2.22.3",
     "@tiptap/extension-underline": "^2.22.3",
     "@tiptap/react": "^2.22.3",
