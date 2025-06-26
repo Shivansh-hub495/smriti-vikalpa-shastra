@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo, memo } from 'react';
 import { motion } from 'framer-motion';
 import { Volume2, Star, StarOff, Expand, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ImageZoomModal from './ImageZoomModal';
 import TextExpandModal from './TextExpandModal';
 import { useLongPress } from '@/hooks/useLongPress';
+import { ANIMATION_DURATIONS, EASING, CONTENT_THRESHOLDS, UI_SIZES, COLORS, A11Y } from '@/constants/study';
+
+/**
+ * @fileoverview Optimized FlashcardComponent with performance best practices
+ * @description Enhanced flashcard component with React.memo, optimized event handlers, and accessibility
+ * @author StudySession Refactor
+ * @version 2.0.0
+ */
 
 interface FlashcardProps {
   id: string;
@@ -24,7 +32,24 @@ interface FlashcardProps {
   onModalStateChange?: (isModalOpen: boolean) => void;
 }
 
-const FlashcardComponent: React.FC<FlashcardProps> = ({
+interface ModalState {
+  isOpen: boolean;
+  imageUrl: string;
+  alt: string;
+}
+
+interface TextModalState {
+  isOpen: boolean;
+  content: string;
+  contentHtml?: string;
+  title: string;
+}
+
+/**
+ * Optimized FlashcardComponent with React.memo for performance
+ * Prevents unnecessary re-renders when props haven't changed
+ */
+const FlashcardComponent: React.FC<FlashcardProps> = memo(({
   id,
   frontContent,
   backContent,
@@ -41,53 +66,59 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
   style = {},
   onModalStateChange
 }) => {
+  // Optimized state with proper initial values
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [imageZoomModal, setImageZoomModal] = useState<{ isOpen: boolean; imageUrl: string; alt: string }>({
+  const [imageZoomModal, setImageZoomModal] = useState<ModalState>(() => ({
     isOpen: false,
     imageUrl: '',
     alt: ''
-  });
-  const [textExpandModal, setTextExpandModal] = useState<{ isOpen: boolean; content: string; contentHtml?: string; title: string }>({
+  }));
+  const [textExpandModal, setTextExpandModal] = useState<TextModalState>(() => ({
     isOpen: false,
     content: '',
     contentHtml: '',
     title: ''
-  });
+  }));
 
-  // Helper function to check if text needs truncation based on image presence
-  const needsTruncation = (text: string, html?: string, hasImage: boolean = false, isBack: boolean = false) => {
+  // Memoized responsive content thresholds
+  const contentThresholds = useMemo(() => {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < CONTENT_THRESHOLDS.CHARACTERS.MOBILE;
+    return {
+      characters: isMobile ? CONTENT_THRESHOLDS.CHARACTERS.MOBILE : CONTENT_THRESHOLDS.CHARACTERS.DESKTOP,
+      lines: isMobile ? CONTENT_THRESHOLDS.LINES.MOBILE : CONTENT_THRESHOLDS.LINES.DESKTOP,
+    };
+  }, []);
+
+  // Memoized helper function to check if text needs truncation
+  const needsTruncation = useCallback((text: string, html?: string, hasImage: boolean = false, isBack: boolean = false) => {
     const content = html || text;
 
     if (hasImage) {
       // Show view more when image is present - more generous text allowance
       return content.length > 200 || (content.match(/\n/g) || []).length > 3;
     } else {
-      // Much more generous when no image - use maximum card space
-      const charThreshold = isBack ? 600 : 700;  // Increased significantly
-      const lineThreshold = isBack ? 8 : 10;     // More lines allowed
+      // Use responsive thresholds for better UX
+      const charThreshold = isBack ? contentThresholds.characters * 1.5 : contentThresholds.characters * 2;
+      const lineThreshold = isBack ? contentThresholds.lines + 3 : contentThresholds.lines + 5;
 
       const charCount = content.length;
       const lineCount = (content.match(/\n/g) || []).length;
 
       return charCount > charThreshold || lineCount > lineThreshold;
     }
-  };
+  }, [contentThresholds]);
 
-  // Helper function to truncate text for display only when needed
-  const getTruncatedText = (text: string, html?: string, isBack: boolean = false, hasImage: boolean = false) => {
+  // Memoized helper function to truncate text for display
+  const getTruncatedText = useCallback((text: string, html?: string, isBack: boolean = false, hasImage: boolean = false) => {
     const needsTrunc = needsTruncation(text, html, hasImage, isBack);
 
     if (!needsTrunc) {
       return { text, html, isTruncated: false };
     }
 
-    // Adjust max length based on image presence
-    let maxLength: number;
-    if (hasImage) {
-      maxLength = isBack ? 180 : 200;  // Much more generous when image present
-    } else {
-      maxLength = isBack ? 500 : 600;  // Much longer when no image - use full space
-    }
+    // Responsive max length based on screen size and image presence
+    const baseLength = hasImage ? 200 : contentThresholds.characters * 2;
+    const maxLength = isBack ? baseLength * 0.9 : baseLength;
 
     const content = html || text;
 
@@ -99,92 +130,147 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
       // For plain text
       return { text: text.substring(0, maxLength) + '...', html: undefined, isTruncated: true };
     }
-  };
+  }, [needsTruncation, contentThresholds]);
 
-  const handleSpeak = (text: string) => {
-    if ('speechSynthesis' in window) {
+  // Optimized speech synthesis handler with error handling
+  const handleSpeak = useCallback((text: string) => {
+    if (!('speechSynthesis' in window)) {
+      console.warn('Speech synthesis not supported');
+      return;
+    }
+
+    try {
       // Stop any ongoing speech
       window.speechSynthesis.cancel();
-      
+
       setIsSpeaking(true);
       const utterance = new SpeechSynthesisUtterance(text);
-      
+
       utterance.onend = () => {
         setIsSpeaking(false);
       };
-      
-      utterance.onerror = () => {
+
+      utterance.onerror = (error) => {
+        console.error('Speech synthesis error:', error);
         setIsSpeaking(false);
       };
-      
-      // Set voice properties
+
+      // Optimized voice properties
       utterance.rate = 0.8;
       utterance.pitch = 1;
       utterance.volume = 1;
-      
-      window.speechSynthesis.speak(utterance);
-    }
-  };
 
-  const handleStarToggle = () => {
+      window.speechSynthesis.speak(utterance);
+    } catch (error) {
+      console.error('Error in speech synthesis:', error);
+      setIsSpeaking(false);
+    }
+  }, []);
+
+  // Optimized event handlers with useCallback for stable references
+  const handleStarToggle = useCallback(() => {
     if (onStar) {
       onStar(id, !isStarred);
     }
-  };
+  }, [onStar, id, isStarred]);
 
-  const handleEditClick = () => {
+  const handleEditClick = useCallback(() => {
     if (onEdit) {
       onEdit(id);
     }
-  };
+  }, [onEdit, id]);
 
-  // Long press handlers for images
+  // Optimized modal handlers
+  const handleImageZoomOpen = useCallback((imageUrl: string, alt: string) => {
+    setImageZoomModal({
+      isOpen: true,
+      imageUrl,
+      alt
+    });
+    onModalStateChange?.(true);
+  }, [onModalStateChange]);
+
+  const handleImageZoomClose = useCallback(() => {
+    setImageZoomModal(prev => ({ ...prev, isOpen: false }));
+    onModalStateChange?.(false);
+  }, [onModalStateChange]);
+
+  const handleTextExpandOpen = useCallback((content: string, contentHtml: string | undefined, title: string) => {
+    setTextExpandModal({
+      isOpen: true,
+      content,
+      contentHtml,
+      title
+    });
+    onModalStateChange?.(true);
+  }, [onModalStateChange]);
+
+  const handleTextExpandClose = useCallback(() => {
+    setTextExpandModal(prev => ({ ...prev, isOpen: false }));
+    onModalStateChange?.(false);
+  }, [onModalStateChange]);
+
+  // Memoized long press handlers for images
   const frontImageLongPress = useLongPress({
-    onLongPress: () => {
+    onLongPress: useCallback(() => {
       if (frontImageUrl) {
-        setImageZoomModal({
-          isOpen: true,
-          imageUrl: frontImageUrl,
-          alt: 'Flashcard front image'
-        });
-        onModalStateChange?.(true);
+        handleImageZoomOpen(frontImageUrl, 'Flashcard front image');
       }
-    }
+    }, [frontImageUrl, handleImageZoomOpen])
   });
 
   const backImageLongPress = useLongPress({
-    onLongPress: () => {
+    onLongPress: useCallback(() => {
       if (backImageUrl) {
-        setImageZoomModal({
-          isOpen: true,
-          imageUrl: backImageUrl,
-          alt: 'Flashcard back image'
-        });
-        onModalStateChange?.(true);
+        handleImageZoomOpen(backImageUrl, 'Flashcard back image');
       }
-    }
+    }, [backImageUrl, handleImageZoomOpen])
   });
 
-  // Text expand handlers
-  const handleExpandFrontText = () => {
-    setTextExpandModal({
-      isOpen: true,
-      content: frontContent,
-      contentHtml: frontContentHtml,
-      title: 'Front Content'
-    });
-    onModalStateChange?.(true);
-  };
+  // Optimized text expand handlers
+  const handleExpandFrontText = useCallback(() => {
+    handleTextExpandOpen(frontContent, frontContentHtml, 'Front Content');
+  }, [frontContent, frontContentHtml, handleTextExpandOpen]);
 
-  const handleExpandBackText = () => {
-    setTextExpandModal({
-      isOpen: true,
-      content: backContent,
-      contentHtml: backContentHtml,
-      title: 'Back Content'
-    });
-    onModalStateChange?.(true);
-  };
+  const handleExpandBackText = useCallback(() => {
+    handleTextExpandOpen(backContent, backContentHtml, 'Back Content');
+  }, [backContent, backContentHtml, handleTextExpandOpen]);
+
+  // Memoized content processing for performance
+  const processedContent = useMemo(() => {
+    const frontHasImage = !!frontImageUrl;
+    const backHasImage = !!backImageUrl;
+
+    return {
+      front: {
+        ...getTruncatedText(frontContent, frontContentHtml, false, frontHasImage),
+        hasImage: frontHasImage,
+        needsViewMore: needsTruncation(frontContent, frontContentHtml, frontHasImage, false)
+      },
+      back: {
+        ...getTruncatedText(backContent, backContentHtml, true, backHasImage),
+        hasImage: backHasImage,
+        needsViewMore: needsTruncation(backContent, backContentHtml, backHasImage, true)
+      }
+    };
+  }, [frontContent, frontContentHtml, frontImageUrl, backContent, backContentHtml, backImageUrl, getTruncatedText, needsTruncation]);
+
+  // Memoized animation variants for performance
+  const animationVariants = useMemo(() => ({
+    cardFlip: {
+      duration: ANIMATION_DURATIONS.CARD_FLIP / 1000,
+      ease: EASING.CARD_FLIP_SPRING.type,
+      ...EASING.CARD_FLIP_SPRING
+    },
+    entrance: {
+      initial: { scale: 0.8, opacity: 0, y: 50 },
+      animate: { scale: 1, opacity: 1, y: 0 },
+      transition: {
+        duration: ANIMATION_DURATIONS.CARD_ENTRANCE / 1000,
+        ...EASING.SPRING
+      }
+    }
+  }), []);
 
   return (
     <div 
@@ -478,10 +564,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
       {/* Image Zoom Modal */}
       <ImageZoomModal
         isOpen={imageZoomModal.isOpen}
-        onClose={() => {
-          setImageZoomModal({ isOpen: false, imageUrl: '', alt: '' });
-          onModalStateChange?.(false);
-        }}
+        onClose={handleImageZoomClose}
         imageUrl={imageZoomModal.imageUrl}
         alt={imageZoomModal.alt}
       />
@@ -489,16 +572,16 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
       {/* Text Expand Modal */}
       <TextExpandModal
         isOpen={textExpandModal.isOpen}
-        onClose={() => {
-          setTextExpandModal({ isOpen: false, content: '', contentHtml: '', title: '' });
-          onModalStateChange?.(false);
-        }}
+        onClose={handleTextExpandClose}
         content={textExpandModal.content}
         contentHtml={textExpandModal.contentHtml}
         title={textExpandModal.title}
       />
     </div>
   );
-};
+});
+
+// Display name for debugging
+FlashcardComponent.displayName = 'FlashcardComponent';
 
 export default FlashcardComponent;

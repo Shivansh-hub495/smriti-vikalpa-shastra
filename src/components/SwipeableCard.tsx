@@ -1,16 +1,15 @@
-import React from 'react';
+import React, { memo, useMemo, useCallback } from 'react';
 import { motion, PanInfo } from 'framer-motion';
 import FlashcardComponent from './FlashcardComponent';
+import type { Flashcard } from '@/types/study';
+import { ANIMATION_DURATIONS, EASING, SWIPE_CONFIG } from '@/constants/study';
 
-interface Flashcard {
-  id: string;
-  front_content: string;
-  back_content: string;
-  front_content_html?: string;
-  back_content_html?: string;
-  front_image_url?: string;
-  back_image_url?: string;
-}
+/**
+ * @fileoverview Optimized SwipeableCard component with Framer Motion best practices
+ * @description Enhanced swipeable card with performance optimizations and proper gesture handling
+ * @author StudySession Refactor
+ * @version 2.0.0
+ */
 
 interface SwipeableCardProps {
   card: Flashcard;
@@ -27,10 +26,10 @@ interface SwipeableCardProps {
 }
 
 /**
- * Swipeable card component with Framer Motion animations
- * Handles drag gestures and visual feedback for swipe actions
+ * Optimized SwipeableCard component with React.memo for performance
+ * Prevents unnecessary re-renders and optimizes animation performance
  */
-const SwipeableCard: React.FC<SwipeableCardProps> = ({
+const SwipeableCard: React.FC<SwipeableCardProps> = memo(({
   card,
   isFlipped,
   isStarred,
@@ -43,43 +42,73 @@ const SwipeableCard: React.FC<SwipeableCardProps> = ({
   onPanEnd,
   onModalStateChange,
 }) => {
+  // Memoized animation variants for performance optimization
+  const animationVariants = useMemo(() => ({
+    initial: {
+      scale: 0.8,
+      opacity: 0,
+      y: 50
+    },
+    animate: {
+      scale: 1,
+      opacity: isSwipeInProgress ? 0.8 : 1,
+      y: 0
+    },
+    exit: {
+      scale: 0.8,
+      opacity: 0,
+      y: -50,
+      transition: { duration: ANIMATION_DURATIONS.CARD_EXIT / 1000 }
+    },
+    whileDrag: {
+      scale: 1.05,
+      rotate: 0,
+      transition: { duration: 0.1 }
+    }
+  }), [isSwipeInProgress]);
+
+  // Memoized transition settings
+  const transitionSettings = useMemo(() => ({
+    main: {
+      duration: ANIMATION_DURATIONS.CARD_ENTRANCE / 1000,
+      ...EASING.SPRING
+    },
+    inner: {
+      ...EASING.SPRING,
+      stiffness: 400,
+      damping: 40
+    },
+    drag: {
+      ...EASING.DRAG_TRANSITION
+    }
+  }), []);
+
+  // Memoized drag constraints and settings
+  const dragSettings = useMemo(() => ({
+    drag: isSwipeDisabled ? false : "x" as const,
+    dragConstraints: { left: 0, right: 0 },
+    dragElastic: SWIPE_CONFIG.DRAG_ELASTIC,
+    onPanStart: isSwipeDisabled ? undefined : onPanStart,
+    onPanEnd: isSwipeDisabled ? undefined : onPanEnd,
+  }), [isSwipeDisabled, onPanStart, onPanEnd]);
+
+  // Memoized style object to prevent recreation
+  const containerStyle = useMemo(() => ({
+    touchAction: 'none' as const
+  }), []);
+
   return (
     <motion.div
       key={card.id}
       className="w-full h-full touch-none relative z-20"
-      style={{ touchAction: 'none' }}
-      initial={{ scale: 0.8, opacity: 0, y: 50 }}
-      animate={{ 
-        scale: 1, 
-        opacity: isSwipeInProgress ? 0.8 : 1, 
-        y: 0 
-      }}
-      exit={{ 
-        scale: 0.8, 
-        opacity: 0, 
-        y: -50,
-        transition: { duration: 0.2 }
-      }}
-      transition={{ 
-        duration: 0.3,
-        type: "spring",
-        stiffness: 300,
-        damping: 30
-      }}
-      drag={isSwipeDisabled ? false : "x"}
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.2}
-      onPanStart={isSwipeDisabled ? undefined : onPanStart}
-      onPanEnd={isSwipeDisabled ? undefined : onPanEnd}
-      whileDrag={{
-        scale: 1.05,
-        rotate: 0,
-        transition: { duration: 0.1 }
-      }}
-      dragTransition={{
-        bounceStiffness: 600,
-        bounceDamping: 20
-      }}
+      style={containerStyle}
+      initial={animationVariants.initial}
+      animate={animationVariants.animate}
+      exit={animationVariants.exit}
+      transition={transitionSettings.main}
+      whileDrag={animationVariants.whileDrag}
+      dragTransition={transitionSettings.drag}
+      {...dragSettings}
     >
       <motion.div
         className="w-full h-full"
@@ -87,11 +116,7 @@ const SwipeableCard: React.FC<SwipeableCardProps> = ({
           x: 0,
           rotate: 0
         }}
-        transition={{
-          type: "spring",
-          stiffness: 400,
-          damping: 40
-        }}
+        transition={transitionSettings.inner}
       >
         <FlashcardComponent
           id={card.id}
@@ -112,6 +137,9 @@ const SwipeableCard: React.FC<SwipeableCardProps> = ({
       </motion.div>
     </motion.div>
   );
-};
+});
+
+// Display name for debugging
+SwipeableCard.displayName = 'SwipeableCard';
 
 export default SwipeableCard;
