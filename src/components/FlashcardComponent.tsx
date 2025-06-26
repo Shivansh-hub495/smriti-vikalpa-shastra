@@ -58,24 +58,19 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
   const needsTruncation = (text: string, html?: string, hasImage: boolean = false, isBack: boolean = false) => {
     const content = html || text;
 
-    // Adjust thresholds based on image presence and front/back
-    let charThreshold: number;
-    let lineThreshold: number;
-
     if (hasImage) {
-      // More conservative when image is present - less space available
-      charThreshold = isBack ? 120 : 150;  // Lower threshold for image cards
-      lineThreshold = isBack ? 2 : 3;      // Fewer lines when image present
+      // Always show view more when image is present - to save space
+      return content.length > 80 || (content.match(/\n/g) || []).length > 1;
     } else {
-      // More generous when no image - full card space available
-      charThreshold = isBack ? 400 : 500;  // Normal thresholds
-      lineThreshold = isBack ? 5 : 6;      // More lines allowed
+      // Normal behavior when no image - let text use full space
+      const charThreshold = isBack ? 300 : 400;
+      const lineThreshold = isBack ? 4 : 5;
+
+      const charCount = content.length;
+      const lineCount = (content.match(/\n/g) || []).length;
+
+      return charCount > charThreshold || lineCount > lineThreshold;
     }
-
-    const charCount = content.length;
-    const lineCount = (content.match(/\n/g) || []).length;
-
-    return charCount > charThreshold || lineCount > lineThreshold;
   };
 
   // Helper function to truncate text for display only when needed
@@ -89,9 +84,9 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
     // Adjust max length based on image presence
     let maxLength: number;
     if (hasImage) {
-      maxLength = isBack ? 100 : 130;  // Much shorter when image present
+      maxLength = isBack ? 80 : 100;  // Short when image present
     } else {
-      maxLength = isBack ? 350 : 400;  // Normal length when no image
+      maxLength = isBack ? 250 : 300;  // Normal length when no image
     }
 
     const content = html || text;
@@ -293,13 +288,13 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             )}
 
             {/* Front Content */}
-            <div className="flex-1 flex flex-col justify-center relative px-2 sm:px-4 min-h-0">
-              <div className="text-center w-full overflow-hidden">
+            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0">
+              <div className="text-center w-full flex-1 flex flex-col justify-center">
                 {(() => {
                   const truncated = getTruncatedText(frontContent, frontContentHtml, false, !!frontImageUrl);
                   return (
                     <>
-                      <div className="overflow-hidden">
+                      <div className="flex-1 flex items-center justify-center">
                         {truncated.html ? (
                           <div
                             className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none"
@@ -312,9 +307,9 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
                         )}
                       </div>
 
-                      {/* View More button - positioned within card boundaries */}
+                      {/* View More button - always visible at bottom */}
                       {truncated.isTruncated && (
-                        <div className="mt-2 sm:mt-3 flex-shrink-0">
+                        <div className="flex-shrink-0 mt-2">
                           <Button
                             variant="ghost"
                             size="sm"
@@ -429,28 +424,28 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             )}
 
             {/* Back Content */}
-            <div className="flex-1 flex flex-col justify-center relative px-2 sm:px-4 min-h-0">
-              <div className="text-center w-full overflow-hidden">
+            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0">
+              <div className="text-center w-full flex-1 flex flex-col justify-center">
                 {(() => {
                   const truncated = getTruncatedText(backContent, backContentHtml, true, !!backImageUrl); // Pass true for back content and image presence
                   return (
                     <>
-                      <div className="overflow-hidden">
+                      <div className="flex-1 flex items-center justify-center">
                         {truncated.html ? (
                           <div
-                            className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none"
+                            className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none text-left"
                             dangerouslySetInnerHTML={{ __html: truncated.html }}
                           />
                         ) : (
-                          <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words">
+                          <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words text-left">
                             {truncated.text}
                           </p>
                         )}
                       </div>
 
-                      {/* View More button - positioned within card boundaries */}
+                      {/* View More button - always visible at bottom */}
                       {truncated.isTruncated && (
-                        <div className="mt-2 sm:mt-3 flex-shrink-0">
+                        <div className="flex-shrink-0 mt-2">
                           <Button
                             variant="ghost"
                             size="sm"
