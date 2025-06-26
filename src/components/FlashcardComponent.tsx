@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Volume2, Star, StarOff, Edit } from 'lucide-react';
+import { Volume2, Star, StarOff, Expand, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ImageZoomModal from './ImageZoomModal';
 import TextExpandModal from './TextExpandModal';
@@ -99,11 +99,6 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
       // For plain text
       return { text: text.substring(0, maxLength) + '...', html: undefined, isTruncated: true };
     }
-  };
-
-  // For back content - return full text for scrolling
-  const getFullText = (text: string, html?: string) => {
-    return { text, html, isTruncated: false };
   };
 
   const handleSpeak = (text: string) => {
@@ -430,55 +425,49 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
               </div>
             )}
 
-            {/* Back Content - Smart Layout */}
-            <div className="flex-1 flex items-center justify-center relative px-2 sm:px-4 min-h-0 max-h-full">
-              {(() => {
-                const fullText = getFullText(backContent, backContentHtml);
-                const content = fullText.html || fullText.text;
-
-                // More accurate content length detection for mobile vs desktop
-                const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-                const charThreshold = isMobile ? 200 : 400; // Lower threshold for mobile
-                const lineThreshold = isMobile ? 3 : 5;     // Fewer lines for mobile
-
-                const isLongContent = content.length > charThreshold || (content.match(/\n/g) || []).length > lineThreshold;
-
-                if (isLongContent) {
-                  // Long content - scrollable from top
+            {/* Back Content */}
+            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0 max-h-full overflow-hidden">
+              <div className="text-center w-full flex-1 flex flex-col justify-center min-h-0 max-h-full overflow-hidden">
+                {(() => {
+                  const truncated = getTruncatedText(backContent, backContentHtml, true, !!backImageUrl); // Pass true for back content and image presence
                   return (
-                    <div className="text-left w-full h-full overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent pr-2">
-                      <div className="pr-2">
-                        {fullText.html ? (
-                          <div
-                            className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none text-left py-2"
-                            dangerouslySetInnerHTML={{ __html: fullText.html }}
-                          />
-                        ) : (
-                          <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words text-left py-2">
-                            {fullText.text}
-                          </p>
-                        )}
+                    <>
+                      <div className="flex-1 flex items-center justify-center overflow-hidden min-h-0">
+                        <div className="w-full overflow-hidden">
+                          {truncated.html ? (
+                            <div
+                              className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none text-left overflow-hidden"
+                              dangerouslySetInnerHTML={{ __html: truncated.html }}
+                            />
+                          ) : (
+                            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words text-left overflow-hidden">
+                              {truncated.text}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                } else {
-                  // Short content - centered
-                  return (
-                    <div className="text-left w-full flex items-center justify-center">
-                      {fullText.html ? (
-                        <div
-                          className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none text-left"
-                          dangerouslySetInnerHTML={{ __html: fullText.html }}
-                        />
-                      ) : (
-                        <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words text-left">
-                          {fullText.text}
-                        </p>
+
+                      {/* View More button - guaranteed to stay within card */}
+                      {truncated.isTruncated && (
+                        <div className="flex-shrink-0 mt-1 pb-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-blue-600 hover:text-blue-800 touch-manipulation text-xs sm:text-sm h-6 px-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleExpandBackText();
+                            }}
+                          >
+                            <Expand className="h-3 w-3 mr-1" />
+                            <span>View More</span>
+                          </Button>
+                        </div>
                       )}
-                    </div>
+                    </>
                   );
-                }
-              })()}
+                })()}
+              </div>
             </div>
 
 
