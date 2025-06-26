@@ -54,42 +54,46 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
     title: ''
   });
 
-  // Helper function to check if text actually overflows and needs truncation
-  const needsTruncation = (text: string, html?: string) => {
+  // Helper function to check if text needs truncation based on image presence
+  const needsTruncation = (text: string, html?: string, hasImage: boolean = false, isBack: boolean = false) => {
     const content = html || text;
-    // More conservative threshold - only truncate when text is really long
-    // Front side (questions) can be longer, back side (answers) should be more conservative
-    const frontThreshold = 500;  // Allow longer questions
-    const backThreshold = 400;   // Slightly shorter for answers
-    const lineThreshold = 6;     // Allow more lines before truncating
+
+    // Adjust thresholds based on image presence and front/back
+    let charThreshold: number;
+    let lineThreshold: number;
+
+    if (hasImage) {
+      // Much more conservative when image is present - less space available
+      charThreshold = isBack ? 200 : 250;  // Reduced for image cards
+      lineThreshold = isBack ? 3 : 4;      // Fewer lines when image present
+    } else {
+      // More generous when no image - full card space available
+      charThreshold = isBack ? 400 : 500;  // Normal thresholds
+      lineThreshold = isBack ? 5 : 6;      // More lines allowed
+    }
 
     const charCount = content.length;
     const lineCount = (content.match(/\n/g) || []).length;
 
-    return charCount > frontThreshold || lineCount > lineThreshold;
-  };
-
-  // Helper function for back content with different threshold
-  const needsTruncationBack = (text: string, html?: string) => {
-    const content = html || text;
-    const backThreshold = 400;   // Conservative for answers
-    const lineThreshold = 5;     // Fewer lines for answers
-
-    const charCount = content.length;
-    const lineCount = (content.match(/\n/g) || []).length;
-
-    return charCount > backThreshold || lineCount > lineThreshold;
+    return charCount > charThreshold || lineCount > lineThreshold;
   };
 
   // Helper function to truncate text for display only when needed
-  const getTruncatedText = (text: string, html?: string, isBack: boolean = false) => {
-    const needsTrunc = isBack ? needsTruncationBack(text, html) : needsTruncation(text, html);
+  const getTruncatedText = (text: string, html?: string, isBack: boolean = false, hasImage: boolean = false) => {
+    const needsTrunc = needsTruncation(text, html, hasImage, isBack);
 
     if (!needsTrunc) {
       return { text, html, isTruncated: false };
     }
 
-    const maxLength = isBack ? 350 : 400; // Different limits for front/back
+    // Adjust max length based on image presence
+    let maxLength: number;
+    if (hasImage) {
+      maxLength = isBack ? 180 : 220;  // Shorter when image present
+    } else {
+      maxLength = isBack ? 350 : 400;  // Normal length when no image
+    }
+
     const content = html || text;
 
     if (html) {
@@ -283,7 +287,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             <div className="flex-1 flex items-center justify-center relative px-2 sm:px-4">
               <div className="text-center w-full">
                 {(() => {
-                  const truncated = getTruncatedText(frontContent, frontContentHtml);
+                  const truncated = getTruncatedText(frontContent, frontContentHtml, false, !!frontImageUrl);
                   return (
                     <>
                       {truncated.html ? (
@@ -406,7 +410,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             <div className="flex-1 flex items-center justify-center relative px-2 sm:px-4">
               <div className="text-center w-full">
                 {(() => {
-                  const truncated = getTruncatedText(backContent, backContentHtml, true); // Pass true for back content
+                  const truncated = getTruncatedText(backContent, backContentHtml, true, !!backImageUrl); // Pass true for back content and image presence
                   return (
                     <>
                       {truncated.html ? (
