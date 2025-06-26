@@ -86,7 +86,7 @@ const SwipeableCard: React.FC<SwipeableCardProps> = memo(({
   // Memoized drag constraints and settings
   const dragSettings = useMemo(() => ({
     drag: isSwipeDisabled ? false : "x" as const,
-    dragConstraints: { left: 0, right: 0 },
+    dragConstraints: { left: -200, right: 200 },
     dragElastic: SWIPE_CONFIG.DRAG_ELASTIC,
     onPanStart: isSwipeDisabled ? undefined : onPanStart,
     onPanEnd: isSwipeDisabled ? undefined : onPanEnd,
