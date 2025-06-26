@@ -291,6 +291,11 @@ const StudySession: React.FC = () => {
     disabled: cardState.currentIndex >= flashcards.length || isModalOpen
   });
 
+  // Reset swipe state when card changes to ensure next card is swipeable
+  useEffect(() => {
+    swipeGesture.resetSwipeState();
+  }, [cardState.currentIndex, swipeGesture.resetSwipeState]);
+
   // Keyboard shortcuts handler
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
     // Don't handle shortcuts when modal is open or input is focused

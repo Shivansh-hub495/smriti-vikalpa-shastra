@@ -108,9 +108,9 @@ export const useSwipeGesture = ({
   const handlePanEnd = useCallback(
     (event: any, info: PanInfo) => {
       // Early returns for performance
-      if (config.disabled || isSwipeInProgress) return;
+      if (config.disabled) return;
 
-      // Debounce rapid swipes
+      // Debounce rapid swipes on the same card
       const now = Date.now();
       if (now - lastSwipeTimeRef.current < 100) return;
 
@@ -137,11 +137,12 @@ export const useSwipeGesture = ({
             console.error('Error executing swipe callback:', error);
           }
 
-          // Reset swipe state after a delay to prevent rapid consecutive swipes
-          timeoutRef.current = setTimeout(() => {
+          // Reset swipe state immediately after callback execution
+          // This allows the next card to be swiped without delay
+          setTimeout(() => {
             setIsSwipeInProgress(false);
             timeoutRef.current = null;
-          }, config.resetDelay);
+          }, 50); // Much shorter delay, just for visual feedback
         }
       } catch (error) {
         console.error('Error in handlePanEnd:', error);
