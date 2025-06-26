@@ -59,8 +59,8 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
     const content = html || text;
 
     if (hasImage) {
-      // Always show view more when image is present - to save space
-      return content.length > 80 || (content.match(/\n/g) || []).length > 1;
+      // Show view more when image is present - slightly more generous
+      return content.length > 120 || (content.match(/\n/g) || []).length > 2;
     } else {
       // Much more generous when no image - use maximum card space
       const charThreshold = isBack ? 600 : 700;  // Increased significantly
@@ -84,7 +84,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
     // Adjust max length based on image presence
     let maxLength: number;
     if (hasImage) {
-      maxLength = isBack ? 80 : 100;  // Short when image present
+      maxLength = isBack ? 110 : 130;  // Slightly more when image present
     } else {
       maxLength = isBack ? 500 : 600;  // Much longer when no image - use full space
     }
