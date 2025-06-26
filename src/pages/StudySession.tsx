@@ -669,15 +669,10 @@ const StudySession: React.FC = () => {
                 onPanStart={swipeGesture.handlePanStart}
                 onPanEnd={swipeGesture.handlePanEnd}
                 onModalStateChange={setIsModalOpen}
+                showCenterIndicator={showCenterIndicator}
               />
             )}
           </AnimatePresence>
-
-          {/* Center Indicator */}
-          <SwipeIndicator
-            show={showCenterIndicator.show}
-            type={showCenterIndicator.type}
-          />
         </div>
 
         {/* Desktop Instructions */}
