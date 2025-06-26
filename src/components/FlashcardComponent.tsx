@@ -89,26 +89,29 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
     };
   }, []);
 
-  // Memoized helper function to check if text needs truncation
+  // Hybrid truncation logic - adaptive to content and layout
   const needsTruncation = useCallback((text: string, html?: string, hasImage: boolean = false, isBack: boolean = false) => {
     const content = html || text;
+    const charCount = content.length;
+    const lineCount = (content.match(/\n/g) || []).length;
+
+    // Adaptive thresholds based on available space
+    let charThreshold, lineThreshold;
 
     if (hasImage) {
-      // Show view more when image is present - more generous text allowance
-      return content.length > 200 || (content.match(/\n/g) || []).length > 3;
+      // Image cards: moderate text allowance
+      charThreshold = isBack ? 300 : 350;
+      lineThreshold = isBack ? 4 : 5;
     } else {
-      // Use responsive thresholds for better UX
-      const charThreshold = isBack ? contentThresholds.characters * 1.5 : contentThresholds.characters * 2;
-      const lineThreshold = isBack ? contentThresholds.lines + 3 : contentThresholds.lines + 5;
-
-      const charCount = content.length;
-      const lineCount = (content.match(/\n/g) || []).length;
-
-      return charCount > charThreshold || lineCount > lineThreshold;
+      // Text-only cards: more generous but not excessive
+      charThreshold = isBack ? contentThresholds.characters * 1.3 : contentThresholds.characters * 1.6;
+      lineThreshold = isBack ? contentThresholds.lines + 2 : contentThresholds.lines + 3;
     }
+
+    return charCount > charThreshold || lineCount > lineThreshold;
   }, [contentThresholds]);
 
-  // Memoized helper function to truncate text for display
+  // Hybrid text truncation - smart word boundary detection
   const getTruncatedText = useCallback((text: string, html?: string, isBack: boolean = false, hasImage: boolean = false) => {
     const needsTrunc = needsTruncation(text, html, hasImage, isBack);
 
@@ -116,22 +119,39 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
       return { text, html, isTruncated: false };
     }
 
-    // Responsive max length based on screen size and image presence
-    const baseLength = hasImage ? 200 : contentThresholds.characters * 2;
-    const maxLength = isBack ? baseLength * 0.9 : baseLength;
+    // Adaptive max length - balanced for both image and text cards
+    let baseLength;
+    if (hasImage) {
+      baseLength = isBack ? 280 : 320; // Moderate for image cards
+    } else {
+      baseLength = isBack ? contentThresholds.characters * 1.2 : contentThresholds.characters * 1.4; // Conservative for text cards
+    }
 
     const content = html || text;
 
-    // Helper function to truncate at word boundary
+    // Smart word boundary truncation
     const truncateAtWordBoundary = (str: string, maxLen: number) => {
       if (str.length <= maxLen) return str;
 
       let truncated = str.substring(0, maxLen);
       const lastSpaceIndex = truncated.lastIndexOf(' ');
 
-      // Only truncate at word boundary if it's not too far back (80% threshold)
-      if (lastSpaceIndex > maxLen * 0.8) {
+      // Always prefer word boundaries, but with reasonable limits
+      if (lastSpaceIndex > maxLen * 0.6) {
+        // Good word boundary found - use it
         truncated = truncated.substring(0, lastSpaceIndex);
+      } else {
+        // No good word boundary - find a better cut point
+        const betterCutPoint = Math.floor(maxLen * 0.85);
+        const betterTruncated = str.substring(0, betterCutPoint);
+        const betterSpaceIndex = betterTruncated.lastIndexOf(' ');
+
+        if (betterSpaceIndex > maxLen * 0.5) {
+          truncated = betterTruncated.substring(0, betterSpaceIndex);
+        } else {
+          // Fallback: use original with word boundary if possible
+          truncated = lastSpaceIndex > 0 ? truncated.substring(0, lastSpaceIndex) : truncated;
+        }
       }
 
       return truncated;
@@ -139,8 +159,8 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
 
     if (html) {
       // For HTML content, truncate at word boundary and add ellipsis
-      const truncatedHtml = truncateAtWordBoundary(content, maxLength);
-      const truncatedText = truncateAtWordBoundary(text, maxLength);
+      const truncatedHtml = truncateAtWordBoundary(content, baseLength);
+      const truncatedText = truncateAtWordBoundary(text, baseLength);
 
       return {
         text: truncatedText + '...',
@@ -149,7 +169,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
       };
     } else {
       // For plain text, truncate at word boundary
-      const truncatedText = truncateAtWordBoundary(text, maxLength);
+      const truncatedText = truncateAtWordBoundary(text, baseLength);
 
       return {
         text: truncatedText + '...',
