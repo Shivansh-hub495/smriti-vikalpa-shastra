@@ -212,7 +212,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             WebkitBackfaceVisibility: "hidden"
           }}
         >
-          <div className="flex flex-col h-full p-4 sm:p-6 md:p-8 relative">
+          <div className="flex flex-col h-full p-4 sm:p-6 md:p-8 relative overflow-hidden">
             {/* Top Controls */}
             <div className="flex justify-between items-start mb-4 sm:mb-6">
               <Button
@@ -288,32 +288,34 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             )}
 
             {/* Front Content */}
-            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0">
-              <div className="text-center w-full flex-1 flex flex-col justify-center">
+            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0 max-h-full overflow-hidden">
+              <div className="text-center w-full flex-1 flex flex-col justify-center min-h-0 max-h-full overflow-hidden">
                 {(() => {
                   const truncated = getTruncatedText(frontContent, frontContentHtml, false, !!frontImageUrl);
                   return (
                     <>
-                      <div className="flex-1 flex items-center justify-center">
-                        {truncated.html ? (
-                          <div
-                            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none"
-                            dangerouslySetInnerHTML={{ __html: truncated.html }}
-                          />
-                        ) : (
-                          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words">
-                            {truncated.text}
-                          </p>
-                        )}
+                      <div className="flex-1 flex items-center justify-center overflow-hidden min-h-0">
+                        <div className="w-full overflow-hidden">
+                          {truncated.html ? (
+                            <div
+                              className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none overflow-hidden"
+                              dangerouslySetInnerHTML={{ __html: truncated.html }}
+                            />
+                          ) : (
+                            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words overflow-hidden">
+                              {truncated.text}
+                            </p>
+                          )}
+                        </div>
                       </div>
 
-                      {/* View More button - always visible at bottom */}
+                      {/* View More button - guaranteed to stay within card */}
                       {truncated.isTruncated && (
-                        <div className="flex-shrink-0 mt-2">
+                        <div className="flex-shrink-0 mt-1 pb-1">
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-gray-500 hover:text-gray-700 touch-manipulation text-xs sm:text-sm"
+                            className="text-gray-500 hover:text-gray-700 touch-manipulation text-xs sm:text-sm h-6 px-2"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleExpandFrontText();
@@ -348,7 +350,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             transform: "rotateY(180deg)"
           }}
         >
-          <div className="flex flex-col h-full p-4 sm:p-6 md:p-8 relative">
+          <div className="flex flex-col h-full p-4 sm:p-6 md:p-8 relative overflow-hidden">
             {/* Top Controls */}
             <div className="flex justify-between items-start mb-4 sm:mb-6">
               <Button
@@ -424,32 +426,34 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             )}
 
             {/* Back Content */}
-            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0">
-              <div className="text-center w-full flex-1 flex flex-col justify-center">
+            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0 max-h-full overflow-hidden">
+              <div className="text-center w-full flex-1 flex flex-col justify-center min-h-0 max-h-full overflow-hidden">
                 {(() => {
                   const truncated = getTruncatedText(backContent, backContentHtml, true, !!backImageUrl); // Pass true for back content and image presence
                   return (
                     <>
-                      <div className="flex-1 flex items-center justify-center">
-                        {truncated.html ? (
-                          <div
-                            className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none text-left"
-                            dangerouslySetInnerHTML={{ __html: truncated.html }}
-                          />
-                        ) : (
-                          <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words text-left">
-                            {truncated.text}
-                          </p>
-                        )}
+                      <div className="flex-1 flex items-center justify-center overflow-hidden min-h-0">
+                        <div className="w-full overflow-hidden">
+                          {truncated.html ? (
+                            <div
+                              className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none text-left overflow-hidden"
+                              dangerouslySetInnerHTML={{ __html: truncated.html }}
+                            />
+                          ) : (
+                            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words text-left overflow-hidden">
+                              {truncated.text}
+                            </p>
+                          )}
+                        </div>
                       </div>
 
-                      {/* View More button - always visible at bottom */}
+                      {/* View More button - guaranteed to stay within card */}
                       {truncated.isTruncated && (
-                        <div className="flex-shrink-0 mt-2">
+                        <div className="flex-shrink-0 mt-1 pb-1">
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-blue-600 hover:text-blue-800 touch-manipulation text-xs sm:text-sm"
+                            className="text-blue-600 hover:text-blue-800 touch-manipulation text-xs sm:text-sm h-6 px-2"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleExpandBackText();
