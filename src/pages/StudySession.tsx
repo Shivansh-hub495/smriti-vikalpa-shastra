@@ -216,7 +216,7 @@ const StudySession: React.FC = () => {
     setShowCenterIndicator({ show: true, type });
     setTimeout(() => {
       setShowCenterIndicator({ show: false, type: null });
-    }, ANIMATION_DURATIONS.CENTER_INDICATOR);
+    }, 400); // Quick 400ms duration
   }, []);
 
   /**
@@ -669,8 +669,31 @@ const StudySession: React.FC = () => {
                 onPanStart={swipeGesture.handlePanStart}
                 onPanEnd={swipeGesture.handlePanEnd}
                 onModalStateChange={setIsModalOpen}
-                showCenterIndicator={showCenterIndicator}
+
               />
+            )}
+          </AnimatePresence>
+
+          {/* New Quick Swipe Indicators - Top Corners */}
+          <AnimatePresence>
+            {showCenterIndicator.show && showCenterIndicator.type && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className={`absolute top-4 ${
+                  showCenterIndicator.type === 'know' ? 'right-4' : 'left-4'
+                } z-50 pointer-events-none`}
+              >
+                <div className={`px-4 py-2 rounded-lg font-semibold text-sm text-white shadow-lg ${
+                  showCenterIndicator.type === 'know'
+                    ? 'bg-green-500'
+                    : 'bg-orange-500'
+                }`}>
+                  {showCenterIndicator.type === 'know' ? '✓ KNOW' : '📚 LEARNING'}
+                </div>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>

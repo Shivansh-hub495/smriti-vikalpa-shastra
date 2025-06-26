@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, memo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, Star, StarOff, Expand, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ImageZoomModal from './ImageZoomModal';
@@ -30,6 +30,7 @@ interface FlashcardProps {
   className?: string;
   style?: React.CSSProperties;
   onModalStateChange?: (isModalOpen: boolean) => void;
+
 }
 
 interface ModalState {
@@ -596,6 +597,8 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
 
           </div>
         </motion.div>
+
+
       </motion.div>
 
       {/* Image Zoom Modal */}

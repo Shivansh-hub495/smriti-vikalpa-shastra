@@ -1,7 +1,6 @@
 import React, { memo, useMemo, useCallback } from 'react';
 import { motion, PanInfo } from 'framer-motion';
 import FlashcardComponent from './FlashcardComponent';
-import SwipeIndicator from './SwipeIndicator';
 import type { Flashcard, CenterIndicatorState } from '@/types/study';
 import { ANIMATION_DURATIONS, EASING, SWIPE_CONFIG } from '@/constants/study';
 
@@ -24,7 +23,7 @@ interface SwipeableCardProps {
   onPanStart: () => void;
   onPanEnd: (event: any, info: PanInfo) => void;
   onModalStateChange?: (isModalOpen: boolean) => void;
-  showCenterIndicator: CenterIndicatorState;
+
 }
 
 /**
@@ -43,7 +42,6 @@ const SwipeableCard: React.FC<SwipeableCardProps> = memo(({
   onPanStart,
   onPanEnd,
   onModalStateChange,
-  showCenterIndicator,
 }) => {
   // Memoized animation variants for performance optimization
   const animationVariants = useMemo(() => ({
@@ -136,12 +134,7 @@ const SwipeableCard: React.FC<SwipeableCardProps> = memo(({
           isStarred={isStarred}
           className="w-full h-full"
           onModalStateChange={onModalStateChange}
-        />
 
-        {/* Center Indicator - positioned relative to the card */}
-        <SwipeIndicator
-          show={showCenterIndicator.show}
-          type={showCenterIndicator.type}
         />
       </motion.div>
     </motion.div>
