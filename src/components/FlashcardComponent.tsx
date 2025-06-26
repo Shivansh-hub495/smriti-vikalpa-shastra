@@ -270,13 +270,22 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
 
             {/* Front Image */}
             {frontImageUrl && (
-              <div className="flex-shrink-0 mb-4 sm:mb-6 relative">
-                <img
-                  {...frontImageLongPress}
-                  src={frontImageUrl}
-                  alt="Flashcard front"
-                  className="w-full max-h-32 sm:max-h-40 md:max-h-48 object-contain rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
-                />
+              <div className="flex-shrink-0 mb-3 sm:mb-4 relative">
+                {(() => {
+                  const hasLongText = needsTruncation(frontContent, frontContentHtml, true, false);
+                  const imageHeight = hasLongText
+                    ? "max-h-24 sm:max-h-28 md:max-h-32" // Smaller when text is long
+                    : "max-h-32 sm:max-h-40 md:max-h-48"; // Normal size
+
+                  return (
+                    <img
+                      {...frontImageLongPress}
+                      src={frontImageUrl}
+                      alt="Flashcard front"
+                      className={`w-full ${imageHeight} object-contain rounded-xl cursor-pointer hover:opacity-90 transition-opacity`}
+                    />
+                  );
+                })()}
                 <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded opacity-0 hover:opacity-100 transition-opacity">
                   Long press to zoom
                 </div>
@@ -284,37 +293,41 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             )}
 
             {/* Front Content */}
-            <div className="flex-1 flex items-center justify-center relative px-2 sm:px-4">
-              <div className="text-center w-full">
+            <div className="flex-1 flex flex-col justify-center relative px-2 sm:px-4 min-h-0">
+              <div className="text-center w-full overflow-hidden">
                 {(() => {
                   const truncated = getTruncatedText(frontContent, frontContentHtml, false, !!frontImageUrl);
                   return (
                     <>
-                      {truncated.html ? (
-                        <div
-                          className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none"
-                          dangerouslySetInnerHTML={{ __html: truncated.html }}
-                        />
-                      ) : (
-                        <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words">
-                          {truncated.text}
-                        </p>
-                      )}
+                      <div className="overflow-hidden">
+                        {truncated.html ? (
+                          <div
+                            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none"
+                            dangerouslySetInnerHTML={{ __html: truncated.html }}
+                          />
+                        ) : (
+                          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words">
+                            {truncated.text}
+                          </p>
+                        )}
+                      </div>
 
-                      {/* View More button - only show when text is actually truncated */}
+                      {/* View More button - positioned within card boundaries */}
                       {truncated.isTruncated && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="mt-3 sm:mt-4 text-gray-500 hover:text-gray-700 touch-manipulation"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleExpandFrontText();
-                          }}
-                        >
-                          <Expand className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                          <span className="text-sm sm:text-base">View More</span>
-                        </Button>
+                        <div className="mt-2 sm:mt-3 flex-shrink-0">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-gray-500 hover:text-gray-700 touch-manipulation text-xs sm:text-sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleExpandFrontText();
+                            }}
+                          >
+                            <Expand className="h-3 w-3 mr-1" />
+                            <span>View More</span>
+                          </Button>
+                        </div>
                       )}
                     </>
                   );
@@ -393,13 +406,22 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
 
             {/* Back Image */}
             {backImageUrl && (
-              <div className="flex-shrink-0 mb-4 sm:mb-6 relative">
-                <img
-                  {...backImageLongPress}
-                  src={backImageUrl}
-                  alt="Flashcard back"
-                  className="w-full max-h-32 sm:max-h-40 md:max-h-48 object-contain rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
-                />
+              <div className="flex-shrink-0 mb-3 sm:mb-4 relative">
+                {(() => {
+                  const hasLongText = needsTruncation(backContent, backContentHtml, true, true);
+                  const imageHeight = hasLongText
+                    ? "max-h-24 sm:max-h-28 md:max-h-32" // Smaller when text is long
+                    : "max-h-32 sm:max-h-40 md:max-h-48"; // Normal size
+
+                  return (
+                    <img
+                      {...backImageLongPress}
+                      src={backImageUrl}
+                      alt="Flashcard back"
+                      className={`w-full ${imageHeight} object-contain rounded-xl cursor-pointer hover:opacity-90 transition-opacity`}
+                    />
+                  );
+                })()}
                 <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded opacity-0 hover:opacity-100 transition-opacity">
                   Long press to zoom
                 </div>
@@ -407,37 +429,41 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             )}
 
             {/* Back Content */}
-            <div className="flex-1 flex items-center justify-center relative px-2 sm:px-4">
-              <div className="text-center w-full">
+            <div className="flex-1 flex flex-col justify-center relative px-2 sm:px-4 min-h-0">
+              <div className="text-center w-full overflow-hidden">
                 {(() => {
                   const truncated = getTruncatedText(backContent, backContentHtml, true, !!backImageUrl); // Pass true for back content and image presence
                   return (
                     <>
-                      {truncated.html ? (
-                        <div
-                          className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none"
-                          dangerouslySetInnerHTML={{ __html: truncated.html }}
-                        />
-                      ) : (
-                        <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words">
-                          {truncated.text}
-                        </p>
-                      )}
+                      <div className="overflow-hidden">
+                        {truncated.html ? (
+                          <div
+                            className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none"
+                            dangerouslySetInnerHTML={{ __html: truncated.html }}
+                          />
+                        ) : (
+                          <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words">
+                            {truncated.text}
+                          </p>
+                        )}
+                      </div>
 
-                      {/* View More button - only show when text is actually truncated */}
+                      {/* View More button - positioned within card boundaries */}
                       {truncated.isTruncated && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="mt-3 sm:mt-4 text-blue-600 hover:text-blue-800 touch-manipulation"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleExpandBackText();
-                          }}
-                        >
-                          <Expand className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                          <span className="text-sm sm:text-base">View More</span>
-                        </Button>
+                        <div className="mt-2 sm:mt-3 flex-shrink-0">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-blue-600 hover:text-blue-800 touch-manipulation text-xs sm:text-sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleExpandBackText();
+                            }}
+                          >
+                            <Expand className="h-3 w-3 mr-1" />
+                            <span>View More</span>
+                          </Button>
+                        </div>
                       )}
                     </>
                   );
