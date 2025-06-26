@@ -54,69 +54,26 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
     title: ''
   });
 
-  // Helper function to calculate available space and determine text limits
-  const getAdaptiveTextLimits = (hasImage: boolean, isBack: boolean) => {
-    // Get viewport dimensions
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    // Calculate card dimensions based on viewport
-    let cardHeight = Math.min(viewportHeight * 0.7, 600); // Max 70% of viewport or 600px
-    let cardWidth = Math.min(viewportWidth * 0.9, 500);   // Max 90% of viewport or 500px
-
-    // Adjust for desktop
-    if (viewportWidth >= 1024) {
-      cardHeight = Math.min(viewportHeight * 0.8, 700);
-      cardWidth = Math.min(viewportWidth * 0.6, 600);
-    }
-
-    // Calculate available text area
-    let availableHeight = cardHeight;
-
-    // Subtract space for header/controls (approx 80px)
-    availableHeight -= 80;
-
-    // Subtract space for image if present
-    if (hasImage) {
-      const imageHeight = viewportWidth >= 1024 ? 200 : 150; // Approximate image height
-      availableHeight -= imageHeight + 20; // Image + margin
-    }
-
-    // Subtract space for "Tap to flip" text (approx 40px)
-    availableHeight -= 40;
-
-    // Subtract space for view more button (approx 40px) - always reserve space
-    availableHeight -= 40;
-
-    // Calculate approximate lines that can fit
-    const lineHeight = isBack ? 28 : 32; // Approximate line height based on font size
-    const maxLines = Math.floor(availableHeight / lineHeight);
-
-    // Calculate character limit based on card width and lines
-    const charsPerLine = Math.floor(cardWidth / (isBack ? 12 : 16)); // Approximate chars per line
-    const charLimit = Math.max(100, maxLines * charsPerLine); // Minimum 100 chars
-
-    return {
-      charLimit: Math.min(charLimit, hasImage ? 800 : 1200), // Cap the limits
-      lineLimit: Math.max(3, maxLines),
-      availableHeight,
-      cardWidth
-    };
-  };
-
-  // Helper function to check if text needs truncation
+  // Helper function to check if text needs truncation based on image presence
   const needsTruncation = (text: string, html?: string, hasImage: boolean = false, isBack: boolean = false) => {
     const content = html || text;
-    const { charLimit, lineLimit } = getAdaptiveTextLimits(hasImage, isBack);
 
-    const charCount = content.length;
-    const lineCount = (content.match(/\n/g) || []).length + 1;
+    if (hasImage) {
+      // Show view more when image is present - more generous text allowance
+      return content.length > 200 || (content.match(/\n/g) || []).length > 3;
+    } else {
+      // Much more generous when no image - use maximum card space
+      const charThreshold = isBack ? 600 : 700;  // Increased significantly
+      const lineThreshold = isBack ? 8 : 10;     // More lines allowed
 
-    // More conservative truncation to ensure content stays within bounds
-    return charCount > charLimit || lineCount > lineLimit;
+      const charCount = content.length;
+      const lineCount = (content.match(/\n/g) || []).length;
+
+      return charCount > charThreshold || lineCount > lineThreshold;
+    }
   };
 
-  // Helper function to truncate text for display
+  // Helper function to truncate text for display only when needed
   const getTruncatedText = (text: string, html?: string, isBack: boolean = false, hasImage: boolean = false) => {
     const needsTrunc = needsTruncation(text, html, hasImage, isBack);
 
@@ -124,9 +81,13 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
       return { text, html, isTruncated: false };
     }
 
-    // Get adaptive limits for truncation
-    const { charLimit } = getAdaptiveTextLimits(hasImage, isBack);
-    const maxLength = Math.floor(charLimit * 0.75); // Use 75% of limit to ensure space for view more
+    // Adjust max length based on image presence
+    let maxLength: number;
+    if (hasImage) {
+      maxLength = isBack ? 180 : 200;  // Much more generous when image present
+    } else {
+      maxLength = isBack ? 500 : 600;  // Much longer when no image - use full space
+    }
 
     const content = html || text;
 
@@ -251,7 +212,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             WebkitBackfaceVisibility: "hidden"
           }}
         >
-          <div className="flex flex-col h-full p-4 sm:p-6 md:p-8 relative overflow-hidden max-h-full">
+          <div className="flex flex-col h-full p-4 sm:p-6 md:p-8 relative">
             {/* Top Controls */}
             <div className="flex justify-between items-start mb-4 sm:mb-6">
               <Button
@@ -307,17 +268,9 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
               <div className="flex-shrink-0 mb-3 sm:mb-4 relative">
                 {(() => {
                   const hasLongText = needsTruncation(frontContent, frontContentHtml, true, false);
-                  const willShowViewMore = hasLongText;
-
-                  // Adjust image size based on text length and view more button
-                  let imageHeight;
-                  if (willShowViewMore) {
-                    imageHeight = "max-h-20 sm:max-h-24 md:max-h-28"; // Smaller when view more is needed
-                  } else if (hasLongText) {
-                    imageHeight = "max-h-24 sm:max-h-28 md:max-h-32"; // Medium when text is long but no view more
-                  } else {
-                    imageHeight = "max-h-28 sm:max-h-36 md:max-h-44"; // Normal size for short text
-                  }
+                  const imageHeight = hasLongText
+                    ? "max-h-24 sm:max-h-28 md:max-h-32" // Smaller when text is long
+                    : "max-h-32 sm:max-h-40 md:max-h-48"; // Normal size
 
                   return (
                     <img
@@ -335,45 +288,46 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             )}
 
             {/* Front Content */}
-            <div className="flex-1 flex flex-col relative px-2 sm:px-4 min-h-0 overflow-hidden">
-              {(() => {
-                const truncated = getTruncatedText(frontContent, frontContentHtml, false, !!frontImageUrl);
-                return (
-                  <>
-                    {/* Text Content Area */}
-                    <div className="flex-1 flex items-center justify-center text-center w-full overflow-hidden">
-                      {truncated.html ? (
-                        <div
-                          className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none overflow-hidden"
-                          dangerouslySetInnerHTML={{ __html: truncated.html }}
-                        />
-                      ) : (
-                        <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words overflow-hidden">
-                          {truncated.text}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* View More button - positioned at bottom when needed */}
-                    {truncated.isTruncated && (
-                      <div className="flex-shrink-0 flex justify-center mt-2 pb-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-gray-500 hover:text-gray-700 touch-manipulation text-xs sm:text-sm px-3 py-1"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleExpandFrontText();
-                          }}
-                        >
-                          <Expand className="h-3 w-3 mr-1" />
-                          <span>View More</span>
-                        </Button>
+            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0">
+              <div className="text-center w-full flex-1 flex flex-col justify-center">
+                {(() => {
+                  const truncated = getTruncatedText(frontContent, frontContentHtml, false, !!frontImageUrl);
+                  return (
+                    <>
+                      <div className="flex-1 flex items-center justify-center">
+                        {truncated.html ? (
+                          <div
+                            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none"
+                            dangerouslySetInnerHTML={{ __html: truncated.html }}
+                          />
+                        ) : (
+                          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words">
+                            {truncated.text}
+                          </p>
+                        )}
                       </div>
-                    )}
-                  </>
-                );
-              })()}
+
+                      {/* View More button - always visible at bottom */}
+                      {truncated.isTruncated && (
+                        <div className="flex-shrink-0 mt-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-gray-500 hover:text-gray-700 touch-manipulation text-xs sm:text-sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleExpandFrontText();
+                            }}
+                          >
+                            <Expand className="h-3 w-3 mr-1" />
+                            <span>View More</span>
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
             </div>
 
             {/* Tap Instruction */}
@@ -394,7 +348,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             transform: "rotateY(180deg)"
           }}
         >
-          <div className="flex flex-col h-full p-4 sm:p-6 md:p-8 relative overflow-hidden max-h-full">
+          <div className="flex flex-col h-full p-4 sm:p-6 md:p-8 relative">
             {/* Top Controls */}
             <div className="flex justify-between items-start mb-4 sm:mb-6">
               <Button
@@ -450,17 +404,9 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
               <div className="flex-shrink-0 mb-3 sm:mb-4 relative">
                 {(() => {
                   const hasLongText = needsTruncation(backContent, backContentHtml, true, true);
-                  const willShowViewMore = hasLongText;
-
-                  // Adjust image size based on text length and view more button
-                  let imageHeight;
-                  if (willShowViewMore) {
-                    imageHeight = "max-h-20 sm:max-h-24 md:max-h-28"; // Smaller when view more is needed
-                  } else if (hasLongText) {
-                    imageHeight = "max-h-24 sm:max-h-28 md:max-h-32"; // Medium when text is long but no view more
-                  } else {
-                    imageHeight = "max-h-28 sm:max-h-36 md:max-h-44"; // Normal size for short text
-                  }
+                  const imageHeight = hasLongText
+                    ? "max-h-24 sm:max-h-28 md:max-h-32" // Smaller when text is long
+                    : "max-h-32 sm:max-h-40 md:max-h-48"; // Normal size
 
                   return (
                     <img
@@ -478,45 +424,46 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             )}
 
             {/* Back Content */}
-            <div className="flex-1 flex flex-col relative px-2 sm:px-4 min-h-0 overflow-hidden">
-              {(() => {
-                const truncated = getTruncatedText(backContent, backContentHtml, true, !!backImageUrl);
-                return (
-                  <>
-                    {/* Text Content Area */}
-                    <div className="flex-1 flex items-center justify-center w-full overflow-hidden">
-                      {truncated.html ? (
-                        <div
-                          className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none text-left overflow-hidden"
-                          dangerouslySetInnerHTML={{ __html: truncated.html }}
-                        />
-                      ) : (
-                        <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words text-left overflow-hidden">
-                          {truncated.text}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* View More button - positioned at bottom when needed */}
-                    {truncated.isTruncated && (
-                      <div className="flex-shrink-0 flex justify-center mt-2 pb-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-blue-600 hover:text-blue-800 touch-manipulation text-xs sm:text-sm px-3 py-1"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleExpandBackText();
-                          }}
-                        >
-                          <Expand className="h-3 w-3 mr-1" />
-                          <span>View More</span>
-                        </Button>
+            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0">
+              <div className="text-center w-full flex-1 flex flex-col justify-center">
+                {(() => {
+                  const truncated = getTruncatedText(backContent, backContentHtml, true, !!backImageUrl); // Pass true for back content and image presence
+                  return (
+                    <>
+                      <div className="flex-1 flex items-center justify-center">
+                        {truncated.html ? (
+                          <div
+                            className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none text-left"
+                            dangerouslySetInnerHTML={{ __html: truncated.html }}
+                          />
+                        ) : (
+                          <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words text-left">
+                            {truncated.text}
+                          </p>
+                        )}
                       </div>
-                    )}
-                  </>
-                );
-              })()}
+
+                      {/* View More button - always visible at bottom */}
+                      {truncated.isTruncated && (
+                        <div className="flex-shrink-0 mt-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-blue-600 hover:text-blue-800 touch-manipulation text-xs sm:text-sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleExpandBackText();
+                            }}
+                          >
+                            <Expand className="h-3 w-3 mr-1" />
+                            <span>View More</span>
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
             </div>
 
 
