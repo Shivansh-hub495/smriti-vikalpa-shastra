@@ -62,9 +62,9 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
       // Always show view more when image is present - to save space
       return content.length > 80 || (content.match(/\n/g) || []).length > 1;
     } else {
-      // Normal behavior when no image - let text use full space
-      const charThreshold = isBack ? 300 : 400;
-      const lineThreshold = isBack ? 4 : 5;
+      // Much more generous when no image - use maximum card space
+      const charThreshold = isBack ? 600 : 700;  // Increased significantly
+      const lineThreshold = isBack ? 8 : 10;     // More lines allowed
 
       const charCount = content.length;
       const lineCount = (content.match(/\n/g) || []).length;
@@ -86,7 +86,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
     if (hasImage) {
       maxLength = isBack ? 80 : 100;  // Short when image present
     } else {
-      maxLength = isBack ? 250 : 300;  // Normal length when no image
+      maxLength = isBack ? 500 : 600;  // Much longer when no image - use full space
     }
 
     const content = html || text;
@@ -466,12 +466,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
               </div>
             </div>
 
-            {/* Tap Instruction */}
-            <div className="flex-shrink-0 text-center mt-4 sm:mt-6">
-              <p className="text-xs sm:text-sm text-blue-600 font-medium">
-                Swipe left (Still Learning) or right (Know)
-              </p>
-            </div>
+
           </div>
         </motion.div>
       </motion.div>
