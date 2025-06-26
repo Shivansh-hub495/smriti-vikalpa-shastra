@@ -53,7 +53,6 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
     contentHtml: '',
     title: ''
   });
-  const [isScrolling, setIsScrolling] = useState(false);
 
   // Helper function to check if text needs truncation based on image presence
   const needsTruncation = (text: string, html?: string, hasImage: boolean = false, isBack: boolean = false) => {
@@ -447,24 +446,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
                 if (isLongContent) {
                   // Long content - scrollable from top
                   return (
-                    <div
-                      className="text-left w-full h-full overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent pr-2"
-                      onTouchStart={(e) => {
-                        e.stopPropagation();
-                        setIsScrolling(true);
-                        onModalStateChange?.(true);
-                      }}
-                      onTouchMove={(e) => e.stopPropagation()}
-                      onTouchEnd={(e) => {
-                        e.stopPropagation();
-                        setTimeout(() => {
-                          setIsScrolling(false);
-                          onModalStateChange?.(false);
-                        }, 100);
-                      }}
-                      onScroll={(e) => e.stopPropagation()}
-                      style={{ touchAction: 'pan-y' }}
-                    >
+                    <div className="text-left w-full h-full overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent pr-2">
                       <div className="pr-2">
                         {fullText.html ? (
                           <div
