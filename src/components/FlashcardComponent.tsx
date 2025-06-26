@@ -54,26 +54,51 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
     title: ''
   });
 
-  // Helper function to check if text needs truncation based on image presence
-  const needsTruncation = (text: string, html?: string, hasImage: boolean = false, isBack: boolean = false) => {
-    const content = html || text;
+  // Helper function to get responsive text limits based on screen size and image presence
+  const getResponsiveTextLimits = (hasImage: boolean, isBack: boolean) => {
+    // Get viewport dimensions
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
-    if (hasImage) {
-      // Show view more when image is present - more generous text allowance
-      return content.length > 200 || (content.match(/\n/g) || []).length > 3;
-    } else {
-      // Much more generous when no image - use maximum card space
-      const charThreshold = isBack ? 600 : 700;  // Increased significantly
-      const lineThreshold = isBack ? 8 : 10;     // More lines allowed
+    // Base multipliers for different screen sizes
+    let sizeMultiplier = 1;
+    if (vw >= 1536) sizeMultiplier = 2.5;      // 2xl screens
+    else if (vw >= 1280) sizeMultiplier = 2.2; // xl screens
+    else if (vw >= 1024) sizeMultiplier = 1.8; // lg screens
+    else if (vw >= 768) sizeMultiplier = 1.4;  // md screens
+    else if (vw >= 640) sizeMultiplier = 1.1;  // sm screens
+    else sizeMultiplier = 0.8;                 // mobile
 
-      const charCount = content.length;
-      const lineCount = (content.match(/\n/g) || []).length;
+    // Height factor - taller screens can show more text
+    const heightFactor = vh > 800 ? 1.3 : vh > 600 ? 1.1 : 0.9;
 
-      return charCount > charThreshold || lineCount > lineThreshold;
-    }
+    // Calculate dynamic limits
+    const baseLimits = hasImage ?
+      { chars: 150, lines: 3 } :  // Conservative with image
+      { chars: 400, lines: 8 };   // Generous without image
+
+    const dynamicChars = Math.floor(baseLimits.chars * sizeMultiplier * heightFactor);
+    const dynamicLines = Math.floor(baseLimits.lines * sizeMultiplier);
+
+    return {
+      charThreshold: isBack ? dynamicChars * 0.9 : dynamicChars,
+      lineThreshold: isBack ? dynamicLines - 1 : dynamicLines,
+      maxDisplayChars: isBack ? dynamicChars * 0.8 : dynamicChars * 0.85
+    };
   };
 
-  // Helper function to truncate text for display only when needed
+  // Helper function to check if text needs truncation based on responsive limits
+  const needsTruncation = (text: string, html?: string, hasImage: boolean = false, isBack: boolean = false) => {
+    const content = html || text;
+    const limits = getResponsiveTextLimits(hasImage, isBack);
+
+    const charCount = content.length;
+    const lineCount = (content.match(/\n/g) || []).length;
+
+    return charCount > limits.charThreshold || lineCount > limits.lineThreshold;
+  };
+
+  // Helper function to truncate text responsively
   const getTruncatedText = (text: string, html?: string, isBack: boolean = false, hasImage: boolean = false) => {
     const needsTrunc = needsTruncation(text, html, hasImage, isBack);
 
@@ -81,14 +106,8 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
       return { text, html, isTruncated: false };
     }
 
-    // Adjust max length based on image presence
-    let maxLength: number;
-    if (hasImage) {
-      maxLength = isBack ? 180 : 200;  // Much more generous when image present
-    } else {
-      maxLength = isBack ? 500 : 600;  // Much longer when no image - use full space
-    }
-
+    const limits = getResponsiveTextLimits(hasImage, isBack);
+    const maxLength = limits.maxDisplayChars;
     const content = html || text;
 
     if (html) {
@@ -288,28 +307,30 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             )}
 
             {/* Front Content */}
-            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0">
-              <div className="text-center w-full flex-1 flex flex-col justify-center">
+            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0 overflow-hidden">
+              <div className="text-center w-full flex-1 flex flex-col justify-center min-h-0">
                 {(() => {
                   const truncated = getTruncatedText(frontContent, frontContentHtml, false, !!frontImageUrl);
                   return (
                     <>
-                      <div className="flex-1 flex items-center justify-center">
-                        {truncated.html ? (
-                          <div
-                            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none"
-                            dangerouslySetInnerHTML={{ __html: truncated.html }}
-                          />
-                        ) : (
-                          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words">
-                            {truncated.text}
-                          </p>
-                        )}
+                      <div className="flex-1 flex items-center justify-center overflow-hidden">
+                        <div className="w-full max-h-full overflow-hidden">
+                          {truncated.html ? (
+                            <div
+                              className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none overflow-hidden"
+                              dangerouslySetInnerHTML={{ __html: truncated.html }}
+                            />
+                          ) : (
+                            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words overflow-hidden">
+                              {truncated.text}
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       {/* View More button - always visible at bottom */}
                       {truncated.isTruncated && (
-                        <div className="flex-shrink-0 mt-2">
+                        <div className="flex-shrink-0 mt-2 pb-1">
                           <Button
                             variant="ghost"
                             size="sm"
@@ -424,28 +445,30 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
             )}
 
             {/* Back Content */}
-            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0">
-              <div className="text-center w-full flex-1 flex flex-col justify-center">
+            <div className="flex-1 flex flex-col justify-between relative px-2 sm:px-4 min-h-0 overflow-hidden">
+              <div className="text-center w-full flex-1 flex flex-col justify-center min-h-0">
                 {(() => {
                   const truncated = getTruncatedText(backContent, backContentHtml, true, !!backImageUrl); // Pass true for back content and image presence
                   return (
                     <>
-                      <div className="flex-1 flex items-center justify-center">
-                        {truncated.html ? (
-                          <div
-                            className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none text-left"
-                            dangerouslySetInnerHTML={{ __html: truncated.html }}
-                          />
-                        ) : (
-                          <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words text-left">
-                            {truncated.text}
-                          </p>
-                        )}
+                      <div className="flex-1 flex items-center justify-center overflow-hidden">
+                        <div className="w-full max-h-full overflow-hidden">
+                          {truncated.html ? (
+                            <div
+                              className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none text-left overflow-hidden"
+                              dangerouslySetInnerHTML={{ __html: truncated.html }}
+                            />
+                          ) : (
+                            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words text-left overflow-hidden">
+                              {truncated.text}
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       {/* View More button - always visible at bottom */}
                       {truncated.isTruncated && (
-                        <div className="flex-shrink-0 mt-2">
+                        <div className="flex-shrink-0 mt-2 pb-1">
                           <Button
                             variant="ghost"
                             size="sm"
