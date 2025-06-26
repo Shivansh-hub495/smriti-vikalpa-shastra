@@ -94,12 +94,12 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
     const content = html || text;
 
     if (hasImage) {
-      // Show view more when image is present - more conservative
-      return content.length > 150 || (content.match(/\n/g) || []).length > 2;
+      // Show view more when image is present - more generous text allowance
+      return content.length > 200 || (content.match(/\n/g) || []).length > 3;
     } else {
-      // Use more conservative thresholds to avoid partial words
-      const charThreshold = isBack ? contentThresholds.characters * 1.2 : contentThresholds.characters * 1.5;
-      const lineThreshold = isBack ? contentThresholds.lines + 2 : contentThresholds.lines + 3;
+      // Use responsive thresholds for better UX
+      const charThreshold = isBack ? contentThresholds.characters * 1.5 : contentThresholds.characters * 2;
+      const lineThreshold = isBack ? contentThresholds.lines + 3 : contentThresholds.lines + 5;
 
       const charCount = content.length;
       const lineCount = (content.match(/\n/g) || []).length;
@@ -116,35 +116,22 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
       return { text, html, isTruncated: false };
     }
 
-    // Responsive max length based on screen size and image presence - more conservative
-    const baseLength = hasImage ? 150 : contentThresholds.characters * 1.5;
-    const maxLength = isBack ? baseLength * 0.8 : baseLength;
+    // Responsive max length based on screen size and image presence
+    const baseLength = hasImage ? 200 : contentThresholds.characters * 2;
+    const maxLength = isBack ? baseLength * 0.9 : baseLength;
 
     const content = html || text;
 
-    // Helper function to truncate at word boundary - ALWAYS truncate at complete words
+    // Helper function to truncate at word boundary
     const truncateAtWordBoundary = (str: string, maxLen: number) => {
       if (str.length <= maxLen) return str;
 
       let truncated = str.substring(0, maxLen);
       const lastSpaceIndex = truncated.lastIndexOf(' ');
 
-      // ALWAYS truncate at word boundary - never show partial words
-      if (lastSpaceIndex > 0) {
+      // Only truncate at word boundary if it's not too far back (80% threshold)
+      if (lastSpaceIndex > maxLen * 0.8) {
         truncated = truncated.substring(0, lastSpaceIndex);
-      } else {
-        // If no space found, find the first word and use that
-        const firstSpaceIndex = str.indexOf(' ');
-        if (firstSpaceIndex > 0 && firstSpaceIndex < maxLen * 1.5) {
-          truncated = str.substring(0, firstSpaceIndex);
-        } else {
-          // Fallback: use a much smaller length to ensure we get complete words
-          truncated = str.substring(0, Math.floor(maxLen * 0.7));
-          const fallbackSpaceIndex = truncated.lastIndexOf(' ');
-          if (fallbackSpaceIndex > 0) {
-            truncated = truncated.substring(0, fallbackSpaceIndex);
-          }
-        }
       }
 
       return truncated;
