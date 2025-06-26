@@ -213,8 +213,10 @@ const StudySession: React.FC = () => {
 
   // Memoized center indicator handler
   const showFeedback = useCallback((type: 'know' | 'learning') => {
+    console.log('🎯 Showing feedback:', type); // Debug log
     setShowCenterIndicator({ show: true, type });
     setTimeout(() => {
+      console.log('🎯 Hiding feedback:', type); // Debug log
       setShowCenterIndicator({ show: false, type: null });
     }, 400); // Quick 400ms duration
   }, []);
@@ -682,20 +684,28 @@ const StudySession: React.FC = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className={`absolute top-4 ${
-                  showCenterIndicator.type === 'know' ? 'right-4' : 'left-4'
-                } z-50 pointer-events-none`}
+                className={`fixed top-20 ${
+                  showCenterIndicator.type === 'know' ? 'right-8' : 'left-8'
+                } z-[9999] pointer-events-none`}
+                style={{
+                  backgroundColor: showCenterIndicator.type === 'know' ? '#22c55e' : '#f97316',
+                  color: 'white',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  fontWeight: 'bold',
+                  fontSize: '16px',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+                }}
               >
-                <div className={`px-4 py-2 rounded-lg font-semibold text-sm text-white shadow-lg ${
-                  showCenterIndicator.type === 'know'
-                    ? 'bg-green-500'
-                    : 'bg-orange-500'
-                }`}>
-                  {showCenterIndicator.type === 'know' ? '✓ KNOW' : '📚 LEARNING'}
-                </div>
+                {showCenterIndicator.type === 'know' ? '✓ KNOW' : '📚 LEARNING'}
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Debug indicator state */}
+          <div className="fixed top-2 left-2 bg-black text-white p-2 text-xs z-[9999]">
+            Debug: {showCenterIndicator.show ? `Showing ${showCenterIndicator.type}` : 'Hidden'}
+          </div>
         </div>
 
         {/* Desktop Instructions */}
