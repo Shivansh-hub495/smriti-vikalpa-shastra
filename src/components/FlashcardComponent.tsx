@@ -54,26 +54,48 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
     title: ''
   });
 
-  // Helper function to check if text needs truncation based on image presence
-  const needsTruncation = (text: string, html?: string, hasImage: boolean = false, isBack: boolean = false) => {
-    const content = html || text;
+  // Helper function to get dynamic text limits based on screen size and image presence
+  const getDynamicTextLimits = (hasImage: boolean, isBack: boolean) => {
+    // Get viewport dimensions
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
 
-    if (hasImage) {
-      // Show view more when image is present - more generous text allowance
-      return content.length > 200 || (content.match(/\n/g) || []).length > 3;
+    // Base multipliers for different screen sizes
+    let sizeMultiplier = 1;
+    if (viewportWidth >= 1024) {
+      // Desktop - more space
+      sizeMultiplier = hasImage ? 1.8 : 2.5;
+    } else if (viewportWidth >= 768) {
+      // Tablet - medium space
+      sizeMultiplier = hasImage ? 1.4 : 2.0;
     } else {
-      // Much more generous when no image - use maximum card space
-      const charThreshold = isBack ? 600 : 700;  // Increased significantly
-      const lineThreshold = isBack ? 8 : 10;     // More lines allowed
-
-      const charCount = content.length;
-      const lineCount = (content.match(/\n/g) || []).length;
-
-      return charCount > charThreshold || lineCount > lineThreshold;
+      // Mobile - less space
+      sizeMultiplier = hasImage ? 1.0 : 1.5;
     }
+
+    // Base limits
+    const baseCharLimit = hasImage ? 150 : 300;
+    const baseLineLimit = hasImage ? 3 : 6;
+
+    // Apply multipliers
+    const charLimit = Math.floor(baseCharLimit * sizeMultiplier);
+    const lineLimit = Math.floor(baseLineLimit * sizeMultiplier);
+
+    return { charLimit, lineLimit };
   };
 
-  // Helper function to truncate text for display only when needed
+  // Helper function to check if text needs truncation based on dynamic limits
+  const needsTruncation = (text: string, html?: string, hasImage: boolean = false, isBack: boolean = false) => {
+    const content = html || text;
+    const { charLimit, lineLimit } = getDynamicTextLimits(hasImage, isBack);
+
+    const charCount = content.length;
+    const lineCount = (content.match(/\n/g) || []).length + 1; // +1 for the first line
+
+    return charCount > charLimit || lineCount > lineLimit;
+  };
+
+  // Helper function to truncate text for display based on dynamic limits
   const getTruncatedText = (text: string, html?: string, isBack: boolean = false, hasImage: boolean = false) => {
     const needsTrunc = needsTruncation(text, html, hasImage, isBack);
 
@@ -81,13 +103,9 @@ const FlashcardComponent: React.FC<FlashcardProps> = ({
       return { text, html, isTruncated: false };
     }
 
-    // Adjust max length based on image presence
-    let maxLength: number;
-    if (hasImage) {
-      maxLength = isBack ? 180 : 200;  // Much more generous when image present
-    } else {
-      maxLength = isBack ? 500 : 600;  // Much longer when no image - use full space
-    }
+    // Get dynamic limits for truncation
+    const { charLimit } = getDynamicTextLimits(hasImage, isBack);
+    const maxLength = Math.floor(charLimit * 0.8); // Use 80% of limit for display
 
     const content = html || text;
 

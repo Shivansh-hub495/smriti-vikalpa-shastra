@@ -289,8 +289,8 @@ const FlashcardSetup = () => {
             <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
           <div className="min-w-0 flex-1">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-1 sm:mb-2 truncate">Manage Flashcards</h1>
-            <p className="text-sm sm:text-base text-gray-600 truncate">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-1 sm:mb-2">Manage Flashcards</h1>
+            <p className="text-sm sm:text-base text-gray-600 break-words leading-tight">
               {deck.name} • {flashcards.length} {flashcards.length === 1 ? 'card' : 'cards'}
             </p>
           </div>
