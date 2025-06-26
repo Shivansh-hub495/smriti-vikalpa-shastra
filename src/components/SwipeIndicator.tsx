@@ -24,16 +24,16 @@ const SwipeIndicator: React.FC<SwipeIndicatorProps> = ({ show, type }) => {
             stiffness: 400,
             damping: 25
           }}
-          className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none"
+          className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
         >
           <motion.div
             initial={{ y: 20 }}
             animate={{ y: 0 }}
             exit={{ y: -20 }}
-            className={`px-6 py-3 rounded-full font-semibold text-lg text-white shadow-lg ${
+            className={`px-8 py-4 rounded-full font-bold text-xl text-white shadow-2xl border-2 border-white/30 ${
               type === 'know'
-                ? 'bg-green-500/90'
-                : 'bg-orange-500/90'
+                ? 'bg-green-500'
+                : 'bg-orange-500'
             }`}
           >
             {type === 'know' ? 'KNOW' : 'LEARNING'}

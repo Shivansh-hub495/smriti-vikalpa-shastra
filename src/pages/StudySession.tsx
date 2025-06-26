@@ -383,12 +383,10 @@ const StudySession: React.FC = () => {
       // Cleanup swipe gesture resources
       swipeGesture.cleanup?.();
 
-      // Clear any pending timeouts
-      if (showCenterIndicator.show) {
-        setShowCenterIndicator({ show: false, type: null });
-      }
+      // Clear any pending timeouts only on component unmount
+      setShowCenterIndicator({ show: false, type: null });
     };
-  }, [swipeGesture, showCenterIndicator.show]);
+  }, [swipeGesture]);
 
   useEffect(() => {
     const fetchDeckAndFlashcardsWithFilter = async (isLearning: boolean, cardIds: string[]) => {
