@@ -14,7 +14,6 @@ import type {
   Flashcard,
   Deck,
   StudyStats,
-  CenterIndicatorState,
   StudySessionParams,
   StudySessionError
 } from '@/types/study';
@@ -152,18 +151,44 @@ const StudySession: React.FC = () => {
   const [isLearningFilter, setIsLearningFilter] = useState(false);
   const [learningCardIds, setLearningCardIds] = useState<string[]>([]);
 
-  // Center indicator state
-  const [showCenterIndicator, setShowCenterIndicator] = useState<CenterIndicatorState>({
-    show: false,
-    type: null
-  });
 
   // Modal state to disable swipe when modal is open
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // New indicator system state
+  const [showNewIndicator, setShowNewIndicator] = useState(false);
+  const [indicatorType, setIndicatorType] = useState<'know' | 'learning' | null>(null);
+  const indicatorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // Custom hooks for state management
   const cardState = useCardState(flashcards.length);
   const { saveCardResponse } = useStudyDatabase();
+
+  // New indicator display function
+  const showIndicator = useCallback((type: 'know' | 'learning') => {
+    // Clear any existing timeout
+    if (indicatorTimeoutRef.current) {
+      clearTimeout(indicatorTimeoutRef.current);
+      indicatorTimeoutRef.current = null;
+    }
+
+    // Reset state first
+    setShowNewIndicator(false);
+    setIndicatorType(null);
+
+    // Use setTimeout to ensure state is reset, then show new indicator
+    setTimeout(() => {
+      setIndicatorType(type);
+      setShowNewIndicator(true);
+
+      // Hide indicator after exactly 0.6 seconds (600ms)
+      indicatorTimeoutRef.current = setTimeout(() => {
+        setShowNewIndicator(false);
+        setIndicatorType(null);
+        indicatorTimeoutRef.current = null;
+      }, 600);
+    }, 50); // Small delay to ensure state reset
+  }, []);
 
   // Memoized error handler
   const handleError = useCallback((error: StudySessionError) => {
@@ -211,28 +236,6 @@ const StudySession: React.FC = () => {
     }
   }, [navigate, deck?.name, deckId, flashcards, cardState.stats, cardState.currentIndex, handleError]);
 
-  // Ref to store timeout for cleanup
-  const feedbackTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Memoized center indicator handler
-  const showFeedback = useCallback((type: 'know' | 'learning') => {
-    console.log('🎯 Showing feedback:', type); // Debug log
-    console.log('🎯 Current state before:', showCenterIndicator); // Debug current state
-
-    // Clear any existing timeout
-    if (feedbackTimeoutRef.current) {
-      clearTimeout(feedbackTimeoutRef.current);
-    }
-
-    setShowCenterIndicator({ show: true, type });
-
-    // Set new timeout
-    feedbackTimeoutRef.current = setTimeout(() => {
-      console.log('🎯 Hiding feedback:', type); // Debug log
-      setShowCenterIndicator({ show: false, type: null });
-      feedbackTimeoutRef.current = null;
-    }, 1500); // Increased to 1.5 seconds for testing
-  }, []); // Remove dependency to avoid infinite re-renders
 
   /**
    * Main card response handler
@@ -249,8 +252,9 @@ const StudySession: React.FC = () => {
       const currentCard = flashcards[cardState.currentIndex];
       const responseTime = Math.max(0, new Date().getTime() - cardState.cardStartTime.getTime());
 
-      // Show immediate feedback
-      showFeedback(wasCorrect ? 'know' : 'learning');
+
+      // Show indicator
+      showIndicator(wasCorrect ? 'know' : 'learning');
 
       // Update card state
       cardState.addToHistory(cardState.currentIndex, wasCorrect);
@@ -313,10 +317,6 @@ const StudySession: React.FC = () => {
     swipeGesture.resetSwipeState();
   }, [cardState.currentIndex, swipeGesture.resetSwipeState]);
 
-  // Debug effect to track state changes
-  useEffect(() => {
-    console.log('🎯 showCenterIndicator state changed:', showCenterIndicator);
-  }, [showCenterIndicator]);
 
   // Keyboard shortcuts handler
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
@@ -405,14 +405,11 @@ const StudySession: React.FC = () => {
       // Cleanup swipe gesture resources
       swipeGesture.cleanup?.();
 
-      // Clear any pending feedback timeout
-      if (feedbackTimeoutRef.current) {
-        clearTimeout(feedbackTimeoutRef.current);
-        feedbackTimeoutRef.current = null;
+      // Cleanup indicator timeout
+      if (indicatorTimeoutRef.current) {
+        clearTimeout(indicatorTimeoutRef.current);
+        indicatorTimeoutRef.current = null;
       }
-
-      // Clear any pending timeouts only on component unmount
-      setShowCenterIndicator({ show: false, type: null });
     };
   }, [swipeGesture]);
 
@@ -702,29 +699,40 @@ const StudySession: React.FC = () => {
             )}
           </AnimatePresence>
 
-          {/* Card Center Swipe Feedback Indicators */}
+          {/* New Center Indicator System */}
           <AnimatePresence>
-            {showCenterIndicator.show && showCenterIndicator.type && (
+            {showNewIndicator && indicatorType && (
               <motion.div
-                initial={{ scale: 0, opacity: 0 }}
+                initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] pointer-events-none"
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
               >
-                <div
-                  className="px-6 py-3 rounded-full text-white font-bold text-lg shadow-lg"
+                <motion.div
+                  initial={{ y: 20, scale: 0.9 }}
+                  animate={{ y: 0, scale: 1 }}
+                  exit={{ y: -20, scale: 0.9 }}
+                  transition={{ 
+                    duration: 0.3, 
+                    type: "spring", 
+                    stiffness: 300, 
+                    damping: 25 
+                  }}
+                  className={`px-8 py-4 rounded-2xl font-bold text-2xl text-white shadow-2xl border-2 ${
+                    indicatorType === 'know'
+                      ? 'bg-green-500 border-green-400'
+                      : 'bg-red-500 border-red-400'
+                  }`}
                   style={{
-                    backgroundColor: showCenterIndicator.type === 'know' ? 'rgba(34, 197, 94, 0.9)' : 'rgba(249, 115, 22, 0.9)',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+                    textShadow: '0 2px 4px rgba(0,0,0,0.3)'
                   }}
                 >
-                  {showCenterIndicator.type === 'know' ? '✓ KNOW' : '📚 STILL LEARNING'}
-                </div>
+                  {indicatorType === 'know' ? 'Know' : 'Still Learning'}
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
-
 
         </div>
 

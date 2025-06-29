@@ -239,16 +239,6 @@ export interface StudyDatabaseOperations {
   }) => Promise<void>;
 }
 
-/**
- * Center indicator state for swipe feedback
- * @interface CenterIndicatorState
- */
-export interface CenterIndicatorState {
-  /** Whether the indicator should be shown */
-  show: boolean;
-  /** Type of indicator to show */
-  type: 'know' | 'learning' | null;
-}
 
 /**
  * Study session URL parameters
