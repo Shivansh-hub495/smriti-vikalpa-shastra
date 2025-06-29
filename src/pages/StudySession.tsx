@@ -719,10 +719,10 @@ const StudySession: React.FC = () => {
                     stiffness: 300, 
                     damping: 25 
                   }}
-                  className={`px-8 py-4 rounded-2xl font-bold text-2xl text-white shadow-2xl border-2 ${
+                  className={`px-4 sm:px-8 py-2 sm:py-4 rounded-2xl font-bold text-lg sm:text-2xl text-white shadow-2xl border-2 ${
                     indicatorType === 'know'
-                      ? 'bg-green-500 border-green-400'
-                      : 'bg-red-500 border-red-400'
+                      ? 'bg-green-500/80 border-green-400/60 backdrop-blur-sm'
+                      : 'bg-red-500/80 border-red-400/60 backdrop-blur-sm'
                   }`}
                   style={{
                     textShadow: '0 2px 4px rgba(0,0,0,0.3)'
