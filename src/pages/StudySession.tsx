@@ -418,6 +418,23 @@ const StudySession: React.FC = () => {
       try {
         setLoading(true);
 
+        // Check if we're returning from card edit and restore session state
+        let savedSessionState = null;
+        try {
+          const savedState = localStorage.getItem(`edit_session_${deckId}`);
+          if (savedState) {
+            savedSessionState = JSON.parse(savedState);
+            // Check if the saved state is recent (within 1 hour)
+            const timeDiff = Date.now() - savedSessionState.timestamp;
+            if (timeDiff > 60 * 60 * 1000) { // 1 hour
+              localStorage.removeItem(`edit_session_${deckId}`);
+              savedSessionState = null;
+            }
+          }
+        } catch (error) {
+          console.warn('Failed to restore session state:', error);
+        }
+
         // Fetch deck details
         const { data: deckData, error: deckError } = await supabase
           .from('decks')
@@ -503,27 +520,59 @@ const StudySession: React.FC = () => {
 
         setFlashcards(finalCards);
 
-        // Handle startFrom option
-        const startFrom = searchParams.get('startFrom');
-        let startIndex = 0;
-        if (startFrom) {
-          const startFromNumber = parseInt(startFrom);
-          if (!isNaN(startFromNumber) && startFromNumber >= 1 && startFromNumber <= finalCards.length) {
-            startIndex = startFromNumber - 1; // Convert to 0-based index
+        // Check if we should restore saved session state
+        if (savedSessionState && savedSessionState.isEditReturn) {
+          console.log('Restoring session state after edit return:', savedSessionState);
+          
+          // Restore all session state
+          cardState.setCurrentIndex(savedSessionState.currentIndex);
+          cardState.setStats({
+            ...savedSessionState.stats,
+            totalCards: finalCards.length // Update with current card count
+          });
+          
+          // Restore other state
+          if (savedSessionState.isFlipped) {
+            cardState.flipCard();
           }
-        }
+          
+          // Restore starred cards
+          if (savedSessionState.starredCards && savedSessionState.starredCards.length > 0) {
+            savedSessionState.starredCards.forEach((cardId: string) => {
+              cardState.toggleStarCard(cardId);
+            });
+          }
+          
+          // Restore session start time
+          sessionStartTimeRef.current = new Date(savedSessionState.sessionStartTime);
+          
+          // Clean up the saved state
+          localStorage.removeItem(`edit_session_${deckId}`);
+          
+          console.log('Session state restored successfully');
+        } else {
+          // Handle normal startFrom option when not restoring state
+          const startFrom = searchParams.get('startFrom');
+          let startIndex = 0;
+          if (startFrom) {
+            const startFromNumber = parseInt(startFrom);
+            if (!isNaN(startFromNumber) && startFromNumber >= 1 && startFromNumber <= finalCards.length) {
+              startIndex = startFromNumber - 1; // Convert to 0-based index
+            }
+          }
 
-        // Update card state stats
-        cardState.setStats(prev => ({
-          ...prev,
-          totalCards: finalCards.length,
-          currentIndex: startIndex,
-          learningCardIds: []
-        }));
+          // Update card state stats
+          cardState.setStats(prev => ({
+            ...prev,
+            totalCards: finalCards.length,
+            currentIndex: startIndex,
+            learningCardIds: []
+          }));
 
-        // Set current index if starting from specific card
-        if (startIndex > 0) {
-          cardState.setCurrentIndex(startIndex);
+          // Set current index if starting from specific card
+          if (startIndex > 0) {
+            cardState.setCurrentIndex(startIndex);
+          }
         }
 
         // Reset card start time
@@ -603,10 +652,31 @@ const StudySession: React.FC = () => {
 
   /**
    * Handle edit card - navigate to card edit page
+   * Save current session state before navigating
    */
   const handleEditCard = useCallback((cardId: string) => {
+    // Save current session state to localStorage before editing
+    const sessionState = {
+      deckId,
+      currentIndex: cardState.currentIndex,
+      isFlipped: cardState.isFlipped,
+      stats: cardState.stats,
+      cardHistory: cardState.cardHistory,
+      starredCards: Array.from(cardState.starredCards),
+      cardStartTime: cardState.cardStartTime.getTime(),
+      sessionStartTime: sessionStartTimeRef.current.getTime(),
+      timestamp: Date.now(),
+      isEditReturn: true // Flag to indicate this is an edit return
+    };
+    
+    try {
+      localStorage.setItem(`edit_session_${deckId}`, JSON.stringify(sessionState));
+    } catch (error) {
+      console.warn('Failed to save session state:', error);
+    }
+    
     navigate(`/study/${deckId}/card/${cardId}/edit?currentIndex=${cardState.currentIndex}`);
-  }, [navigate, deckId, cardState.currentIndex]);
+  }, [navigate, deckId, cardState]);
 
   if (loading) {
     return (
