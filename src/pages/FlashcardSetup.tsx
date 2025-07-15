@@ -102,10 +102,14 @@ const FlashcardSetup = () => {
   };
 
   const saveFlashcard = async () => {
-    if (!frontContent.trim() || !backContent.trim()) {
+    // Check if both sides have either content or image
+    const frontHasContent = frontContent.trim() || frontImageUrl;
+    const backHasContent = backContent.trim() || backImageUrl;
+
+    if (!frontHasContent || !backHasContent) {
       toast({
         title: "Error",
-        description: "Please fill in both front and back content",
+        description: "Please add content (text or image) to both front and back of the card",
         variant: "destructive",
       });
       return;
