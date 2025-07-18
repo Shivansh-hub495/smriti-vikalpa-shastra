@@ -62,11 +62,11 @@ const FolderCard = ({
   };
 
   return (
-    <Card 
-      className="group relative overflow-hidden bg-white/80 backdrop-blur-lg border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:scale-105 rounded-2xl cursor-pointer"
+    <Card
+      className="group relative overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:scale-105 rounded-2xl cursor-pointer"
       onClick={handleOpen}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-100 to-pink-100 opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-gray-700 dark:to-gray-600 opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>
       
       <CardHeader className="relative z-10 space-y-0 pb-2">
         <div className="flex items-start justify-between gap-3 mb-3">
@@ -78,11 +78,11 @@ const FolderCard = ({
               </div>
             </div>
             <div className="min-w-0 flex-1">
-              <CardTitle className="text-base sm:text-lg font-bold text-gray-800 group-hover:text-gray-900 transition-colors break-words leading-tight">
+              <CardTitle className="text-base sm:text-lg font-bold text-gray-800 dark:text-gray-100 group-hover:text-gray-900 dark:group-hover:text-white transition-colors break-words leading-tight">
                 {folder.name}
               </CardTitle>
               {folder.description && (
-                <p className="text-sm text-gray-600 mt-1 break-words leading-relaxed">{folder.description}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 break-words leading-relaxed">{folder.description}</p>
               )}
             </div>
           </div>
@@ -125,20 +125,20 @@ const FolderCard = ({
           <div className="flex space-x-4">
             {folder.deck_count !== undefined && (
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-800">{folder.deck_count}</div>
-                <div className="text-xs text-gray-600">Decks</div>
+                <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">{folder.deck_count}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-300">Decks</div>
               </div>
             )}
             {folder.subfolder_count !== undefined && (
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-800">{folder.subfolder_count}</div>
-                <div className="text-xs text-gray-600">Folders</div>
+                <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">{folder.subfolder_count}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-300">Folders</div>
               </div>
             )}
           </div>
           
           <div className="text-right">
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
               Updated {new Date(folder.updated_at).toLocaleDateString()}
             </div>
           </div>

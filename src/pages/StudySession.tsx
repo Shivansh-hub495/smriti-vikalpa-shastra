@@ -680,17 +680,17 @@ const StudySession: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      <div className="fixed inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 dark:border-purple-400"></div>
       </div>
     );
   }
 
   if (!deck || flashcards.length === 0) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 flex items-center justify-center">
+      <div className="fixed inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">No flashcards found</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">No flashcards found</h2>
           <Button onClick={() => navigate('/study')}>Back to Study</Button>
         </div>
       </div>
@@ -702,9 +702,9 @@ const StudySession: React.FC = () => {
   const progress = ((cardState.currentIndex) / flashcards.length) * 100;
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 overflow-hidden">
+    <div className="fixed inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-10 p-3 sm:p-4 bg-white/80 backdrop-blur-sm border-b border-white/20">
+      <div className="absolute top-0 left-0 right-0 z-10 p-3 sm:p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-white/20 dark:border-gray-700/20">
         <div className="flex items-center justify-between max-w-sm sm:max-w-md mx-auto">
           <Button
             variant="ghost"
@@ -716,7 +716,7 @@ const StudySession: React.FC = () => {
           </Button>
 
           <div className="text-center">
-            <div className="text-base sm:text-lg font-semibold text-gray-800">
+            <div className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100">
               {cardState.currentIndex + 1} / {flashcards.length}
             </div>
           </div>

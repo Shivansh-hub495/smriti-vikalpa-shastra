@@ -12,7 +12,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <ProtectedRoute>
       <SidebarProvider>
-        <div className="min-h-screen flex w-full bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50">
+        <div className="min-h-screen flex w-full bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
           <AppSidebar />
           <SidebarInset>
             {children}

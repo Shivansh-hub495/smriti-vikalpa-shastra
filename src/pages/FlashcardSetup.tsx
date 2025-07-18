@@ -269,7 +269,7 @@ const FlashcardSetup = () => {
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 p-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center py-12">
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">Deck not found</h1>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Deck not found</h1>
             <Button onClick={() => navigate('/')}>
               Return to Dashboard
             </Button>
@@ -280,11 +280,11 @@ const FlashcardSetup = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 p-3 sm:p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-3 sm:p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <SidebarTrigger className="text-gray-600 hover:text-gray-900 transition-colors touch-manipulation" />
+          <SidebarTrigger className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors touch-manipulation" />
           <Button
             variant="ghost"
             onClick={() => navigate(`/deck/${deckId}/edit`)}
@@ -293,8 +293,8 @@ const FlashcardSetup = () => {
             <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
           <div className="min-w-0 flex-1">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-1 sm:mb-2">Manage Flashcards</h1>
-            <p className="text-sm sm:text-base text-gray-600 break-words leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-1 sm:mb-2">Manage Flashcards</h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 break-words leading-tight">
               {deck.name} • {flashcards.length} {flashcards.length === 1 ? 'card' : 'cards'}
             </p>
           </div>
@@ -314,9 +314,9 @@ const FlashcardSetup = () => {
 
           {/* Create/Edit Flashcard Tab */}
           <TabsContent value="create" className="space-y-4 sm:space-y-6">
-            <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
               <CardHeader className="pb-4 sm:pb-6">
-                <CardTitle className="text-lg sm:text-xl font-semibold text-gray-800">
+                <CardTitle className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-100">
                   {editingCard ? 'Edit Flashcard' : 'Create New Flashcard'}
                 </CardTitle>
               </CardHeader>
@@ -324,7 +324,7 @@ const FlashcardSetup = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {/* Front Side */}
                   <div className="space-y-3 sm:space-y-4">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                       Front (Question)
                     </label>
                     <RichTextEditor
@@ -334,10 +334,10 @@ const FlashcardSetup = () => {
                         setFrontContentHtml(html);
                       }}
                       placeholder="Enter the question or prompt..."
-                      className="bg-white/80 backdrop-blur-lg border-white/20 rounded-xl shadow-lg"
+                      className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 rounded-xl shadow-lg"
                     />
                     <div>
-                      <label className="block text-sm font-medium text-gray-600 mb-2">
+                      <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                         Front Image (Optional)
                       </label>
                       <ImageUpload
@@ -351,7 +351,7 @@ const FlashcardSetup = () => {
 
                   {/* Back Side */}
                   <div className="space-y-3 sm:space-y-4">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                       Back (Answer)
                     </label>
                     <RichTextEditor
@@ -361,10 +361,10 @@ const FlashcardSetup = () => {
                         setBackContentHtml(html);
                       }}
                       placeholder="Enter the answer or explanation..."
-                      className="bg-white/80 backdrop-blur-lg border-white/20 rounded-xl shadow-lg"
+                      className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 rounded-xl shadow-lg"
                     />
                     <div>
-                      <label className="block text-sm font-medium text-gray-600 mb-2">
+                      <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                         Back Image (Optional)
                       </label>
                       <ImageUpload
@@ -404,13 +404,13 @@ const FlashcardSetup = () => {
           {/* Manage Cards Tab */}
           <TabsContent value="manage" className="space-y-4 sm:space-y-6">
             {flashcards.length === 0 ? (
-              <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
                 <CardContent className="p-8 sm:p-12 text-center">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
                     <Plus className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600" />
                   </div>
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">No flashcards yet</h3>
-                  <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Create your first flashcard to get started</p>
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">No flashcards yet</h3>
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4 sm:mb-6">Create your first flashcard to get started</p>
                 </CardContent>
               </Card>
             ) : (
@@ -418,18 +418,18 @@ const FlashcardSetup = () => {
                 {flashcards.map((card) => (
                   <Card
                     key={card.id}
-                    className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300"
+                    className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300"
                   >
                     <CardContent className="p-4 sm:p-6">
                       <div className="space-y-3 sm:space-y-4">
                         {/* Front */}
                         <div>
                           <div className="flex items-center justify-between mb-2">
-                            <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs sm:text-sm">
+                            <Badge variant="secondary" className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs sm:text-sm">
                               Front
                             </Badge>
                           </div>
-                          <div className="p-2 sm:p-3 bg-gray-50 rounded-lg space-y-2">
+                          <div className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-2">
                             {card.front_image_url && (
                               <img
                                 src={card.front_image_url}
@@ -449,7 +449,7 @@ const FlashcardSetup = () => {
                         {/* Back */}
                         <div>
                           <div className="flex items-center justify-between mb-2">
-                            <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs sm:text-sm">
+                            <Badge variant="secondary" className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs sm:text-sm">
                               Back
                             </Badge>
                             <Button
@@ -465,7 +465,7 @@ const FlashcardSetup = () => {
                               )}
                             </Button>
                           </div>
-                          <div className="p-2 sm:p-3 bg-gray-50 rounded-lg space-y-2">
+                          <div className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-2">
                             {showAnswers[card.id] ? (
                               <>
                                 {card.back_image_url && (
@@ -494,7 +494,7 @@ const FlashcardSetup = () => {
                             onClick={() => editFlashcard(card)}
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 hover:bg-blue-100 touch-manipulation"
+                            className="h-8 w-8 p-0 hover:bg-blue-100 dark:hover:bg-blue-900/30 touch-manipulation"
                           >
                             <Edit className="h-4 w-4 text-blue-600" />
                           </Button>
@@ -502,7 +502,7 @@ const FlashcardSetup = () => {
                             onClick={() => deleteFlashcard(card.id)}
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 hover:bg-red-100 text-red-600 hover:text-red-700 touch-manipulation"
+                            className="h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 touch-manipulation"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>

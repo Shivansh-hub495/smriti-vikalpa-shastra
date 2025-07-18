@@ -149,8 +149,8 @@ const CardEdit: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50">
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-10">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-white/20 dark:border-gray-700/20 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -162,7 +162,7 @@ const CardEdit: React.FC = () => {
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-              <h1 className="text-xl font-bold text-gray-800">Edit Card</h1>
+              <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">Edit Card</h1>
             </div>
 
             <div className="flex space-x-2">
@@ -189,16 +189,16 @@ const CardEdit: React.FC = () => {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
           <CardHeader>
-            <CardTitle className="text-lg font-bold text-gray-800">
+            <CardTitle className="text-lg font-bold text-gray-800 dark:text-gray-100">
               Edit Flashcard
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Front (Question)
                 </label>
                 <RichTextEditor
@@ -208,7 +208,7 @@ const CardEdit: React.FC = () => {
                     setFrontContentHtml(html);
                   }}
                   placeholder="Enter the question or prompt..."
-                  className="bg-white/80 backdrop-blur-lg border-white/20 rounded-xl shadow-lg"
+                  className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 rounded-xl shadow-lg"
                 />
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-2">
@@ -224,7 +224,7 @@ const CardEdit: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Back (Answer)
                 </label>
                 <RichTextEditor
@@ -234,7 +234,7 @@ const CardEdit: React.FC = () => {
                     setBackContentHtml(html);
                   }}
                   placeholder="Enter the answer or explanation..."
-                  className="bg-white/80 backdrop-blur-lg border-white/20 rounded-xl shadow-lg"
+                  className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 rounded-xl shadow-lg"
                 />
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-2">

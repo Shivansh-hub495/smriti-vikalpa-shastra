@@ -6,9 +6,10 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { User, Bell, Palette, Database, Shield, LogOut, Save } from 'lucide-react';
+import { User, Bell, Palette, Database, Shield, LogOut, Save, Moon, Sun } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/components/theme-provider';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -27,13 +28,13 @@ interface UserProfile {
 
 const Settings = () => {
   const { user, signOut } = useAuth();
+  const { theme, setTheme } = useTheme();
   const { toast } = useToast();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [fullName, setFullName] = useState('');
   const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
   const [studyReminders, setStudyReminders] = useState(true);
   const [emailUpdates, setEmailUpdates] = useState(false);
 
@@ -42,6 +43,37 @@ const Settings = () => {
       fetchProfile();
     }
   }, [user]);
+
+  // Save theme preference to database when user manually changes it
+  const updateThemePreference = async (newTheme: 'light' | 'dark') => {
+    if (user && profile) {
+      try {
+        const isDarkMode = newTheme === 'dark';
+        const { error } = await supabase
+          .from('profiles')
+          .update({
+            preferences: {
+              ...profile.preferences,
+              darkMode: isDarkMode
+            }
+          })
+          .eq('id', user.id);
+
+        if (error) throw error;
+
+        // Update local profile state
+        setProfile(prev => prev ? {
+          ...prev,
+          preferences: {
+            ...prev.preferences,
+            darkMode: isDarkMode
+          }
+        } : null);
+      } catch (error) {
+        console.error('Error updating theme preference:', error);
+      }
+    }
+  };
 
   const fetchProfile = async () => {
     try {
@@ -59,7 +91,7 @@ const Settings = () => {
         setProfile(data);
         setFullName(data.full_name || '');
         setNotifications(data.preferences?.notifications ?? true);
-        setDarkMode(data.preferences?.darkMode ?? false);
+        // Don't automatically change theme - let user control it manually
         setStudyReminders(data.preferences?.studyReminders ?? true);
         setEmailUpdates(data.preferences?.emailUpdates ?? false);
       } else {
@@ -102,7 +134,7 @@ const Settings = () => {
         full_name: fullName,
         preferences: {
           notifications,
-          darkMode,
+          darkMode: profile?.preferences?.darkMode ?? false, // Keep existing theme preference
           studyReminders,
           emailUpdates
         }
@@ -153,13 +185,13 @@ const Settings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
             <div className="space-y-4">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-32 bg-gray-200 rounded-2xl"></div>
+                <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-2xl"></div>
               ))}
             </div>
           </div>
@@ -169,21 +201,21 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <SidebarTrigger className="text-gray-600 hover:text-gray-900 transition-colors" />
+          <SidebarTrigger className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 transition-colors" />
           <div>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">Settings</h1>
-            <p className="text-gray-600">Manage your account and application preferences</p>
+            <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">Settings</h1>
+            <p className="text-gray-600 dark:text-gray-300">Manage your account and application preferences</p>
           </div>
         </div>
 
         {/* Profile Settings */}
-        <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-800">
+            <CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-800 dark:text-gray-100">
               <User className="h-5 w-5" />
               Profile Information
             </CardTitle>
@@ -191,7 +223,7 @@ const Settings = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Email Address
                 </Label>
                 <Input
@@ -199,12 +231,12 @@ const Settings = () => {
                   type="email"
                   value={user?.email || ''}
                   disabled
-                  className="bg-gray-50 text-gray-500 cursor-not-allowed"
+                  className="bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                 />
-                <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Email cannot be changed</p>
               </div>
               <div>
-                <Label htmlFor="fullName" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="fullName" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Full Name
                 </Label>
                 <Input
@@ -213,7 +245,7 @@ const Settings = () => {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Enter your full name"
-                  className="bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 placeholder:text-gray-400 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
+                  className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300 dark:focus:border-purple-400"
                 />
               </div>
             </div>
@@ -221,9 +253,9 @@ const Settings = () => {
         </Card>
 
         {/* Notification Settings */}
-        <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-800">
+            <CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-800 dark:text-gray-100">
               <Bell className="h-5 w-5" />
               Notifications
             </CardTitle>
@@ -231,8 +263,8 @@ const Settings = () => {
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-sm font-medium text-gray-700">Push Notifications</Label>
-                <p className="text-xs text-gray-500">Receive notifications in your browser</p>
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Push Notifications</Label>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Receive notifications in your browser</p>
               </div>
               <Switch
                 checked={notifications}
@@ -242,8 +274,8 @@ const Settings = () => {
             <Separator />
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-sm font-medium text-gray-700">Study Reminders</Label>
-                <p className="text-xs text-gray-500">Get reminded to study your flashcards</p>
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Study Reminders</Label>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Get reminded to study your flashcards</p>
               </div>
               <Switch
                 checked={studyReminders}
@@ -253,8 +285,8 @@ const Settings = () => {
             <Separator />
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-sm font-medium text-gray-700">Email Updates</Label>
-                <p className="text-xs text-gray-500">Receive progress reports and tips via email</p>
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email Updates</Label>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Receive progress reports and tips via email</p>
               </div>
               <Switch
                 checked={emailUpdates}
@@ -265,25 +297,36 @@ const Settings = () => {
         </Card>
 
         {/* Appearance Settings */}
-        <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-800">
+            <CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-800 dark:text-gray-100">
               <Palette className="h-5 w-5" />
               Appearance
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-sm font-medium text-gray-700">Dark Mode</Label>
-                <p className="text-xs text-gray-500">Switch to dark theme</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500">
+                  {theme === 'dark' ? (
+                    <Moon className="h-4 w-4 text-white" />
+                  ) : (
+                    <Sun className="h-4 w-4 text-white" />
+                  )}
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Dark Mode</Label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Switch to dark theme</p>
+                </div>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="text-xs">Coming Soon</Badge>
                 <Switch
-                  checked={darkMode}
-                  onCheckedChange={setDarkMode}
-                  disabled
+                  checked={theme === 'dark'}
+                  onCheckedChange={(checked) => {
+                    const newTheme = checked ? 'dark' : 'light';
+                    setTheme(newTheme);
+                    updateThemePreference(newTheme);
+                  }}
                 />
               </div>
             </div>
@@ -291,9 +334,9 @@ const Settings = () => {
         </Card>
 
         {/* Data & Privacy */}
-        <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-800">
+            <CardTitle className="flex items-center gap-2 text-xl font-semibold text-gray-800 dark:text-gray-100">
               <Shield className="h-5 w-5" />
               Data & Privacy
             </CardTitle>
@@ -301,8 +344,8 @@ const Settings = () => {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-sm font-medium text-gray-700">Export Data</Label>
-                <p className="text-xs text-gray-500">Download all your flashcards and study data</p>
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Export Data</Label>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Download all your flashcards and study data</p>
               </div>
               <Button variant="outline" disabled>
                 <Database className="h-4 w-4 mr-2" />
@@ -312,8 +355,8 @@ const Settings = () => {
             <Separator />
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-sm font-medium text-gray-700">Delete Account</Label>
-                <p className="text-xs text-gray-500">Permanently delete your account and all data</p>
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Delete Account</Label>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Permanently delete your account and all data</p>
               </div>
               <Button variant="destructive" disabled>
                 Delete Account

@@ -47,8 +47,8 @@ const DeckCard = ({ deck, onStudy, onEdit, onDelete }: DeckCardProps) => {
   };
 
   return (
-    <Card className="group relative overflow-hidden bg-white/80 backdrop-blur-lg border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:scale-105 rounded-2xl">
-      <div className={`absolute inset-0 bg-gradient-to-br ${deck.color.replace('bg-', 'from-')}-100 ${deck.color.replace('bg-', 'to-')}-200 opacity-50 group-hover:opacity-70 transition-opacity duration-500`}></div>
+    <Card className="group relative overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:scale-105 rounded-2xl">
+      <div className={`absolute inset-0 bg-gradient-to-br ${deck.color.replace('bg-', 'from-')}-100 dark:from-gray-700 ${deck.color.replace('bg-', 'to-')}-200 dark:to-gray-600 opacity-50 group-hover:opacity-70 transition-opacity duration-500`}></div>
 
       <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="flex items-center space-x-3">
@@ -59,11 +59,11 @@ const DeckCard = ({ deck, onStudy, onEdit, onDelete }: DeckCardProps) => {
             </div>
           </div>
           <div className="min-w-0 flex-1">
-            <CardTitle className="text-base sm:text-lg font-bold text-gray-800 group-hover:text-gray-900 transition-colors break-words leading-tight">
+            <CardTitle className="text-base sm:text-lg font-bold text-gray-800 dark:text-gray-100 group-hover:text-gray-900 dark:group-hover:text-white transition-colors break-words leading-tight">
               {deck.name}
             </CardTitle>
             {deck.description && (
-              <p className="text-sm text-gray-600 mt-1 break-words leading-relaxed">{deck.description}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 break-words leading-relaxed">{deck.description}</p>
             )}
           </div>
         </div>
@@ -121,45 +121,45 @@ const DeckCard = ({ deck, onStudy, onEdit, onDelete }: DeckCardProps) => {
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="text-center bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <div className="text-center bg-gradient-to-br from-purple-50 to-purple-100 dark:from-gray-700 dark:to-gray-600 rounded-xl p-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <div className="flex items-center justify-center mb-2">
               <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg shadow-lg">
                 <BookOpen className="h-4 w-4 text-white" />
               </div>
             </div>
-            <div className="text-xl font-bold text-gray-800">
+            <div className="text-xl font-bold text-gray-800 dark:text-gray-100">
               {deck.total_cards || 0}
             </div>
-            <div className="text-xs text-gray-600 font-semibold">Cards</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300 font-semibold">Cards</div>
           </div>
 
-          <div className="text-center bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <div className="text-center bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-700 dark:to-gray-600 rounded-xl p-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <div className="flex items-center justify-center mb-2">
               <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg shadow-lg">
                 <Target className="h-4 w-4 text-white" />
               </div>
             </div>
-            <div className="text-xl font-bold text-gray-800">
+            <div className="text-xl font-bold text-gray-800 dark:text-gray-100">
               {deck.accuracy_percentage || 0}%
             </div>
-            <div className="text-xs text-gray-600 font-semibold">Accuracy</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300 font-semibold">Accuracy</div>
           </div>
 
-          <div className="text-center bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <div className="text-center bg-gradient-to-br from-green-50 to-green-100 dark:from-gray-700 dark:to-gray-600 rounded-xl p-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <div className="flex items-center justify-center mb-2">
               <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-lg">
                 <Clock className="h-4 w-4 text-white" />
               </div>
             </div>
-            <div className="text-xl font-bold text-gray-800">
+            <div className="text-xl font-bold text-gray-800 dark:text-gray-100">
               {deck.cards_due || 0}
             </div>
-            <div className="text-xs text-gray-600 font-semibold">Due</div>
+            <div className="text-xs text-gray-600 dark:text-gray-300 font-semibold">Due</div>
           </div>
         </div>
 
         {/* Last Studied */}
-        <div className="text-sm text-gray-600 mb-4 font-medium bg-gray-50 rounded-lg p-2 text-center">
+        <div className="text-sm text-gray-600 dark:text-gray-300 mb-4 font-medium bg-gray-50 dark:bg-gray-700 rounded-lg p-2 text-center">
           Last studied: {deck.last_studied ? new Date(deck.last_studied).toLocaleDateString() : 'Never'}
         </div>
 

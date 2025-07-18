@@ -136,10 +136,10 @@ const CreateDeckModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-lg border-white/20 shadow-2xl rounded-2xl">
+      <DialogContent className="sm:max-w-[500px] bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-2xl rounded-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-purple-600" />
+            <BookOpen className="h-6 w-6 text-purple-600 dark:text-purple-400" />
             {editingDeck ? "Edit Deck" : "Create New Deck"} ✨
           </DialogTitle>
         </DialogHeader>

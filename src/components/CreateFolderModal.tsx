@@ -107,43 +107,43 @@ const CreateFolderModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-lg border-white/20 shadow-2xl rounded-2xl">
+      <DialogContent className="sm:max-w-[500px] bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-2xl rounded-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-2">
-            <Folder className="h-6 w-6 text-purple-600" />
+            <Folder className="h-6 w-6 text-purple-600 dark:text-purple-400" />
             {editingFolder ? "Edit Folder" : "Create New Folder"} ✨
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-gray-700 font-semibold">Folder Name *</Label>
+            <Label htmlFor="name" className="text-gray-700 dark:text-gray-300 font-semibold">Folder Name *</Label>
             <Input
               id="name"
               placeholder="e.g., CA Foundation, NEET Biology"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 placeholder:text-gray-400 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
+              className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-gray-700 font-semibold">Description</Label>
+            <Label htmlFor="description" className="text-gray-700 dark:text-gray-300 font-semibold">Description</Label>
             <Textarea
               id="description"
               placeholder="Brief description of this folder's contents..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              className="bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 placeholder:text-gray-400 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300 resize-none"
+              className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300 resize-none"
             />
           </div>
 
           {availableFolders.length > 0 && (
             <div className="space-y-2">
-              <Label className="text-gray-700 font-semibold">Parent Folder</Label>
+              <Label className="text-gray-700 dark:text-gray-300 font-semibold">Parent Folder</Label>
               <Select value={selectedParentId || "root"} onValueChange={(value) => setSelectedParentId(value === "root" ? undefined : value)}>
-                <SelectTrigger className="bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300">
+                <SelectTrigger className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300">
                   <SelectValue placeholder="Select parent folder" />
                 </SelectTrigger>
                 <SelectContent>
@@ -161,7 +161,7 @@ const CreateFolderModal = ({
           )}
 
           <div className="space-y-2">
-            <Label className="text-gray-700 font-semibold flex items-center gap-2">
+            <Label className="text-gray-700 dark:text-gray-300 font-semibold flex items-center gap-2">
               <Palette className="h-4 w-4" />
               Folder Color
             </Label>
@@ -172,13 +172,13 @@ const CreateFolderModal = ({
                   type="button"
                   onClick={() => setSelectedColor(color.value)}
                   className={`relative p-4 rounded-xl ${color.class} transition-all duration-300 hover:scale-110 ${
-                    selectedColor === color.value 
-                      ? 'ring-4 ring-white ring-opacity-50 shadow-xl' 
+                    selectedColor === color.value
+                      ? 'ring-4 ring-white dark:ring-gray-300 ring-opacity-50 shadow-xl'
                       : 'hover:shadow-lg'
                   }`}
                 >
                   {selectedColor === color.value && (
-                    <div className="absolute inset-0 rounded-xl border-2 border-white"></div>
+                    <div className="absolute inset-0 rounded-xl border-2 border-white dark:border-gray-300"></div>
                   )}
                 </button>
               ))}
@@ -190,7 +190,7 @@ const CreateFolderModal = ({
               type="button"
               variant="outline"
               onClick={handleClose}
-              className="px-6 py-2 rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50 transition-all duration-300"
+              className="px-6 py-2 rounded-xl border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300"
             >
               Cancel
             </Button>

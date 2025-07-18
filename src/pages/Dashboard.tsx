@@ -90,19 +90,37 @@ const Dashboard = () => {
 
   const fetchStats = async () => {
     try {
-      // Fetch flashcards data for accurate stats
-      const { data: flashcards, error: flashcardsError } = await supabase
-        .from('flashcards')
-        .select('*')
-        .eq('user_id', user?.id);
+      // Use count queries for better performance and accuracy
+      const [totalSessionsResponse, correctSessionsResponse, recentSessionsResponse] = await Promise.all([
+        // Total sessions count
+        supabase
+          .from('study_sessions')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user?.id),
+        // Correct sessions count
+        supabase
+          .from('study_sessions')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user?.id)
+          .eq('was_correct', true),
+        // Recent sessions for streak calculation (last 30 days)
+        supabase
+          .from('study_sessions')
+          .select('created_at')
+          .eq('user_id', user?.id)
+          .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+          .order('created_at', { ascending: false })
+      ]);
 
-      if (flashcardsError) throw flashcardsError;
+      if (totalSessionsResponse.error) throw totalSessionsResponse.error;
+      if (correctSessionsResponse.error) throw correctSessionsResponse.error;
+      if (recentSessionsResponse.error) throw recentSessionsResponse.error;
 
-      // Calculate stats from flashcards
-      const totalReviews = flashcards?.reduce((sum, card) => sum + (card.review_count || 0), 0) || 0;
-      const totalCorrect = flashcards?.reduce((sum, card) => sum + (card.correct_count || 0), 0) || 0;
+      // Calculate stats from count queries (more accurate and efficient)
+      const totalReviews = totalSessionsResponse.count || 0;
+      const totalCorrect = correctSessionsResponse.count || 0;
 
-      // Calculate study streak based on flashcard updates
+      // Calculate study streak based on recent sessions (more accurate)
       const today = new Date();
       let streak = 0;
       for (let i = 0; i < 30; i++) {
@@ -110,8 +128,8 @@ const Dashboard = () => {
         checkDate.setDate(today.getDate() - i);
         const dateStr = checkDate.toISOString().split('T')[0];
 
-        const hasActivity = flashcards?.some(card =>
-          card.updated_at?.startsWith(dateStr) && card.review_count > 0
+        const hasActivity = recentSessionsResponse.data?.some(session =>
+          session.created_at?.startsWith(dateStr)
         );
 
         if (hasActivity) {
@@ -288,13 +306,13 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-32 bg-gray-200 rounded-2xl"></div>
+                <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-2xl"></div>
               ))}
             </div>
           </div>
@@ -304,15 +322,15 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="flex items-center gap-4">
-            <SidebarTrigger className="text-gray-600 hover:text-gray-900 transition-colors" />
+            <SidebarTrigger className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors" />
             <div>
-              <h1 className="text-4xl font-bold text-gray-800 mb-2">Dashboard</h1>
-              <p className="text-gray-600">Track your learning progress and manage your study materials</p>
+              <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">Dashboard</h1>
+              <p className="text-gray-600 dark:text-gray-300">Track your learning progress and manage your study materials</p>
             </div>
           </div>
           <Button
@@ -326,61 +344,61 @@ const Dashboard = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-          <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300">
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300">
             <CardContent className="p-4 lg:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Study Streak</p>
-                  <p className="text-2xl lg:text-3xl font-bold text-green-600">{stats.studyStreak}</p>
-                  <p className="text-xs text-gray-500">days</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Study Streak</p>
+                  <p className="text-2xl lg:text-3xl font-bold text-green-600 dark:text-green-400">{stats.studyStreak}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">days</p>
                 </div>
-                <div className="p-2 lg:p-3 bg-green-100 rounded-full">
-                  <TrendingUp className="h-5 w-5 lg:h-6 lg:w-6 text-green-600" />
+                <div className="p-2 lg:p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
+                  <TrendingUp className="h-5 w-5 lg:h-6 lg:w-6 text-green-600 dark:text-green-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300">
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300">
             <CardContent className="p-4 lg:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Overall Accuracy</p>
-                  <p className="text-2xl lg:text-3xl font-bold text-blue-600">{stats.overallAccuracy}</p>
-                  <p className="text-xs text-gray-500">%</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Overall Accuracy</p>
+                  <p className="text-2xl lg:text-3xl font-bold text-blue-600 dark:text-blue-400">{stats.overallAccuracy}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">%</p>
                 </div>
-                <div className="p-2 lg:p-3 bg-blue-100 rounded-full">
-                  <Target className="h-5 w-5 lg:h-6 lg:w-6 text-blue-600" />
+                <div className="p-2 lg:p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                  <Target className="h-5 w-5 lg:h-6 lg:w-6 text-blue-600 dark:text-blue-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300">
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300">
             <CardContent className="p-4 lg:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Cards Reviewed</p>
-                  <p className="text-2xl lg:text-3xl font-bold text-purple-600">{stats.cardsReviewed.toLocaleString()}</p>
-                  <p className="text-xs text-gray-500">total</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Cards Reviewed</p>
+                  <p className="text-2xl lg:text-3xl font-bold text-purple-600 dark:text-purple-400">{stats.cardsReviewed.toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">total</p>
                 </div>
-                <div className="p-2 lg:p-3 bg-purple-100 rounded-full">
-                  <BookOpen className="h-5 w-5 lg:h-6 lg:w-6 text-purple-600" />
+                <div className="p-2 lg:p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+                  <BookOpen className="h-5 w-5 lg:h-6 lg:w-6 text-purple-600 dark:text-purple-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300">
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300">
             <CardContent className="p-4 lg:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Study Time</p>
-                  <p className="text-2xl lg:text-3xl font-bold text-orange-600">{stats.studyTime}</p>
-                  <p className="text-xs text-gray-500">hrs total</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Study Time</p>
+                  <p className="text-2xl lg:text-3xl font-bold text-orange-600 dark:text-orange-400">{stats.studyTime}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">hrs total</p>
                 </div>
-                <div className="p-2 lg:p-3 bg-orange-100 rounded-full">
-                  <Clock className="h-5 w-5 lg:h-6 lg:w-6 text-orange-600" />
+                <div className="p-2 lg:p-3 bg-orange-100 dark:bg-orange-900/30 rounded-full">
+                  <Clock className="h-5 w-5 lg:h-6 lg:w-6 text-orange-600 dark:text-orange-400" />
                 </div>
               </div>
             </CardContent>
@@ -396,14 +414,14 @@ const Dashboard = () => {
                 placeholder="Search folders, decks, tags..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 placeholder:text-gray-400 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
+                className="pl-10 bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
               />
             </div>
           </div>
 
           {/* Create Folder Form */}
           {isCreatingFolder && (
-            <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
               <CardContent className="p-6">
                 <div className="flex gap-4">
                   <Input
@@ -411,7 +429,7 @@ const Dashboard = () => {
                     value={newFolderName}
                     onChange={(e) => setNewFolderName(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && createFolder()}
-                    className="bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 placeholder:text-gray-400 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
+                    className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
                     autoFocus
                   />
                   <Button onClick={createFolder} className="bg-green-500 hover:bg-green-600 text-white">
@@ -433,13 +451,13 @@ const Dashboard = () => {
 
           {/* Folders Grid */}
           {filteredFolders.length === 0 ? (
-            <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
               <CardContent className="p-12 text-center">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Folder className="h-8 w-8 text-purple-600" />
+                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Folder className="h-8 w-8 text-purple-600 dark:text-purple-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">No folders yet</h3>
-                <p className="text-gray-600 mb-6">Get started by creating your first folder</p>
+                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">No folders yet</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">Get started by creating your first folder</p>
                 <Button
                   onClick={() => setIsCreateFolderModalOpen(true)}
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"

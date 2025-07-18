@@ -34,7 +34,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
       <AppSidebar />
       <div
         className={cn(
-          "flex items-center justify-between p-4 bg-white/80 backdrop-blur-sm border-b border-white/20 sticky top-0 z-50",
+          "flex items-center justify-between p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-white/20 dark:border-gray-700/20 sticky top-0 z-50",
           className
         )}
       >
@@ -51,7 +51,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
           )}
           <SidebarTrigger />
           {title && (
-            <h1 className="text-lg font-semibold text-gray-800">{title}</h1>
+            <h1 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{title}</h1>
           )}
         </div>
         {children}

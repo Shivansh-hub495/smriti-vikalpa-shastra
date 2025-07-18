@@ -177,24 +177,24 @@ export const UI_SIZES = {
 export const COLORS = {
   /** Card background colors */
   CARD: {
-    FRONT: "bg-white",
-    BACK: "bg-gradient-to-br from-blue-50 to-indigo-50",
+    FRONT: "bg-white dark:bg-gray-800",
+    BACK: "bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600",
     BORDER: {
-      FRONT: "border-gray-100",
-      BACK: "border-blue-100",
+      FRONT: "border-gray-100 dark:border-gray-700",
+      BACK: "border-blue-100 dark:border-gray-600",
     },
   },
   /** Swipe indicator colors */
   SWIPE_INDICATOR: {
-    KNOW: "bg-green-500",
-    LEARNING: "bg-orange-500",
+    KNOW: "bg-green-500 dark:bg-green-600",
+    LEARNING: "bg-orange-500 dark:bg-orange-600",
   },
   /** Button colors */
   BUTTON: {
-    PRIMARY: "bg-blue-100 hover:bg-blue-200",
-    SECONDARY: "bg-gray-100 hover:bg-gray-200",
-    SUCCESS: "bg-green-100 hover:bg-green-200",
-    WARNING: "bg-orange-100 hover:bg-orange-200",
+    PRIMARY: "bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/20 dark:hover:bg-blue-900/30",
+    SECONDARY: "bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600",
+    SUCCESS: "bg-green-100 hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/30",
+    WARNING: "bg-orange-100 hover:bg-orange-200 dark:bg-orange-900/20 dark:hover:bg-orange-900/30",
   },
 } as const;
 

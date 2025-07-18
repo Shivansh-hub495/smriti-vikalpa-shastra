@@ -50,10 +50,10 @@ const StudySummary: React.FC = () => {
   const completionRate = 100; // Since we completed all cards
 
   const getPerformanceMessage = () => {
-    if (accuracy >= 90) return { message: "Excellent work! 🎉", color: "text-green-600", icon: Trophy };
-    if (accuracy >= 75) return { message: "Great job! 👏", color: "text-blue-600", icon: Star };
-    if (accuracy >= 60) return { message: "Good progress! 👍", color: "text-yellow-600", icon: Target };
-    return { message: "Keep practicing! 💪", color: "text-orange-600", icon: TrendingUp };
+    if (accuracy >= 90) return { message: "Excellent work! 🎉", color: "text-green-600 dark:text-green-400", icon: Trophy };
+    if (accuracy >= 75) return { message: "Great job! 👏", color: "text-blue-600 dark:text-blue-400", icon: Star };
+    if (accuracy >= 60) return { message: "Good progress! 👍", color: "text-yellow-600 dark:text-yellow-400", icon: Target };
+    return { message: "Keep practicing! 💪", color: "text-orange-600 dark:text-orange-400", icon: TrendingUp };
   };
 
   const performance = getPerformanceMessage();
@@ -102,7 +102,7 @@ const StudySummary: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 overflow-auto">
+    <div className="fixed inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-auto">
       <div className="min-h-full flex items-center justify-center p-4">
         <motion.div
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -110,7 +110,7 @@ const StudySummary: React.FC = () => {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="w-full max-w-md"
         >
-          <Card className="bg-white/90 backdrop-blur-lg border-white/20 shadow-2xl rounded-3xl overflow-hidden">
+          <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-2xl rounded-3xl overflow-hidden">
             <CardHeader className="text-center pb-4">
               <motion.div
                 initial={{ scale: 0 }}
@@ -123,7 +123,7 @@ const StudySummary: React.FC = () => {
                 </div>
               </motion.div>
               
-              <CardTitle className="text-2xl font-bold text-gray-800 mb-2">
+              <CardTitle className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
                 Study Complete!
               </CardTitle>
               
@@ -132,7 +132,7 @@ const StudySummary: React.FC = () => {
               </p>
               
               {stats.deckName && (
-                <Badge variant="secondary" className="mt-2 bg-purple-100 text-purple-800">
+                <Badge variant="secondary" className="mt-2 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
                   {stats.deckName}
                 </Badge>
               )}
@@ -145,22 +145,22 @@ const StudySummary: React.FC = () => {
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="text-center p-4 bg-green-50 rounded-2xl"
+                  className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-2xl"
                 >
-                  <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-green-700">{stats.knowCount}</div>
-                  <div className="text-sm text-green-600">Known</div>
+                  <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-green-700 dark:text-green-300">{stats.knowCount}</div>
+                  <div className="text-sm text-green-600 dark:text-green-400">Known</div>
                 </motion.div>
 
                 <motion.div
                   initial={{ x: 20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-center p-4 bg-orange-50 rounded-2xl"
+                  className="text-center p-4 bg-orange-50 dark:bg-orange-900/20 rounded-2xl"
                 >
-                  <XCircle className="h-8 w-8 text-orange-600 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-orange-700">{stats.learningCount}</div>
-                  <div className="text-sm text-orange-600">Learning</div>
+                  <XCircle className="h-8 w-8 text-orange-600 dark:text-orange-400 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-orange-700 dark:text-orange-300">{stats.learningCount}</div>
+                  <div className="text-sm text-orange-600 dark:text-orange-400">Learning</div>
                 </motion.div>
               </div>
 
@@ -172,8 +172,8 @@ const StudySummary: React.FC = () => {
                 className="space-y-3"
               >
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-600">Accuracy</span>
-                  <span className="text-lg font-bold text-gray-800">{accuracy}%</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Accuracy</span>
+                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">{accuracy}%</span>
                 </div>
                 <Progress value={accuracy} className="h-3" />
               </motion.div>
@@ -186,22 +186,22 @@ const StudySummary: React.FC = () => {
                 className="grid grid-cols-2 gap-4 pt-2"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Clock className="h-5 w-5 text-blue-600" />
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <div className="text-sm text-gray-600">Duration</div>
-                    <div className="font-semibold text-gray-800">{stats.duration}m</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">Duration</div>
+                    <div className="font-semibold text-gray-800 dark:text-gray-100">{stats.duration}m</div>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                    <Target className="h-5 w-5 text-purple-600" />
+                  <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                    <Target className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <div className="text-sm text-gray-600">Cards</div>
-                    <div className="font-semibold text-gray-800">{stats.totalCards}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">Cards</div>
+                    <div className="font-semibold text-gray-800 dark:text-gray-100">{stats.totalCards}</div>
                   </div>
                 </div>
               </motion.div>
@@ -236,7 +236,7 @@ const StudySummary: React.FC = () => {
                 <Button
                   onClick={handleBackToDecks}
                   variant="outline"
-                  className="w-full py-3 rounded-2xl border-gray-200 hover:bg-gray-50 font-semibold"
+                  className="w-full py-3 rounded-2xl border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 font-semibold"
                 >
                   <ArrowLeft className="h-5 w-5 mr-2" />
                   Back to Decks
@@ -248,9 +248,9 @@ const StudySummary: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="text-center pt-4 border-t border-gray-100"
+                className="text-center pt-4 border-t border-gray-100 dark:border-gray-700"
               >
-                <p className="text-sm text-gray-600 leading-relaxed">
+                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                   {accuracy >= 80 
                     ? "You're mastering this deck! Keep up the excellent work." 
                     : stats.learningCount > 0 

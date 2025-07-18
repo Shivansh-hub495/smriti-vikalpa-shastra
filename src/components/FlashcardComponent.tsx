@@ -364,8 +364,8 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
         <>
           {/* Front Side */}
           <motion.div
-          className="absolute inset-0 w-full h-full backface-hidden bg-white rounded-3xl shadow-2xl border border-gray-100"
-          style={{ 
+          className="absolute inset-0 w-full h-full backface-hidden bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700"
+          style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden"
           }}
@@ -383,14 +383,14 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="p-1.5 sm:p-2 rounded-full bg-white/80 hover:bg-white/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
+                      className="p-1.5 sm:p-2 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-white/90 dark:hover:bg-gray-700/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleSpeak(frontContent);
                       }}
                       disabled={isSpeaking}
                     >
-                      <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-gray-600'}`} />
+                      <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-gray-600 dark:text-gray-300'}`} />
                     </Button>
 
                     <div className="flex space-x-2">
@@ -398,13 +398,13 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="p-1.5 sm:p-2 rounded-full bg-white/80 hover:bg-white/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
+                          className="p-1.5 sm:p-2 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-white/90 dark:hover:bg-gray-700/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleEditClick();
                           }}
                         >
-                          <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                          <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-300" />
                         </Button>
                       )}
 
@@ -412,7 +412,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="p-1.5 sm:p-2 rounded-full bg-white/80 hover:bg-white/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
+                          className="p-1.5 sm:p-2 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-white/90 dark:hover:bg-gray-700/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleStarToggle();
@@ -421,7 +421,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                           {isStarred ? (
                             <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current" />
                           ) : (
-                            <StarOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                            <StarOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-300" />
                           )}
                         </Button>
                       )}
@@ -445,7 +445,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
 
                   {/* Bottom instruction */}
                   <div className="absolute bottom-2 sm:bottom-4 md:bottom-6 lg:bottom-8 left-0 right-0 text-center">
-                    <p className="text-xs sm:text-sm text-gray-700 font-medium bg-white/80 backdrop-blur-sm rounded-full px-3 py-1.5 sm:px-4 sm:py-2 inline-block shadow-sm">
+                    <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full px-3 py-1.5 sm:px-4 sm:py-2 inline-block shadow-sm">
                       Tap the card to flip
                     </p>
                   </div>
@@ -460,14 +460,14 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="p-1.5 sm:p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors touch-manipulation"
+                      className="p-1.5 sm:p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors touch-manipulation"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleSpeak(frontContent);
                       }}
                       disabled={isSpeaking}
                     >
-                      <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-gray-600'}`} />
+                      <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-gray-600 dark:text-gray-300'}`} />
                     </Button>
 
                     <div className="flex space-x-2">
@@ -475,13 +475,13 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="p-1.5 sm:p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors touch-manipulation"
+                          className="p-1.5 sm:p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors touch-manipulation"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleEditClick();
                           }}
                         >
-                          <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                          <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-300" />
                         </Button>
                       )}
 
@@ -489,7 +489,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="p-1.5 sm:p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors touch-manipulation"
+                          className="p-1.5 sm:p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors touch-manipulation"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleStarToggle();
@@ -498,7 +498,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                           {isStarred ? (
                             <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current" />
                           ) : (
-                            <StarOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                            <StarOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-300" />
                           )}
                         </Button>
                       )}
@@ -538,11 +538,11 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                       <div className="w-full overflow-hidden">
                         {processedContent.front.html ? (
                           <div
-                            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none overflow-hidden"
+                            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 dark:text-gray-100 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none overflow-hidden"
                             dangerouslySetInnerHTML={{ __html: processedContent.front.html }}
                           />
                         ) : (
-                          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words overflow-hidden">
+                          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 dark:text-gray-100 leading-relaxed font-['Montserrat',sans-serif] break-words overflow-hidden">
                             {processedContent.front.text}
                           </p>
                         )}
@@ -573,7 +573,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
 
                   {/* Tap Instruction - only for cards with text */}
                   <div className="flex-shrink-0 text-center mt-4 sm:mt-6">
-                    <p className="text-xs sm:text-sm text-gray-500 font-medium">
+                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-medium">
                       Tap the card to flip
                     </p>
                   </div>
@@ -585,8 +585,8 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
 
         {/* Back Side */}
         <motion.div
-          className="absolute inset-0 w-full h-full backface-hidden bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl shadow-2xl border border-blue-100"
-          style={{ 
+          className="absolute inset-0 w-full h-full backface-hidden bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 rounded-3xl shadow-2xl border border-blue-100 dark:border-gray-600"
+          style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             transform: "rotateY(180deg)"
@@ -605,14 +605,14 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="p-1.5 sm:p-2 rounded-full bg-white/80 hover:bg-white/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
+                      className="p-1.5 sm:p-2 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-white/90 dark:hover:bg-gray-700/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleSpeak(backContent);
                       }}
                       disabled={isSpeaking}
                     >
-                      <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-blue-700'}`} />
+                      <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-blue-700 dark:text-blue-300'}`} />
                     </Button>
 
                     <div className="flex space-x-2">
@@ -620,7 +620,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="p-1.5 sm:p-2 rounded-full bg-white/80 hover:bg-white/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
+                          className="p-1.5 sm:p-2 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-white/90 dark:hover:bg-gray-700/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleEditClick();
@@ -677,14 +677,14 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="p-1.5 sm:p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors touch-manipulation"
+                      className="p-1.5 sm:p-2 rounded-full bg-blue-100 dark:bg-gray-700 hover:bg-blue-200 dark:hover:bg-gray-600 transition-colors touch-manipulation"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleSpeak(backContent);
                       }}
                       disabled={isSpeaking}
                     >
-                      <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-blue-700'}`} />
+                      <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-blue-700 dark:text-blue-300'}`} />
                     </Button>
 
                     <div className="flex space-x-2">
@@ -692,13 +692,13 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="p-1.5 sm:p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors touch-manipulation"
+                          className="p-1.5 sm:p-2 rounded-full bg-blue-100 dark:bg-gray-700 hover:bg-blue-200 dark:hover:bg-gray-600 transition-colors touch-manipulation"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleEditClick();
                           }}
                         >
-                          <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700" />
+                          <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700 dark:text-blue-300" />
                         </Button>
                       )}
 
@@ -706,7 +706,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="p-1.5 sm:p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors touch-manipulation"
+                          className="p-1.5 sm:p-2 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-white/90 dark:hover:bg-gray-700/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleStarToggle();
@@ -715,7 +715,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                           {isStarred ? (
                             <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current" />
                           ) : (
-                            <StarOff className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700" />
+                            <StarOff className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700 dark:text-blue-300" />
                           )}
                         </Button>
                       )}
@@ -755,11 +755,11 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                       <div className="w-full overflow-hidden">
                         {processedContent.back.html ? (
                           <div
-                            className={`text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none ${processedContent.back.isTruncated ? 'text-left' : 'text-center'} overflow-hidden`}
+                            className={`text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 dark:text-gray-100 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none ${processedContent.back.isTruncated ? 'text-left' : 'text-center'} overflow-hidden`}
                             dangerouslySetInnerHTML={{ __html: processedContent.back.html }}
                           />
                         ) : (
-                          <p className={`text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 leading-relaxed font-['Montserrat',sans-serif] break-words ${processedContent.back.isTruncated ? 'text-left' : 'text-center'} overflow-hidden`}>
+                          <p className={`text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 dark:text-gray-100 leading-relaxed font-['Montserrat',sans-serif] break-words ${processedContent.back.isTruncated ? 'text-left' : 'text-center'} overflow-hidden`}>
                             {processedContent.back.text}
                           </p>
                         )}
@@ -772,7 +772,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-blue-600 hover:text-blue-800 touch-manipulation text-xs sm:text-sm h-6 px-2"
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 touch-manipulation text-xs sm:text-sm h-6 px-2"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleExpandBackText();

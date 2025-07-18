@@ -63,7 +63,7 @@ const Auth = () => {
   return (
     <>
       <AuthRedirect />
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 flex">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex">
       {/* Left Side - Branding and Features */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-center px-12 py-8">
         <div className="max-w-lg">

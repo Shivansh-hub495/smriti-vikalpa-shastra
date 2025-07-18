@@ -3,9 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Settings, LogOut, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const UserProfile: React.FC = () => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   if (!user) return null;
@@ -19,6 +21,16 @@ const UserProfile: React.FC = () => {
       return user.user_metadata.full_name;
     }
     return user.email?.split('@')[0] || 'User';
+  };
+
+  const handleProfileClick = () => {
+    setIsOpen(false);
+    navigate('/settings');
+  };
+
+  const handleSettingsClick = () => {
+    setIsOpen(false);
+    navigate('/settings');
   };
 
   const handleSignOut = async () => {
@@ -43,37 +55,43 @@ const UserProfile: React.FC = () => {
 
           {/* Dropdown Content */}
           <div className="absolute bottom-full left-0 right-0 mb-2 z-50">
-            <div className="bg-white/95 backdrop-blur-lg border border-white/20 shadow-xl rounded-xl p-1 mx-2">
+            <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg border border-white/20 dark:border-gray-700/20 shadow-xl rounded-xl p-1 mx-2">
               {/* User Info Header */}
-              <div className="px-3 py-2 border-b border-gray-100">
-                <p className="text-sm font-medium text-gray-900 truncate">
+              <div className="px-3 py-2 border-b border-gray-100 dark:border-gray-700">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                   {getDisplayName()}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                   {user.email}
                 </p>
               </div>
 
               {/* Menu Items */}
               <div className="py-1">
-                <button className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 rounded-lg transition-colors">
-                  <User className="mr-2 h-4 w-4 text-purple-600" />
+                <button
+                  onClick={handleProfileClick}
+                  className="w-full flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors"
+                >
+                  <User className="mr-2 h-4 w-4 text-purple-600 dark:text-purple-400" />
                   Profile
                 </button>
-                <button className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 rounded-lg transition-colors">
-                  <Settings className="mr-2 h-4 w-4 text-purple-600" />
+                <button
+                  onClick={handleSettingsClick}
+                  className="w-full flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors"
+                >
+                  <Settings className="mr-2 h-4 w-4 text-purple-600 dark:text-purple-400" />
                   Settings
                 </button>
               </div>
 
               {/* Separator */}
-              <div className="border-t border-gray-100 my-1" />
+              <div className="border-t border-gray-100 dark:border-gray-700 my-1" />
 
               {/* Sign Out */}
               <div className="py-1">
                 <button
                   onClick={handleSignOut}
-                  className="w-full flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="w-full flex items-center px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign out
@@ -87,7 +105,7 @@ const UserProfile: React.FC = () => {
       {/* Profile Button */}
       <Button
         variant="ghost"
-        className="w-full justify-start px-3 py-2 h-auto hover:bg-purple-50 rounded-xl"
+        className="w-full justify-start px-3 py-2 h-auto hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl"
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="flex items-center space-x-3 w-full">
@@ -98,14 +116,14 @@ const UserProfile: React.FC = () => {
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 text-left min-w-0">
-            <p className="text-xs text-gray-500 truncate">
+            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
               {user.email}
             </p>
           </div>
           {isOpen ? (
-            <ChevronUp className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <ChevronUp className="h-4 w-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
           ) : (
-            <ChevronDown className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <ChevronDown className="h-4 w-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
           )}
         </div>
       </Button>

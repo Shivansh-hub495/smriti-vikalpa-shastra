@@ -128,4 +128,50 @@
   [data-sidebar] {
     overflow: visible !important;
   }
+
+  /* Color switching for flashcard content - red to yellow in dark mode, yellow to red in light mode */
+
+  /* Light mode: yellow becomes red */
+  :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color: yellow"],
+  :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color:#ffff00"],
+  :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color:#ff0"],
+  :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color:rgb(255,255,0)"],
+  .text-yellow-400,
+  .text-yellow-500,
+  .text-yellow-600 {
+    color: #ef4444 !important; /* red-500 in light mode */
+  }
+
+  /* Dark mode: red becomes yellow, yellow becomes red */
+  .dark :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color: red"],
+  .dark :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color:#ff0000"],
+  .dark :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color:#f00"],
+  .dark :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color:rgb(255,0,0)"],
+  .dark :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color:red"],
+  .dark .text-red-500,
+  .dark .text-red-600,
+  .dark .text-red-700 {
+    color: #eab308 !important; /* yellow-500 in dark mode */
+  }
+
+  .dark :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color: yellow"],
+  .dark :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color:#ffff00"],
+  .dark :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color:#ff0"],
+  .dark :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color:rgb(255,255,0)"],
+  .dark :is(span, p, div, h1, h2, h3, h4, h5, h6, li, td, th, strong, em, b, i, font)[style*="color:yellow"],
+  .dark .text-yellow-400,
+  .dark .text-yellow-500,
+  .dark .text-yellow-600 {
+    color: #ef4444 !important; /* red-500 in dark mode */
+  }
+
+  /* Additional catch-all for any red text in dark mode */
+  .dark [style*="red"] {
+    color: #eab308 !important;
+  }
+
+  /* Additional catch-all for any yellow text in light mode */
+  [style*="yellow"]:not(.dark *) {
+    color: #ef4444 !important;
+  }
 }

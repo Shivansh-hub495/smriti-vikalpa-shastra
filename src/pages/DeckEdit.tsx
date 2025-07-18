@@ -377,13 +377,13 @@ const DeckEdit = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
-      <header className="border-b border-white/20 bg-white/80 backdrop-blur-lg shadow-lg">
+      <header className="border-b border-white/20 dark:border-gray-700/20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-lg">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 py-3 sm:py-4 min-h-16">
             <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1 w-full sm:w-auto">
-              <SidebarTrigger className="text-gray-600 hover:text-gray-900 transition-colors touch-manipulation flex-shrink-0" />
+              <SidebarTrigger className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors touch-manipulation flex-shrink-0" />
               <Button
                 onClick={() => {
                   if (deck?.folder_id) {
@@ -393,7 +393,7 @@ const DeckEdit = () => {
                   }
                 }}
                 variant="ghost"
-                className="text-gray-600 hover:text-gray-900 p-1.5 sm:p-2 touch-manipulation flex-shrink-0"
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 p-1.5 sm:p-2 touch-manipulation flex-shrink-0"
               >
                 <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">Back</span>
@@ -402,7 +402,7 @@ const DeckEdit = () => {
                 <h2 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent break-words leading-tight">
                   {deck.name}
                 </h2>
-                <p className="text-xs sm:text-sm text-gray-600">{flashcards.length} flashcards</p>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{flashcards.length} flashcards</p>
               </div>
             </div>
 
@@ -410,7 +410,7 @@ const DeckEdit = () => {
               <Button
                 onClick={() => setShowAnswers(!showAnswers)}
                 variant="outline"
-                className="bg-white/80 backdrop-blur-lg border-white/20 touch-manipulation text-xs sm:text-sm px-2 sm:px-3 flex-1 sm:flex-none"
+                className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 touch-manipulation text-xs sm:text-sm px-2 sm:px-3 flex-1 sm:flex-none"
               >
                 {showAnswers ? <EyeOff className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" /> : <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />}
                 <span className="hidden sm:inline">{showAnswers ? 'Hide' : 'Show'} Answers</span>
@@ -435,7 +435,7 @@ const DeckEdit = () => {
 
       <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
         <Tabs defaultValue="cards" className="space-y-4 sm:space-y-6">
-          <TabsList className="grid w-full grid-cols-2 bg-white/80 backdrop-blur-lg border-white/20 shadow-lg rounded-xl h-auto">
+          <TabsList className="grid w-full grid-cols-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-lg rounded-xl h-auto">
             <TabsTrigger value="cards" className="flex items-center gap-1 sm:gap-2 py-2 sm:py-2.5 text-sm sm:text-base">
               <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="hidden sm:inline">Flashcards</span>
@@ -451,9 +451,9 @@ const DeckEdit = () => {
           <TabsContent value="cards" className="space-y-6">
             {/* Create/Edit Card Form */}
             {(isCreatingCard || editingCard) && (
-              <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
                 <CardHeader className="pb-4 sm:pb-6">
-                  <CardTitle className="text-lg sm:text-xl font-bold text-gray-800">
+                  <CardTitle className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100">
                     {editingCard ? 'Edit Flashcard' : 'Create New Flashcard'}
                   </CardTitle>
                 </CardHeader>
@@ -461,7 +461,7 @@ const DeckEdit = () => {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     {/* Front Side */}
                     <div className="space-y-4">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         Front (Question)
                       </label>
                       <RichTextEditor
@@ -471,10 +471,10 @@ const DeckEdit = () => {
                           setFrontContentHtml(html);
                         }}
                         placeholder="Enter the question or prompt..."
-                        className="bg-white/80 backdrop-blur-lg border-white/20 rounded-xl shadow-lg"
+                        className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 rounded-xl shadow-lg"
                       />
                       <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-2">
+                        <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                           Front Image (Optional)
                         </label>
                         <ImageUpload
@@ -488,7 +488,7 @@ const DeckEdit = () => {
 
                     {/* Back Side */}
                     <div className="space-y-4">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                         Back (Answer)
                       </label>
                       <RichTextEditor
@@ -498,10 +498,10 @@ const DeckEdit = () => {
                           setBackContentHtml(html);
                         }}
                         placeholder="Enter the answer or explanation..."
-                        className="bg-white/80 backdrop-blur-lg border-white/20 rounded-xl shadow-lg"
+                        className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 rounded-xl shadow-lg"
                       />
                       <div>
-                        <label className="block text-sm font-medium text-gray-600 mb-2">
+                        <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                           Back Image (Optional)
                         </label>
                         <ImageUpload
@@ -517,7 +517,7 @@ const DeckEdit = () => {
                     <Button
                       onClick={handleCancelEdit}
                       variant="outline"
-                      className="bg-white/80 backdrop-blur-lg border-white/20 touch-manipulation w-full sm:w-auto"
+                      className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 touch-manipulation w-full sm:w-auto"
                     >
                       Cancel
                     </Button>
@@ -548,9 +548,9 @@ const DeckEdit = () => {
                           <Card
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            className={`group relative overflow-hidden bg-white/80 backdrop-blur-lg border-white/20 shadow-xl transition-all duration-300 rounded-2xl w-full ${
+                            className={`group relative overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl transition-all duration-300 rounded-2xl w-full ${
                               snapshot.isDragging
-                                ? 'rotate-1 scale-105 shadow-2xl z-50 bg-purple-50 border-purple-300'
+                                ? 'rotate-1 scale-105 shadow-2xl z-50 bg-purple-50 dark:bg-purple-900/30 border-purple-300 dark:border-purple-600'
                                 : 'hover:shadow-2xl hover:-translate-y-1'
                             }`}
                           >
@@ -559,11 +559,11 @@ const DeckEdit = () => {
                       <div className="flex items-center space-x-2">
                         <div
                           {...provided.dragHandleProps}
-                          className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 rounded transition-colors"
+                          className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                         >
-                          <GripVertical className="h-4 w-4 text-gray-400" />
+                          <GripVertical className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                         </div>
-                        <div className="text-xs sm:text-sm text-gray-500 font-medium">
+                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-medium">
                           Card #{index + 1}
                         </div>
                       </div>
@@ -572,7 +572,7 @@ const DeckEdit = () => {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleEditCard(card)}
-                          className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-blue-100 touch-manipulation"
+                          className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-blue-100 dark:hover:bg-blue-900/30 touch-manipulation"
                         >
                           <Edit className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
                         </Button>
@@ -580,7 +580,7 @@ const DeckEdit = () => {
                           size="sm"
                           variant="ghost"
                           onClick={() => handleDeleteCard(card.id)}
-                          className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-red-100 touch-manipulation"
+                          className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/30 touch-manipulation"
                         >
                           <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
                         </Button>
@@ -590,8 +590,8 @@ const DeckEdit = () => {
                   <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6 min-w-0">
                     <div className={`${showAnswers ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : ''}`}>
                       <div>
-                        <div className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">Front:</div>
-                        <div className="text-gray-800 bg-gray-50 p-2 sm:p-3 rounded-lg min-h-[50px] sm:min-h-[60px] space-y-2 break-words">
+                        <div className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Front:</div>
+                        <div className="text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 p-2 sm:p-3 rounded-lg min-h-[50px] sm:min-h-[60px] space-y-2 break-words">
                           {card.front_image_url && (
                             <img
                               src={card.front_image_url}
@@ -609,8 +609,8 @@ const DeckEdit = () => {
                       </div>
                       {showAnswers && (
                         <div>
-                          <div className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">Back:</div>
-                          <div className="text-gray-800 bg-green-50 p-2 sm:p-3 rounded-lg min-h-[50px] sm:min-h-[60px] space-y-2 break-words">
+                          <div className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Back:</div>
+                          <div className="text-gray-800 dark:text-gray-200 bg-green-50 dark:bg-green-900/30 p-2 sm:p-3 rounded-lg min-h-[50px] sm:min-h-[60px] space-y-2 break-words">
                             {card.back_image_url && (
                               <img
                                 src={card.back_image_url}
@@ -628,7 +628,7 @@ const DeckEdit = () => {
                         </div>
                       )}
                     </div>
-                    <div className="flex justify-between text-xs text-gray-500 min-w-0">
+                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 min-w-0">
                       <span className="truncate">Reviews: {card.review_count}</span>
                       <span className="truncate">Accuracy: {card.review_count > 0 ? Math.round((card.correct_count / card.review_count) * 100) : 0}%</span>
                     </div>
@@ -671,24 +671,24 @@ const DeckEdit = () => {
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-4 sm:space-y-6">
-            <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
               <CardHeader className="pb-4 sm:pb-6">
-                <CardTitle className="text-lg sm:text-xl font-bold text-gray-800">Deck Settings</CardTitle>
+                <CardTitle className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100">Deck Settings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     Deck Name
                   </label>
                   <Input
                     value={deckName}
                     onChange={(e) => setDeckName(e.target.value)}
                     placeholder="Enter deck name..."
-                    className="bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 placeholder:text-gray-400 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
+                    className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     Description
                   </label>
                   <Textarea
@@ -696,11 +696,11 @@ const DeckEdit = () => {
                     onChange={(e) => setDeckDescription(e.target.value)}
                     placeholder="Enter deck description..."
                     rows={3}
-                    className="bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 placeholder:text-gray-400 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300 resize-none"
+                    className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300 resize-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     Tags
                   </label>
                   <div className="flex flex-wrap gap-2 mb-2">
@@ -734,7 +734,7 @@ const DeckEdit = () => {
                           }
                         }
                       }}
-                      className="bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 placeholder:text-gray-400 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
+                      className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
                     />
                   </div>
                 </div>

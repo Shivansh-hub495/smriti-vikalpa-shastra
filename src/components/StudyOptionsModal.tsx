@@ -77,22 +77,22 @@ const StudyOptionsModal: React.FC<StudyOptionsModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ type: "spring", duration: 0.3 }}
-          className="relative bg-white rounded-2xl shadow-2xl p-6 sm:p-8 mx-4 w-full max-w-md"
+          className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 mx-4 w-full max-w-md"
         >
           {/* Close Button */}
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="absolute top-4 right-4 h-8 w-8 p-0 text-gray-400 hover:text-gray-600"
+            className="absolute top-4 right-4 h-8 w-8 p-0 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <X className="h-4 w-4" />
           </Button>
 
           {/* Header */}
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Start Study Session</h2>
-            <p className="text-gray-600">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Start Study Session</h2>
+            <p className="text-gray-600 dark:text-gray-300">
               <span className="font-semibold">{deckName}</span>
               <br />
               <span className="text-sm">{totalCards} cards available</span>
@@ -107,20 +107,20 @@ const StudyOptionsModal: React.FC<StudyOptionsModalProps> = ({
               whileTap={{ scale: 0.98 }}
               className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
                 selectedMode === 'normal'
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                  : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
               }`}
               onClick={() => setSelectedMode('normal')}
             >
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${
-                  selectedMode === 'normal' ? 'bg-blue-500' : 'bg-gray-400'
+                  selectedMode === 'normal' ? 'bg-blue-500' : 'bg-gray-400 dark:bg-gray-600'
                 }`}>
                   <Play className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800">Normal</h3>
-                  <p className="text-sm text-gray-600">Study cards in order</p>
+                  <h3 className="font-semibold text-gray-800 dark:text-gray-100">Normal</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Study cards in order</p>
                 </div>
               </div>
             </motion.div>
@@ -131,20 +131,20 @@ const StudyOptionsModal: React.FC<StudyOptionsModalProps> = ({
               whileTap={{ scale: 0.98 }}
               className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
                 selectedMode === 'shuffle'
-                  ? 'border-purple-500 bg-purple-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/30'
+                  : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
               }`}
               onClick={() => setSelectedMode('shuffle')}
             >
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${
-                  selectedMode === 'shuffle' ? 'bg-purple-500' : 'bg-gray-400'
+                  selectedMode === 'shuffle' ? 'bg-purple-500' : 'bg-gray-400 dark:bg-gray-600'
                 }`}>
                   <Shuffle className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800">Shuffle</h3>
-                  <p className="text-sm text-gray-600">Study cards in random order</p>
+                  <h3 className="font-semibold text-gray-800 dark:text-gray-100">Shuffle</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Study cards in random order</p>
                 </div>
               </div>
             </motion.div>
@@ -155,23 +155,23 @@ const StudyOptionsModal: React.FC<StudyOptionsModalProps> = ({
               whileTap={{ scale: 0.98 }}
               className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
                 selectedMode === 'startFrom'
-                  ? 'border-green-500 bg-green-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
+                  : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
               }`}
               onClick={() => setSelectedMode('startFrom')}
             >
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${
-                  selectedMode === 'startFrom' ? 'bg-green-500' : 'bg-gray-400'
+                  selectedMode === 'startFrom' ? 'bg-green-500' : 'bg-gray-400 dark:bg-gray-600'
                 }`}>
                   <Hash className="h-5 w-5 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800">Start From</h3>
-                  <p className="text-sm text-gray-600 mb-2">Begin from a specific card</p>
+                  <h3 className="font-semibold text-gray-800 dark:text-gray-100">Start From</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">Begin from a specific card</p>
                   {selectedMode === 'startFrom' && (
                     <div className="flex items-center gap-2">
-                      <Label htmlFor="startCard" className="text-sm font-medium">
+                      <Label htmlFor="startCard" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         Card #:
                       </Label>
                       <Input
@@ -182,7 +182,7 @@ const StudyOptionsModal: React.FC<StudyOptionsModalProps> = ({
                         value={startFromCard}
                         placeholder="1"
                         onChange={(e) => handleStartFromCardChange(e.target.value)}
-                        className="w-20 h-8 text-sm"
+                        className="w-20 h-8 text-sm bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                         onClick={(e) => e.stopPropagation()}
                         onFocus={(e) => e.target.select()}
                       />

@@ -129,13 +129,13 @@ const Browse = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-48 bg-gray-200 rounded-2xl"></div>
+                <div key={i} className="h-48 bg-gray-200 dark:bg-gray-700 rounded-2xl"></div>
               ))}
             </div>
           </div>
@@ -145,19 +145,19 @@ const Browse = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <SidebarTrigger className="text-gray-600 hover:text-gray-900 transition-colors" />
+          <SidebarTrigger className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 transition-colors" />
           <div>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">Browse</h1>
-            <p className="text-gray-600">Explore and manage all your study materials</p>
+            <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">Browse</h1>
+            <p className="text-gray-600 dark:text-gray-300">Explore and manage all your study materials</p>
           </div>
         </div>
 
         {/* Filters */}
-        <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Search */}
@@ -167,13 +167,13 @@ const Browse = () => {
                   placeholder="Search decks..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 placeholder:text-gray-400 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
+                  className="pl-10 bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
                 />
               </div>
 
               {/* Folder Filter */}
               <Select value={selectedFolder} onValueChange={setSelectedFolder}>
-                <SelectTrigger className="bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300">
+                <SelectTrigger className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300">
                   <SelectValue placeholder="All Folders" />
                 </SelectTrigger>
                 <SelectContent>
@@ -188,7 +188,7 @@ const Browse = () => {
 
               {/* Tag Filter */}
               <Select value={selectedTag} onValueChange={setSelectedTag}>
-                <SelectTrigger className="bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300">
+                <SelectTrigger className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300">
                   <SelectValue placeholder="All Tags" />
                 </SelectTrigger>
                 <SelectContent>
@@ -203,7 +203,7 @@ const Browse = () => {
 
               {/* Sort */}
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="bg-white/80 backdrop-blur-lg border-white/20 text-gray-700 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300">
+                <SelectTrigger className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -219,7 +219,7 @@ const Browse = () => {
         {/* Results */}
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800">
+            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
               {filteredDecks.length} {filteredDecks.length === 1 ? 'Deck' : 'Decks'}
             </h2>
             <Button
@@ -231,13 +231,13 @@ const Browse = () => {
           </div>
 
           {filteredDecks.length === 0 ? (
-            <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
               <CardContent className="p-12 text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BookOpen className="h-8 w-8 text-gray-400" />
+                <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BookOpen className="h-8 w-8 text-gray-400 dark:text-gray-500" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">No decks found</h3>
-                <p className="text-gray-600 mb-6">
+                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">No decks found</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
                   {searchQuery || selectedFolder !== 'all' || selectedTag !== 'all'
                     ? 'Try adjusting your filters or search terms'
                     : 'Create your first deck to get started'
@@ -256,47 +256,47 @@ const Browse = () => {
               {filteredDecks.map((deck) => (
                 <Card
                   key={deck.id}
-                  className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300 cursor-pointer group"
+                  className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300 cursor-pointer group"
                   onClick={() => navigate(`/deck/${deck.id}/edit`)}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
-                      <div className="p-3 bg-purple-100 rounded-full group-hover:bg-purple-200 transition-colors">
-                        <BookOpen className="h-6 w-6 text-purple-600" />
+                      <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full group-hover:bg-purple-200 dark:group-hover:bg-purple-800/50 transition-colors">
+                        <BookOpen className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                       </div>
                       {deck.folder && (
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                        <Badge variant="secondary" className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
                           <Folder className="h-3 w-3 mr-1" />
                           {deck.folder.name}
                         </Badge>
                       )}
                     </div>
                     
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 group-hover:text-purple-600 transition-colors break-words leading-tight">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors break-words leading-tight">
                       {deck.name}
                     </h3>
-                    
+
                     {deck.description && (
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">{deck.description}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">{deck.description}</p>
                     )}
-                    
+
                     {deck.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-4">
                         {deck.tags.slice(0, 3).map((tag, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
+                          <Badge key={index} variant="outline" className="text-xs border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">
                             <Tag className="h-2 w-2 mr-1" />
                             {tag}
                           </Badge>
                         ))}
                         {deck.tags.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">
                             +{deck.tags.length - 3} more
                           </Badge>
                         )}
                       </div>
                     )}
-                    
-                    <div className="flex items-center justify-between text-xs text-gray-500">
+
+                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         {new Date(deck.created_at).toLocaleDateString()}

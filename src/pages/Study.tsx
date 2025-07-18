@@ -231,30 +231,30 @@ const Study = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 p-3 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-3 sm:p-6">
       <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <SidebarTrigger className="text-gray-600 hover:text-gray-900 transition-colors" />
+          <SidebarTrigger className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 transition-colors" />
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-1 sm:mb-2">Study</h1>
-            <p className="text-sm sm:text-base text-gray-600">Choose a deck to start your study session</p>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-1 sm:mb-2">Study</h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Choose a deck to start your study session</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Available Decks */}
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-            <h2 className="text-xl sm:text-2xl font-semibold text-gray-800">Available Decks</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-gray-100">Available Decks</h2>
             
             {decks.length === 0 ? (
-              <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
                 <CardContent className="p-12 text-center">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <BookOpen className="h-8 w-8 text-purple-600" />
+                  <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <BookOpen className="h-8 w-8 text-purple-600 dark:text-purple-400" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">No decks available</h3>
-                  <p className="text-gray-600 mb-6">Create your first deck to start studying</p>
+                  <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">No decks available</h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-6">Create your first deck to start studying</p>
                   <Button
                     onClick={() => navigate('/create')}
                     className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
@@ -268,25 +268,25 @@ const Study = () => {
                 {decks.map((deck) => (
                   <Card
                     key={deck.id}
-                    className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300"
+                    className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300"
                   >
                     <CardContent className="p-4 sm:p-6">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
-                            <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 break-words leading-tight">{deck.name}</h3>
+                            <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-100 break-words leading-tight">{deck.name}</h3>
                             {deck.folder && (
-                              <Badge variant="secondary" className="bg-purple-100 text-purple-800 w-fit">
+                              <Badge variant="secondary" className="bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 w-fit">
                                 {deck.folder.name}
                               </Badge>
                             )}
                           </div>
                           {deck.description && (
-                            <p className="text-sm sm:text-base text-gray-600 mb-3 line-clamp-2">{deck.description}</p>
+                            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">{deck.description}</p>
                           )}
                           <div className="flex flex-wrap gap-2">
                             {deck.tags.map((tag, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
+                              <Badge key={index} variant="outline" className="text-xs border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">
                                 {tag}
                               </Badge>
                             ))}
@@ -312,31 +312,31 @@ const Study = () => {
           {/* Study Stats & Recent Sessions */}
           <div className="space-y-4 sm:space-y-6">
             {/* Quick Stats */}
-            <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
               <CardHeader className="pb-3 sm:pb-6">
-                <CardTitle className="text-base sm:text-lg font-semibold text-gray-800">Today's Progress</CardTitle>
+                <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100">Today's Progress</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 sm:space-y-4 pt-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-blue-600" />
-                    <span className="text-xs sm:text-sm text-gray-600">Study Time</span>
+                    <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Study Time</span>
                   </div>
-                  <span className="text-sm sm:text-base font-semibold text-gray-800">{todayStats.studyTime} min</span>
+                  <span className="text-sm sm:text-base font-semibold text-gray-800 dark:text-gray-100">{todayStats.studyTime} min</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Target className="h-4 w-4 text-green-600" />
-                    <span className="text-xs sm:text-sm text-gray-600">Cards Reviewed</span>
+                    <Target className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Cards Reviewed</span>
                   </div>
-                  <span className="text-sm sm:text-base font-semibold text-gray-800">{todayStats.cardsReviewed}</span>
+                  <span className="text-sm sm:text-base font-semibold text-gray-800 dark:text-gray-100">{todayStats.cardsReviewed}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-purple-600" />
-                    <span className="text-xs sm:text-sm text-gray-600">Accuracy</span>
+                    <TrendingUp className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Accuracy</span>
                   </div>
-                  <span className="text-sm sm:text-base font-semibold text-gray-800">
+                  <span className="text-sm sm:text-base font-semibold text-gray-800 dark:text-gray-100">
                     {todayStats.cardsReviewed > 0 ? `${todayStats.accuracy}%` : '--%'}
                   </span>
                 </div>
@@ -344,31 +344,31 @@ const Study = () => {
             </Card>
 
             {/* Recent Sessions */}
-            <Card className="bg-white/80 backdrop-blur-lg border-white/20 shadow-xl rounded-2xl">
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-800">Recent Sessions</CardTitle>
+                <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100">Recent Sessions</CardTitle>
               </CardHeader>
               <CardContent>
                 {recentSessions.length === 0 ? (
                   <div className="text-center py-8">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <RotateCcw className="h-6 w-6 text-gray-400" />
+                    <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <RotateCcw className="h-6 w-6 text-gray-400 dark:text-gray-500" />
                     </div>
-                    <p className="text-sm text-gray-500">No recent sessions</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">No recent sessions</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {recentSessions.map((session) => (
-                      <div key={session.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={session.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                         <div>
-                          <div className="text-sm font-medium text-gray-800">
+                          <div className="text-sm font-medium text-gray-800 dark:text-gray-100">
                             {session.deck_name}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
                             {session.correct_answers}/{session.total_questions} correct ({Math.round((session.correct_answers / session.total_questions) * 100)}%)
                           </div>
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
                           {new Date(session.created_at).toLocaleDateString()}
                         </div>
                       </div>

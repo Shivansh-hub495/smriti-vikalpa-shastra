@@ -1,5 +1,6 @@
 
 import { BookOpen, Home, Target, TrendingUp, Settings, Plus, Search, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -55,20 +56,21 @@ const quickActions = [
 
 export function AppSidebar() {
   return (
-    <Sidebar className="bg-white/80 backdrop-blur-lg border-r border-white/20 shadow-xl flex flex-col">
-      <SidebarHeader className="border-b border-white/20 p-6 flex-shrink-0">
+    <Sidebar className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-r border-white/20 dark:border-gray-700/20 shadow-xl flex flex-col">
+      <SidebarHeader className="border-b border-white/20 dark:border-gray-700/20 p-6 flex-shrink-0">
         <div className="flex items-center space-x-3">
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl blur opacity-75"></div>
-            <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 p-2 rounded-xl">
-              <Sparkles className="h-6 w-6 text-white" />
-            </div>
+            <img
+              src="/logo.png"
+              alt="Smriti Logo"
+              className="h-12 w-12 rounded-xl object-contain"
+            />
           </div>
           <div>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               Smriti
             </h1>
-            <p className="text-sm text-gray-500 font-medium">Memory Palace</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Memory Palace</p>
           </div>
         </div>
       </SidebarHeader>
@@ -77,7 +79,7 @@ export function AppSidebar() {
         <ScrollArea className="h-full">
           <div className="p-4">
             <SidebarGroup>
-              <SidebarGroupLabel className="text-gray-600 text-xs uppercase tracking-wider font-semibold mb-3">
+              <SidebarGroupLabel className="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-wider font-semibold mb-3">
                 Navigation
               </SidebarGroupLabel>
               <SidebarGroupContent>
@@ -85,12 +87,12 @@ export function AppSidebar() {
                   {navigationItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild className="group relative overflow-hidden rounded-xl px-3 !py-3 !h-auto transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                        <a href={item.url} className="flex items-center space-x-3">
+                        <Link to={item.url} className="flex items-center space-x-3">
                           <div className={`p-2 rounded-lg bg-gradient-to-r ${item.color} shadow-lg group-hover:shadow-xl transition-all duration-300`}>
                             <item.icon className="h-4 w-4 text-white" />
                           </div>
-                          <span className="text-base font-medium text-gray-700 group-hover:text-gray-900">{item.title}</span>
-                        </a>
+                          <span className="text-base font-medium text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">{item.title}</span>
+                        </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -99,7 +101,7 @@ export function AppSidebar() {
             </SidebarGroup>
 
             <SidebarGroup className="mt-6">
-              <SidebarGroupLabel className="text-gray-600 text-xs uppercase tracking-wider font-semibold mb-3">
+              <SidebarGroupLabel className="text-gray-600 dark:text-gray-400 text-xs uppercase tracking-wider font-semibold mb-3">
                 Quick Actions
               </SidebarGroupLabel>
               <SidebarGroupContent>
@@ -107,12 +109,12 @@ export function AppSidebar() {
                   {quickActions.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild className="group relative overflow-hidden rounded-xl px-3 !py-3 !h-auto transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                        <a href={item.url} className="flex items-center space-x-3">
+                        <Link to={item.url} className="flex items-center space-x-3">
                           <div className={`p-2 rounded-lg bg-gradient-to-r ${item.color} shadow-lg group-hover:shadow-xl transition-all duration-300`}>
                             <item.icon className="h-4 w-4 text-white" />
                           </div>
-                          <span className="text-base font-medium text-gray-700 group-hover:text-gray-900">{item.title}</span>
-                        </a>
+                          <span className="text-base font-medium text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">{item.title}</span>
+                        </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
@@ -123,17 +125,17 @@ export function AppSidebar() {
         </ScrollArea>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-white/20 p-4 space-y-2 flex-shrink-0">
+      <SidebarFooter className="border-t border-white/20 dark:border-gray-700/20 p-4 space-y-2 flex-shrink-0">
         <UserProfile />
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="group relative overflow-hidden rounded-xl px-3 !py-3 !h-auto transition-all duration-300 hover:scale-105 hover:shadow-lg">
-              <a href="/settings" className="flex items-center space-x-3">
+              <Link to="/settings" className="flex items-center space-x-3">
                 <div className="p-2 rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 shadow-lg group-hover:shadow-xl transition-all duration-300">
                   <Settings className="h-4 w-4 text-white" />
                 </div>
-                <span className="text-base font-medium text-gray-700 group-hover:text-gray-900">Settings</span>
-              </a>
+                <span className="text-base font-medium text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">Settings</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
