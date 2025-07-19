@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Folder, FolderOpen, MoreVertical, Edit, Trash2, Plus } from "lucide-react";
+import { Folder, FolderOpen, MoreVertical, Edit, Trash2, Plus, Move } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 
@@ -25,15 +25,17 @@ interface FolderCardProps {
   onDelete: (folderId: string) => void;
   onCreateSubfolder: (parentId: string) => void;
   onCreateDeck: (folderId: string) => void;
+  onMove?: (folder: Folder) => void;
 }
 
-const FolderCard = ({ 
-  folder, 
-  onOpen, 
-  onEdit, 
-  onDelete, 
-  onCreateSubfolder, 
-  onCreateDeck 
+const FolderCard = ({
+  folder,
+  onOpen,
+  onEdit,
+  onDelete,
+  onCreateSubfolder,
+  onCreateDeck,
+  onMove
 }: FolderCardProps) => {
   const { toast } = useToast();
 
@@ -59,6 +61,11 @@ const FolderCard = ({
   const handleCreateDeck = (e: React.MouseEvent) => {
     e.stopPropagation();
     onCreateDeck(folder.id);
+  };
+
+  const handleMove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onMove?.(folder);
   };
 
   return (
@@ -111,6 +118,12 @@ const FolderCard = ({
               <Edit className="h-4 w-4 mr-2" />
               Edit Folder
             </DropdownMenuItem>
+            {onMove && (
+              <DropdownMenuItem onClick={handleMove}>
+                <Move className="h-4 w-4 mr-2" />
+                Move to
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem onClick={handleDelete} className="text-red-600">
               <Trash2 className="h-4 w-4 mr-2" />
               Delete Folder

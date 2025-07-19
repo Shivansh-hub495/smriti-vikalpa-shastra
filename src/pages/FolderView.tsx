@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ArrowLeft, Plus, Search, BookOpen, MoreVertical, Edit, Trash2, Play, Settings, Tag, Folder } from 'lucide-react';
+import { ArrowLeft, Plus, Search, BookOpen, MoreVertical, Edit, Trash2, Play, Settings, Tag, Folder, Move } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import CreateFolderModal from '@/components/CreateFolderModal';
 import FolderCard from '@/components/FolderCard';
 import StudyOptionsModal, { StudyOptions } from '@/components/StudyOptionsModal';
+import MoveToModal from '@/components/MoveToModal';
 
 interface Folder {
   id: string;
@@ -56,6 +57,8 @@ const FolderView = () => {
   const [showStudyModal, setShowStudyModal] = useState(false);
   const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
   const [deckCardCount, setDeckCardCount] = useState(0);
+  const [showMoveModal, setShowMoveModal] = useState(false);
+  const [moveItem, setMoveItem] = useState<{ type: 'folder' | 'deck'; item: Folder | Deck } | null>(null);
 
   useEffect(() => {
     if (user && folderId) {
@@ -344,6 +347,22 @@ const FolderView = () => {
     navigate(`/create-deck?folderId=${folderId}`);
   };
 
+  const handleMoveFolder = (folder: Folder) => {
+    setMoveItem({ type: 'folder', item: folder });
+    setShowMoveModal(true);
+  };
+
+  const handleMoveDeck = (deck: Deck) => {
+    setMoveItem({ type: 'deck', item: deck });
+    setShowMoveModal(true);
+  };
+
+  const handleMoveSuccess = () => {
+    fetchFolderData();
+    setShowMoveModal(false);
+    setMoveItem(null);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
@@ -460,6 +479,7 @@ const FolderView = () => {
                   onDelete={handleDeleteFolder}
                   onCreateSubfolder={handleCreateSubfolder}
                   onCreateDeck={handleCreateDeck}
+                  onMove={handleMoveFolder}
                 />
               ))}
             </div>
@@ -523,7 +543,11 @@ const FolderView = () => {
                           <Settings className="h-4 w-4 mr-2" />
                           Manage Cards
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
+                        <DropdownMenuItem onClick={() => handleMoveDeck(deck)}>
+                          <Move className="h-4 w-4 mr-2" />
+                          Move to
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
                           onClick={() => deleteDeck(deck.id, deck.name)}
                           className="text-red-600"
                         >
@@ -608,6 +632,22 @@ const FolderView = () => {
           onStartStudy={handleStudyStart}
           deckName={selectedDeck.name}
           totalCards={deckCardCount}
+        />
+      )}
+
+      {/* Move To Modal */}
+      {moveItem && (
+        <MoveToModal
+          isOpen={showMoveModal}
+          onClose={() => {
+            setShowMoveModal(false);
+            setMoveItem(null);
+          }}
+          onSuccess={handleMoveSuccess}
+          itemType={moveItem.type}
+          itemId={moveItem.item.id}
+          itemName={moveItem.item.name}
+          currentFolderId={moveItem.type === 'folder' ? (moveItem.item as Folder).parent_id : (moveItem.item as Deck).folder_id}
         />
       )}
     </div>

@@ -62,7 +62,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode, onForgotPassword })
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto bg-white/95 backdrop-blur-lg border-white/20 shadow-2xl">
+    <Card className="w-full max-w-md mx-auto bg-white/60 backdrop-blur-sm border-white/20 shadow-lg">
       <CardHeader className="space-y-1 text-center">
         <CardTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
           Welcome Back

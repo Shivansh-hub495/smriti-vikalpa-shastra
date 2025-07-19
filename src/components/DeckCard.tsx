@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Target, Clock, Play, MoreVertical, Edit, Trash2 } from "lucide-react";
+import { BookOpen, Target, Clock, Play, MoreVertical, Edit, Trash2, Move } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 
@@ -27,9 +27,10 @@ interface DeckCardProps {
   onStudy: (deckId: string) => void;
   onEdit: (deck: Deck) => void;
   onDelete: (deckId: string) => void;
+  onMove?: (deck: Deck) => void;
 }
 
-const DeckCard = ({ deck, onStudy, onEdit, onDelete }: DeckCardProps) => {
+const DeckCard = ({ deck, onStudy, onEdit, onDelete, onMove }: DeckCardProps) => {
   const { toast } = useToast();
 
   const handleStudy = () => {
@@ -44,6 +45,11 @@ const DeckCard = ({ deck, onStudy, onEdit, onDelete }: DeckCardProps) => {
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     onDelete(deck.id);
+  };
+
+  const handleMove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onMove?.(deck);
   };
 
   return (
@@ -84,6 +90,12 @@ const DeckCard = ({ deck, onStudy, onEdit, onDelete }: DeckCardProps) => {
               <Edit className="h-4 w-4 mr-2" />
               Edit Deck
             </DropdownMenuItem>
+            {onMove && (
+              <DropdownMenuItem onClick={handleMove}>
+                <Move className="h-4 w-4 mr-2" />
+                Move to
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem onClick={handleDelete} className="text-red-600">
               <Trash2 className="h-4 w-4 mr-2" />
               Delete Deck

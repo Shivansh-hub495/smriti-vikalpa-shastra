@@ -12,6 +12,7 @@ import CreateDeckModal from "@/components/CreateDeckModal";
 import CreateFolderModal from "@/components/CreateFolderModal";
 import FolderBreadcrumb from "@/components/FolderBreadcrumb";
 import StatsOverview from "@/components/StatsOverview";
+import MoveToModal from "@/components/MoveToModal";
 import { useFolders } from "@/hooks/useFolders";
 import { useDecks } from "@/hooks/useDecks";
 import type { Folder, Deck } from "@/lib/supabase";
@@ -24,6 +25,8 @@ const Index = () => {
   const [currentPath, setCurrentPath] = useState<{ id: string; name: string }[]>([]);
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
   const [editingDeck, setEditingDeck] = useState<Deck | null>(null);
+  const [showMoveModal, setShowMoveModal] = useState(false);
+  const [moveItem, setMoveItem] = useState<{ type: 'folder' | 'deck'; item: Folder | Deck } | null>(null);
   const { toast } = useToast();
 
   // Hooks for data fetching
@@ -137,6 +140,23 @@ const Index = () => {
     // TODO: Navigate to study page
   };
 
+  const handleMoveFolder = (folder: Folder) => {
+    setMoveItem({ type: 'folder', item: folder });
+    setShowMoveModal(true);
+  };
+
+  const handleMoveDeck = (deck: Deck) => {
+    setMoveItem({ type: 'deck', item: deck });
+    setShowMoveModal(true);
+  };
+
+  const handleMoveSuccess = () => {
+    // Refresh both folders and decks data
+    setShowMoveModal(false);
+    setMoveItem(null);
+    // The hooks will automatically refetch data
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
@@ -223,6 +243,7 @@ const Index = () => {
                     setCurrentFolderId(folderId);
                     setIsCreateDeckModalOpen(true);
                   }}
+                  onMove={handleMoveFolder}
                 />
               ))}
 
@@ -234,6 +255,7 @@ const Index = () => {
                   onStudy={handleStudyDeck}
                   onEdit={handleEditDeck}
                   onDelete={handleDeleteDeck}
+                  onMove={handleMoveDeck}
                 />
               ))}
             </div>
@@ -285,6 +307,22 @@ const Index = () => {
         folderId={currentFolderId}
         editingDeck={editingDeck}
       />
+
+      {/* Move To Modal */}
+      {moveItem && (
+        <MoveToModal
+          isOpen={showMoveModal}
+          onClose={() => {
+            setShowMoveModal(false);
+            setMoveItem(null);
+          }}
+          onSuccess={handleMoveSuccess}
+          itemType={moveItem.type}
+          itemId={moveItem.item.id}
+          itemName={moveItem.item.name}
+          currentFolderId={moveItem.type === 'folder' ? (moveItem.item as Folder).parent_id : (moveItem.item as Deck).folder_id}
+        />
+      )}
     </div>
   );
 };
