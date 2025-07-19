@@ -171,16 +171,8 @@ const Settings = () => {
   };
 
   const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error('Error signing out:', error);
-      toast({
-        title: "Error",
-        description: "Failed to sign out",
-        variant: "destructive",
-      });
-    }
+    // The AuthContext now handles all error scenarios and user feedback
+    await signOut();
   };
 
   if (loading) {

@@ -42,12 +42,9 @@ const UserProfile: React.FC = () => {
   };
 
   const handleSignOut = async () => {
-    try {
-      setIsOpen(false);
-      await signOut();
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
+    setIsOpen(false);
+    // The AuthContext now handles all error scenarios and user feedback
+    await signOut();
   };
 
   return (

@@ -138,20 +138,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signOut = async () => {
     try {
+      // Always attempt to sign out, regardless of session state
       const { error } = await supabase.auth.signOut();
+
+      // Clear local state regardless of API response
+      setSession(null);
+      setUser(null);
+
       if (error) {
+        console.warn('Supabase signOut error (but continuing with local cleanup):', error);
+        // Don't show error to user if it's just a session issue
+        if (error.message.toLowerCase().includes('session') ||
+            error.message.toLowerCase().includes('not authenticated')) {
+          toast({
+            title: "Signed out successfully",
+            description: "You have been signed out",
+          });
+        } else {
+          toast({
+            title: "Sign out completed",
+            description: "You have been signed out locally",
+          });
+        }
+      } else {
         toast({
-          title: "Sign out failed",
-          description: error.message,
-          variant: "destructive",
+          title: "Signed out successfully",
+          description: "You have been signed out",
         });
       }
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error('Error during sign out:', error);
+      // Always clear local state to ensure user is signed out
+      setSession(null);
+      setUser(null);
       toast({
-        title: "Sign out failed",
-        description: "An unexpected error occurred",
-        variant: "destructive",
+        title: "Signed out successfully",
+        description: "You have been signed out",
       });
     }
   };
