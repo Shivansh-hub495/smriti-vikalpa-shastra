@@ -13,6 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -55,6 +56,15 @@ const quickActions = [
 ];
 
 export function AppSidebar() {
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  // Function to handle navigation link clicks on mobile
+  const handleMobileNavClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
   return (
     <Sidebar className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-r border-white/20 dark:border-gray-700/20 shadow-xl flex flex-col">
       <SidebarHeader className="border-b border-white/20 dark:border-gray-700/20 p-6 flex-shrink-0">
@@ -87,7 +97,7 @@ export function AppSidebar() {
                   {navigationItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild className="group relative overflow-hidden rounded-xl px-3 !py-3 !h-auto transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                        <Link to={item.url} className="flex items-center space-x-3">
+                        <Link to={item.url} onClick={handleMobileNavClick} className="flex items-center space-x-3">
                           <div className={`p-2 rounded-lg bg-gradient-to-r ${item.color} shadow-lg group-hover:shadow-xl transition-all duration-300`}>
                             <item.icon className="h-4 w-4 text-white" />
                           </div>
@@ -109,7 +119,7 @@ export function AppSidebar() {
                   {quickActions.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild className="group relative overflow-hidden rounded-xl px-3 !py-3 !h-auto transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                        <Link to={item.url} className="flex items-center space-x-3">
+                        <Link to={item.url} onClick={handleMobileNavClick} className="flex items-center space-x-3">
                           <div className={`p-2 rounded-lg bg-gradient-to-r ${item.color} shadow-lg group-hover:shadow-xl transition-all duration-300`}>
                             <item.icon className="h-4 w-4 text-white" />
                           </div>
@@ -130,7 +140,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="group relative overflow-hidden rounded-xl px-3 !py-3 !h-auto transition-all duration-300 hover:scale-105 hover:shadow-lg">
-              <Link to="/settings" className="flex items-center space-x-3">
+              <Link to="/settings" onClick={handleMobileNavClick} className="flex items-center space-x-3">
                 <div className="p-2 rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 shadow-lg group-hover:shadow-xl transition-all duration-300">
                   <Settings className="h-4 w-4 text-white" />
                 </div>

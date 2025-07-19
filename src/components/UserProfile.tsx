@@ -4,10 +4,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Settings, LogOut, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useSidebar } from '@/components/ui/sidebar';
 
 const UserProfile: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { isMobile, setOpenMobile } = useSidebar();
   const [isOpen, setIsOpen] = useState(false);
 
   if (!user) return null;
@@ -25,11 +27,17 @@ const UserProfile: React.FC = () => {
 
   const handleProfileClick = () => {
     setIsOpen(false);
+    if (isMobile) {
+      setOpenMobile(false);
+    }
     navigate('/settings');
   };
 
   const handleSettingsClick = () => {
     setIsOpen(false);
+    if (isMobile) {
+      setOpenMobile(false);
+    }
     navigate('/settings');
   };
 
