@@ -27,3 +27,6 @@ dist-ssr
 .kiro/
 .qodo/
 .zencoder/
+
+# Vite temporary files
+vite.config.ts.timestamp-*
