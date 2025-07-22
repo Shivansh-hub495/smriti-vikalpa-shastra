@@ -210,4 +210,235 @@
   .portfolio-scroll {
     scroll-behavior: smooth;
   }
+
+  /* Chatbot animations */
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.2s ease-out;
+  }
+
+  /* Auth form animations */
+  @keyframes form-slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes form-fade-in {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes input-focus {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.02);
+    }
+  }
+
+  .animate-form-slide-in {
+    animation: form-slide-in 0.5s ease-out;
+  }
+
+  .animate-form-fade-in {
+    animation: form-fade-in 0.4s ease-out;
+  }
+
+  .input-focus-animation:focus {
+    animation: input-focus 0.2s ease-out;
+  }
+
+  /* Stagger animation for form fields */
+  .animate-stagger-1 {
+    animation: form-slide-in 0.5s ease-out;
+    animation-delay: 0.1s;
+    animation-fill-mode: both;
+  }
+
+  .animate-stagger-2 {
+    animation: form-slide-in 0.5s ease-out;
+    animation-delay: 0.2s;
+    animation-fill-mode: both;
+  }
+
+  .animate-stagger-3 {
+    animation: form-slide-in 0.5s ease-out;
+    animation-delay: 0.3s;
+    animation-fill-mode: both;
+  }
+
+  .animate-stagger-4 {
+    animation: form-slide-in 0.5s ease-out;
+    animation-delay: 0.4s;
+    animation-fill-mode: both;
+  }
+
+  .animate-stagger-5 {
+    animation: form-slide-in 0.5s ease-out;
+    animation-delay: 0.5s;
+    animation-fill-mode: both;
+  }
+
+  /* Dashboard glow effect */
+  @keyframes glow-pulse {
+    0%, 100% {
+      box-shadow:
+        0 0 15px rgba(147, 51, 234, 0.3),
+        0 0 30px rgba(147, 51, 234, 0.2),
+        0 0 45px rgba(147, 51, 234, 0.1);
+    }
+    50% {
+      box-shadow:
+        0 0 20px rgba(147, 51, 234, 0.4),
+        0 0 40px rgba(147, 51, 234, 0.3),
+        0 0 60px rgba(147, 51, 234, 0.2);
+    }
+  }
+
+  .dashboard-glow {
+    animation: glow-pulse 8s ease-in-out infinite;
+    position: relative;
+    background: inherit;
+  }
+
+  /* Static border */
+  .dashboard-glow::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    padding: 2px;
+    border-radius: 1rem;
+    background: rgba(147, 51, 234, 0.2);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  /* Moving light around border */
+  .dashboard-glow::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    padding: 2px;
+    border-radius: 1rem;
+    background: conic-gradient(
+      from var(--angle),
+      transparent 0deg,
+      transparent 270deg,
+      #a855f7 290deg,
+      #ec4899 300deg,
+      #a855f7 310deg,
+      transparent 330deg,
+      transparent 360deg
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: rotate-border 6s linear infinite;
+  }
+
+  @keyframes rotate-border {
+    to {
+      --angle: 360deg;
+    }
+  }
+
+  @property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  /* Auth card animations */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes card-entrance {
+    from {
+      opacity: 0;
+      transform: translateY(40px) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .auth-card-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .auth-card-entrance {
+    animation: card-entrance 0.6s ease-out;
+  }
+
+  /* 3D tilt effect on hover */
+  .auth-card-3d {
+    transition: transform 0.3s ease;
+    transform-style: preserve-3d;
+  }
+
+  .auth-card-3d:hover {
+    transform: rotateY(-5deg) rotateX(5deg) scale(1.02);
+  }
+
+  /* Subtle breathing effect */
+  @keyframes breathe {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 10px 40px rgba(147, 51, 234, 0.1);
+    }
+    50% {
+      transform: scale(1.01);
+      box-shadow: 0 15px 50px rgba(147, 51, 234, 0.2);
+    }
+  }
+
+  .auth-card-breathe {
+    animation: breathe 4s ease-in-out infinite;
+  }
 }

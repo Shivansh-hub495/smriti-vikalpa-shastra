@@ -87,11 +87,20 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				'skew-scroll': {
+					'0%': {
+						transform: 'rotateX(20deg) rotateZ(-20deg) skewX(20deg) translateY(0)',
+					},
+					'100%': {
+						transform: 'rotateX(20deg) rotateZ(-20deg) skewX(20deg) translateY(-100%)',
+					},
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'skew-scroll': 'skew-scroll 20s linear infinite',
 			}
 		}
 	},

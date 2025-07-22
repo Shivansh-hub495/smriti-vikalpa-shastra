@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# AI/Development tools
+.kiro/
+.qodo/
+.zencoder/
