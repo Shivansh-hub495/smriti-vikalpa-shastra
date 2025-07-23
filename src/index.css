@@ -242,6 +242,22 @@
     animation: fade-in 0.2s ease-out;
   }
 
+  /* Mobile safe area and keyboard handling */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Touch optimization */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  /* Smooth scrolling for mobile */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
   /* Auth form animations */
   @keyframes form-slide-in {
     from {
