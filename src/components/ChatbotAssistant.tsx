@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, X, Send } from 'lucide-react';
+import { X, Send } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import RobotFace from './RobotFace';
 
 const ChatbotAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [robotExpression, setRobotExpression] = useState<'happy' | 'thinking' | 'neutral' | 'winking' | 'surprised'>('happy');
   const [messages, setMessages] = useState([
     { text: "Hi! I'm your study assistant. How can I help you today?", sender: "assistant" }
   ]);
@@ -22,6 +24,11 @@ const ChatbotAssistant = () => {
     // Reset input focus state when closing
     if (isOpen) {
       setIsInputFocused(false);
+      setRobotExpression('neutral');
+    } else {
+      // Wink when opening
+      setRobotExpression('winking');
+      setTimeout(() => setRobotExpression('happy'), 1000);
     }
   };
 
@@ -105,14 +112,19 @@ const ChatbotAssistant = () => {
     const newMessages = [...messages, { text: inputMessage, sender: "user" }];
     setMessages(newMessages);
 
-    // Show typing indicator
+    // Show typing indicator and thinking expression
     setIsTyping(true);
+    setRobotExpression('thinking');
 
     // Get and add assistant response
     const response = getResponse(inputMessage);
     setTimeout(() => {
       setIsTyping(false);
       setMessages(prev => [...prev, { text: response, sender: "assistant" }]);
+      
+      // Show happy expression after responding
+      setRobotExpression('happy');
+      setTimeout(() => setRobotExpression('neutral'), 2000);
     }, 600);
 
     setInputMessage("");
@@ -133,6 +145,11 @@ const ChatbotAssistant = () => {
 
   const handleInputFocus = () => {
     setIsInputFocused(true);
+    // Show surprised expression when user starts typing
+    if (inputMessage.length === 0) {
+      setRobotExpression('surprised');
+      setTimeout(() => setRobotExpression('neutral'), 1000);
+    }
   };
 
   const handleInputBlur = () => {
@@ -150,7 +167,10 @@ const ChatbotAssistant = () => {
           onClick={toggleChat}
           aria-label={isOpen ? "Close chat" : "Open chat"}
         >
-          <Bot className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} transition-transform duration-300 group-hover:rotate-12`} />
+          <RobotFace
+            expression={robotExpression}
+            className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} transition-transform duration-300 group-hover:rotate-12`}
+          />
           {/* Pulse animation */}
           <span className="absolute -inset-1 bg-purple-600 rounded-full opacity-30 animate-ping"></span>
         </button>
@@ -180,7 +200,10 @@ const ChatbotAssistant = () => {
             isMobile ? 'p-3' : 'p-4'
           } border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-gray-700 dark:to-gray-800 flex-shrink-0`}>
             <div className="flex items-center gap-2">
-              <Bot className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'} text-purple-600 dark:text-purple-400`} />
+              <RobotFace
+                expression={isTyping ? 'thinking' : 'neutral'}
+                className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'} text-purple-600 dark:text-purple-400`}
+              />
               <h3 className={`font-semibold text-gray-800 dark:text-white ${
                 isMobile ? 'text-base' : 'text-lg'
               }`}>Study Assistant</h3>
@@ -198,7 +221,7 @@ const ChatbotAssistant = () => {
           
           <div
             ref={messagesRef}
-            className={`${isMobile ? 'p-3' : 'p-4'} overflow-y-auto bg-gray-50 dark:bg-gray-900 flex-1 scroll-smooth`}
+            className={`${isMobile ? 'p-3' : 'p-4'} overflow-y-auto bg-gray-50 dark:bg-gray-900 flex-1 scroll-smooth custom-scrollbar`}
             style={{
               WebkitOverflowScrolling: 'touch'
             }}
