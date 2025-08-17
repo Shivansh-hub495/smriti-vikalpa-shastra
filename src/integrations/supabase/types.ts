@@ -215,6 +215,155 @@ export type Database = {
           }
         ]
       }
+      questions: {
+        Row: {
+          id: string
+          quiz_id: string
+          question_text: string
+          question_type: string
+          question_data: Json
+          explanation: string | null
+          order_index: number
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          quiz_id: string
+          question_text: string
+          question_type: string
+          question_data?: Json
+          explanation?: string | null
+          order_index: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          quiz_id?: string
+          question_text?: string
+          question_type?: string
+          question_data?: Json
+          explanation?: string | null
+          order_index?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      quiz_attempts: {
+        Row: {
+          id: string
+          quiz_id: string
+          user_id: string
+          started_at: string | null
+          completed_at: string | null
+          score: number | null
+          total_questions: number
+          correct_answers: number | null
+          time_taken: number | null
+          answers: Json | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          quiz_id: string
+          user_id: string
+          started_at?: string | null
+          completed_at?: string | null
+          score?: number | null
+          total_questions: number
+          correct_answers?: number | null
+          time_taken?: number | null
+          answers?: Json | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          quiz_id?: string
+          user_id?: string
+          started_at?: string | null
+          completed_at?: string | null
+          score?: number | null
+          total_questions?: number
+          correct_answers?: number | null
+          time_taken?: number | null
+          answers?: Json | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_attempts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      quizzes: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          folder_id: string
+          user_id: string
+          settings: Json | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          folder_id: string
+          user_id: string
+          settings?: Json | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          folder_id?: string
+          user_id?: string
+          settings?: Json | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quizzes_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quizzes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       study_sessions: {
         Row: {
           id: string

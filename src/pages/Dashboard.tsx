@@ -7,6 +7,7 @@ import { Plus, Folder, Search, TrendingUp, Target, Clock, BookOpen } from 'lucid
 import { useNavigate } from 'react-router-dom';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { supabase } from '@/integrations/supabase/client';
+import { useAutoRefresh } from '@/hooks/useAutoRefresh';
 import { useAuth } from '@/contexts/AuthContext';
 import FolderCard from '@/components/FolderCard';
 import CreateFolderModal from '@/components/CreateFolderModal';
@@ -52,6 +53,14 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (user) {
+      fetchFolders();
+      fetchStats();
+    }
+  }, [user]);
+
+  // auto refresh on focus/visibility/back
+  useAutoRefresh(() => {
     if (user) {
       fetchFolders();
       fetchStats();

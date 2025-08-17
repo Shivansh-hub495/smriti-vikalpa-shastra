@@ -90,7 +90,7 @@ const ChatbotAssistant = () => {
     "default": "I'm not sure I understand. I can help with study tips, app navigation, or general questions about flashcards."
   };
 
-  const getResponse = (message) => {
+  const getResponse = (message: string) => {
     const lowerMessage = message.toLowerCase();
     if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
       return predefinedResponses.hello;

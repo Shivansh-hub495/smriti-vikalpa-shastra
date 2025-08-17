@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ArrowLeft, Plus, Search, BookOpen, MoreVertical, Edit, Trash2, Play, Settings, Tag, Folder, Move } from 'lucide-react';
+import { ArrowLeft, Plus, Search, BookOpen, MoreVertical, Edit, Trash2, Play, Settings, Tag, Folder, Move, FileQuestion } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,8 +12,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import CreateFolderModal from '@/components/CreateFolderModal';
 import FolderCard from '@/components/FolderCard';
+import QuizCard from '@/components/QuizCard';
 import StudyOptionsModal, { StudyOptions } from '@/components/StudyOptionsModal';
 import MoveToModal from '@/components/MoveToModal';
+import { useAutoRefresh } from '@/hooks/useAutoRefresh';
+
+// Temporarily comment out the optimized hooks to fix the white screen
+// import { useQuizzesInFolder, useDeleteQuiz } from '@/hooks/useQuizQuery';
+// import { VirtualizedQuizList } from '@/components/quiz/VirtualizedQuizList';
+// import { QuizListSkeleton } from '@/components/quiz/LazyQuizComponents';
 
 interface Folder {
   id: string;
@@ -26,6 +33,7 @@ interface Folder {
   user_id: string;
   // Computed fields
   deck_count?: number;
+  quiz_count?: number;
   subfolder_count?: number;
 }
 
@@ -40,6 +48,23 @@ interface Deck {
   flashcard_count?: number;
 }
 
+interface Quiz {
+  id: string;
+  title: string;
+  description?: string;
+  folder_id: string;
+  user_id: string;
+  settings: any;
+  created_at: string;
+  updated_at: string;
+  question_count?: number;
+  last_attempt?: {
+    score: number;
+    completed_at: string;
+  };
+  attempt_count?: number;
+}
+
 const FolderView = () => {
   const navigate = useNavigate();
   const { folderId } = useParams<{ folderId: string }>();
@@ -50,6 +75,8 @@ const FolderView = () => {
   const [subfolders, setSubfolders] = useState<Folder[]>([]);
   const [decks, setDecks] = useState<Deck[]>([]);
   const [filteredDecks, setFilteredDecks] = useState<Deck[]>([]);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [filteredQuizzes, setFilteredQuizzes] = useState<Quiz[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
@@ -59,73 +86,207 @@ const FolderView = () => {
   const [deckCardCount, setDeckCardCount] = useState(0);
   const [showMoveModal, setShowMoveModal] = useState(false);
   const [moveItem, setMoveItem] = useState<{ type: 'folder' | 'deck'; item: Folder | Deck } | null>(null);
-
   useEffect(() => {
     if (user && folderId) {
+      // Always fetch fresh data when folder changes or page mounts
       fetchFolderData();
     }
   }, [user, folderId]);
 
+  // Auto refresh on focus/visibility/back
+  useAutoRefresh(() => {
+    if (user && folderId) fetchFolderData();
+  }, [user, folderId]);
+
   useEffect(() => {
     filterDecks();
-  }, [decks, searchQuery]);
+    filterQuizzes();
+  }, [decks, quizzes, searchQuery]);
 
   const fetchFolderData = async () => {
+    if (!user?.id || !folderId) {
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Fetch folder details
-      const { data: folderData, error: folderError } = await supabase
-        .from('folders')
-        .select('*')
-        .eq('id', folderId)
-        .eq('user_id', user?.id)
-        .single();
+      // Fetch all basic data in parallel for much faster loading
+      const [folderResult, subfoldersResult, decksResult, quizzesResult] = await Promise.all([
+        // Fetch folder details
+        supabase
+          .from('folders')
+          .select('*')
+          .eq('id', folderId)
+          .eq('user_id', user?.id)
+          .single(),
+        
+        // Fetch subfolders
+        supabase
+          .from('folders')
+          .select('*')
+          .eq('parent_id', folderId)
+          .eq('user_id', user?.id)
+          .order('created_at', { ascending: false }),
+        
+        // Fetch decks
+        supabase
+          .from('decks')
+          .select('*')
+          .eq('folder_id', folderId)
+          .eq('user_id', user?.id)
+          .order('created_at', { ascending: false }),
+        
+        // Fetch quizzes
+        supabase
+          .from('quizzes')
+          .select('*')
+          .eq('folder_id', folderId)
+          .eq('user_id', user?.id)
+          .order('created_at', { ascending: false })
+      ]);
 
-      if (folderError) throw folderError;
-      setFolder(folderData);
+      // Handle folder data
+      if (folderResult.error) throw folderResult.error;
+      setFolder(folderResult.data);
 
-      // Fetch subfolders
-      const { data: subfoldersData, error: subfoldersError } = await supabase
-        .from('folders')
-        .select(`
-          *,
-          decks:decks(count),
-          subfolders:folders!parent_id(count)
-        `)
-        .eq('parent_id', folderId)
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false });
+      // Handle subfolders - set basic data first, load counts later
+      if (!subfoldersResult.error && subfoldersResult.data) {
+        const basicSubfolders = subfoldersResult.data.map(folder => ({
+          ...folder,
+          deck_count: 0,
+          quiz_count: 0,
+          subfolder_count: 0
+        }));
+        setSubfolders(basicSubfolders);
+      }
 
-      if (subfoldersError) throw subfoldersError;
+      // Handle decks - set basic data first, load flashcard counts later
+      if (!decksResult.error && decksResult.data) {
+        const basicDecks = decksResult.data.map(deck => ({
+          ...deck,
+          flashcard_count: 0
+        }));
+        setDecks(basicDecks);
+      }
 
-      // Process subfolder data to include counts
-      const processedSubfolders = subfoldersData?.map(folder => ({
-        ...folder,
-        deck_count: folder.decks?.[0]?.count || 0,
-        subfolder_count: folder.subfolders?.[0]?.count || 0
-      })) || [];
+      // Handle quizzes - set basic data first
+      if (!quizzesResult.error && quizzesResult.data) {
+        const basicQuizzes = quizzesResult.data.map(quiz => ({
+          ...quiz,
+          question_count: 0,
+          attempt_count: 0,
+          last_attempt: undefined
+        }));
+        setQuizzes(basicQuizzes);
+      }
 
-      setSubfolders(processedSubfolders);
+      // Load additional metadata in background (non-blocking)
+      setTimeout(async () => {
+        try {
+          // Load subfolder counts if we have subfolders
+          if (subfoldersResult.data && subfoldersResult.data.length > 0) {
+            const subfolderIds = subfoldersResult.data.map(f => f.id);
+            
+            const [deckCounts, quizCounts, subfolderCounts] = await Promise.all([
+              supabase.from('decks').select('folder_id').in('folder_id', subfolderIds).eq('user_id', user?.id),
+              supabase.from('quizzes').select('folder_id').in('folder_id', subfolderIds).eq('user_id', user?.id),
+              supabase.from('folders').select('parent_id').in('parent_id', subfolderIds).eq('user_id', user?.id)
+            ]);
 
-      // Fetch decks in this folder
-      const { data: decksData, error: decksError } = await supabase
-        .from('decks')
-        .select(`
-          *,
-          flashcards(count)
-        `)
-        .eq('folder_id', folderId)
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false });
+            // Process counts
+            const deckCountMap = new Map();
+            const quizCountMap = new Map();
+            const subfolderCountMap = new Map();
 
-      if (decksError) throw decksError;
+            deckCounts.data?.forEach(item => {
+              deckCountMap.set(item.folder_id, (deckCountMap.get(item.folder_id) || 0) + 1);
+            });
 
-      // Process deck data to include flashcard count
-      const processedDecks = decksData?.map(deck => ({
-        ...deck,
-        flashcard_count: deck.flashcards?.[0]?.count || 0
-      })) || [];
+            quizCounts.data?.forEach(item => {
+              quizCountMap.set(item.folder_id, (quizCountMap.get(item.folder_id) || 0) + 1);
+            });
 
-      setDecks(processedDecks);
+            subfolderCounts.data?.forEach(item => {
+              subfolderCountMap.set(item.parent_id, (subfolderCountMap.get(item.parent_id) || 0) + 1);
+            });
+
+            // Update subfolders with counts
+            const enrichedSubfolders = subfoldersResult.data.map(folder => ({
+              ...folder,
+              deck_count: deckCountMap.get(folder.id) || 0,
+              quiz_count: quizCountMap.get(folder.id) || 0,
+              subfolder_count: subfolderCountMap.get(folder.id) || 0
+            }));
+
+            setSubfolders(enrichedSubfolders);
+          }
+
+          // Load deck flashcard counts if we have decks
+          if (decksResult.data && decksResult.data.length > 0) {
+            const deckIds = decksResult.data.map(d => d.id);
+            const { data: flashcards } = await supabase
+              .from('flashcards')
+              .select('deck_id')
+              .in('deck_id', deckIds);
+
+            const flashcardCountMap = new Map();
+            flashcards?.forEach(item => {
+              flashcardCountMap.set(item.deck_id, (flashcardCountMap.get(item.deck_id) || 0) + 1);
+            });
+
+            const enrichedDecks = decksResult.data.map(deck => ({
+              ...deck,
+              flashcard_count: flashcardCountMap.get(deck.id) || 0
+            }));
+
+            setDecks(enrichedDecks);
+          }
+
+          // Load quiz metadata if we have quizzes
+          if (quizzesResult.data && quizzesResult.data.length > 0) {
+            const quizIds = quizzesResult.data.map(q => q.id);
+            
+            const [questions, attempts] = await Promise.all([
+              supabase.from('questions').select('quiz_id').in('quiz_id', quizIds),
+              supabase.from('quiz_attempts')
+                .select('quiz_id, score, completed_at')
+                .in('quiz_id', quizIds)
+                .eq('user_id', user?.id)
+                .not('completed_at', 'is', null)
+            ]);
+
+            // Process counts
+            const questionCounts = new Map();
+            questions.data?.forEach(q => {
+              questionCounts.set(q.quiz_id, (questionCounts.get(q.quiz_id) || 0) + 1);
+            });
+
+            const attemptStats = new Map();
+            attempts.data?.forEach(attempt => {
+              const existing = attemptStats.get(attempt.quiz_id) || { count: 0, lastAttempt: null };
+              existing.count++;
+              if (!existing.lastAttempt || new Date(attempt.completed_at) > new Date(existing.lastAttempt.completed_at)) {
+                existing.lastAttempt = { score: attempt.score, completed_at: attempt.completed_at };
+              }
+              attemptStats.set(attempt.quiz_id, existing);
+            });
+
+            // Update quizzes with metadata
+            const enrichedQuizzes = quizzesResult.data.map(quiz => ({
+              ...quiz,
+              question_count: questionCounts.get(quiz.id) || 0,
+              attempt_count: attemptStats.get(quiz.id)?.count || 0,
+              last_attempt: attemptStats.get(quiz.id)?.lastAttempt
+            }));
+
+            setQuizzes(enrichedQuizzes);
+          }
+        } catch (error) {
+          console.warn('Error loading metadata:', error);
+          // Metadata loading failure doesn't break the UI
+        }
+      }, 50); // Very small delay to ensure UI renders immediately
+
     } catch (error) {
       console.error('Error fetching folder data:', error);
       toast({
@@ -153,6 +314,19 @@ const FolderView = () => {
     setFilteredDecks(filtered);
   };
 
+  const filterQuizzes = () => {
+    if (!searchQuery) {
+      setFilteredQuizzes(quizzes);
+      return;
+    }
+
+    const filtered = quizzes.filter(quiz =>
+      quiz.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      quiz.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredQuizzes(filtered);
+  };
+
   const deleteDeck = async (deckId: string, deckName: string) => {
     if (!confirm(`Are you sure you want to delete "${deckName}"? This action cannot be undone.`)) {
       return;
@@ -174,6 +348,36 @@ const FolderView = () => {
       toast({
         title: "Error",
         description: "Failed to delete deck",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteQuiz = async (quizId: string, quizTitle: string) => {
+    if (!confirm(`Are you sure you want to delete "${quizTitle}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('quizzes')
+        .delete()
+        .eq('id', quizId)
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      setQuizzes(quizzes.filter(quiz => quiz.id !== quizId));
+      toast({
+        title: "Success",
+        description: `Quiz "${quizTitle}" deleted successfully`,
+      });
+
+    } catch (error) {
+      console.error('Error deleting quiz:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete quiz",
         variant: "destructive",
       });
     }
@@ -368,7 +572,10 @@ const FolderView = () => {
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+            <div className="flex items-center gap-4">
+              <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="h-48 bg-gray-200 dark:bg-gray-700 rounded-2xl"></div>
@@ -380,12 +587,14 @@ const FolderView = () => {
     );
   }
 
-  if (!folder) {
+  if (!loading && !folder) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-12">
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Folder not found</h1>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+              {!user ? 'Please log in to continue' : 'Folder not found'}
+            </h1>
             <Button onClick={() => navigate('/')}>
               Return to Dashboard
             </Button>
@@ -434,6 +643,7 @@ const FolderView = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            {/* New Folder Button */}
             <Button
               onClick={() => setIsCreateFolderModalOpen(true)}
               variant="outline"
@@ -442,13 +652,25 @@ const FolderView = () => {
               <Folder className="h-4 w-4 mr-2" />
               New Folder
             </Button>
-            <Button
-              onClick={() => navigate(`/create?folderId=${folderId}`)}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto flex-shrink-0"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Deck
-            </Button>
+            
+            {/* Create Deck and Create Quiz - Side by side on mobile, inline on desktop */}
+            <div className="flex gap-2 sm:gap-3">
+              <Button
+                onClick={() => navigate(`/create?folderId=${folderId}`)}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex-1 sm:flex-initial sm:w-auto flex-shrink-0"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Deck
+              </Button>
+              <Button
+                onClick={() => navigate(`/create-quiz?folderId=${folderId}`)}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex-1 sm:flex-initial sm:w-auto flex-shrink-0"
+                data-tour="create-quiz-button"
+              >
+                <FileQuestion className="h-4 w-4 mr-2" />
+                Create Quiz
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -457,7 +679,7 @@ const FolderView = () => {
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Search decks..."
+              placeholder="Search decks and quizzes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 bg-white/80 dark:bg-gray-700/80 backdrop-blur-lg border-white/20 dark:border-gray-600/20 text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-300"
@@ -486,20 +708,43 @@ const FolderView = () => {
           </div>
         )}
 
+        {/* Quizzes Section */}
+        {filteredQuizzes.length > 0 && (
+          <div className="space-y-4" data-tour="quiz-results">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Quizzes</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+              {filteredQuizzes.map((quiz) => (
+                <QuizCard
+                  key={quiz.id}
+                  quiz={quiz}
+                  onDelete={deleteQuiz}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Decks Section */}
+        {filteredDecks.length > 0 && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Decks</h2>
+          </div>
+        )}
+
         {/* Decks Grid */}
-        {filteredDecks.length === 0 ? (
+        {filteredDecks.length === 0 && filteredQuizzes.length === 0 ? (
           <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-white/20 dark:border-gray-700/20 shadow-xl rounded-2xl">
             <CardContent className="p-12 text-center">
               <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="h-8 w-8 text-purple-600 dark:text-purple-400" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
-                {searchQuery ? 'No decks found' : 'No decks in this folder'}
+                {searchQuery ? 'No content found' : 'No content in this folder'}
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
                 {searchQuery
                   ? 'Try adjusting your search terms'
-                  : 'Create your first deck to get started'
+                  : 'Create your first deck or quiz to get started'
                 }
               </p>
               <Button
@@ -511,7 +756,7 @@ const FolderView = () => {
               </Button>
             </CardContent>
           </Card>
-        ) : (
+        ) : filteredDecks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
             {filteredDecks.map((deck) => (
               <Card
@@ -608,7 +853,7 @@ const FolderView = () => {
               </Card>
             ))}
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* Create/Edit Folder Modal */}
@@ -650,6 +895,7 @@ const FolderView = () => {
           currentFolderId={moveItem.type === 'folder' ? (moveItem.item as Folder).parent_id : (moveItem.item as Deck).folder_id}
         />
       )}
+
     </div>
   );
 };

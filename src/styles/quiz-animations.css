@@ -1,0 +1,461 @@
+/**
+ * Quiz System Animations and Transitions
+ * Enhanced UI/UX animations for smooth user experience
+ */
+
+/* Question transition animations */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+}
+
+/* Answer feedback animations */
+@keyframes correctAnswer {
+  0% {
+    transform: scale(1);
+    background-color: transparent;
+  }
+  50% {
+    transform: scale(1.05);
+    background-color: rgba(34, 197, 94, 0.1);
+  }
+  100% {
+    transform: scale(1);
+    background-color: rgba(34, 197, 94, 0.05);
+  }
+}
+
+@keyframes incorrectAnswer {
+  0% {
+    transform: scale(1);
+    background-color: transparent;
+  }
+  25% {
+    transform: translateX(-5px);
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+  75% {
+    transform: translateX(5px);
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+  100% {
+    transform: translateX(0);
+    background-color: rgba(239, 68, 68, 0.05);
+  }
+}
+
+/* Progress bar animations */
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--progress-width);
+  }
+}
+
+@keyframes progressPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Timer warning animations */
+@keyframes timerWarning {
+  0%, 100% {
+    color: rgb(234, 179, 8);
+    transform: scale(1);
+  }
+  50% {
+    color: rgb(239, 68, 68);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes timerCritical {
+  0%, 100% {
+    color: rgb(239, 68, 68);
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    color: rgb(220, 38, 38);
+    transform: scale(1.1);
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+  }
+}
+
+/* Card hover and interaction animations */
+@keyframes cardHover {
+  from {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  to {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}
+
+@keyframes cardPress {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(0.98);
+  }
+}
+
+/* Button ripple effect */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Confetti animation for quiz completion */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes confetti-sway {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(20px);
+  }
+}
+
+/* Celebration animations */
+@keyframes celebrate {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+@keyframes trophy-bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Loading animations */
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Focus and accessibility animations */
+@keyframes focusRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+  }
+}
+
+@keyframes accessibleHighlight {
+  0%, 100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+}
+
+/* Mobile-specific animations */
+@keyframes mobileSlideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes mobileSlideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+/* Utility classes */
+.quiz-slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.quiz-slide-in-left {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.quiz-slide-out-right {
+  animation: slideOutRight 0.3s ease-in;
+}
+
+.quiz-slide-out-left {
+  animation: slideOutLeft 0.3s ease-in;
+}
+
+.quiz-correct-answer {
+  animation: correctAnswer 0.6s ease-out;
+}
+
+.quiz-incorrect-answer {
+  animation: incorrectAnswer 0.6s ease-out;
+}
+
+.quiz-progress-fill {
+  animation: progressFill 0.8s ease-out;
+}
+
+.quiz-progress-pulse {
+  animation: progressPulse 2s ease-in-out infinite;
+}
+
+.quiz-timer-warning {
+  animation: timerWarning 1s ease-in-out infinite;
+}
+
+.quiz-timer-critical {
+  animation: timerCritical 0.5s ease-in-out infinite;
+}
+
+.quiz-card-hover {
+  transition: all 0.3s ease;
+}
+
+.quiz-card-hover:hover {
+  animation: cardHover 0.3s ease-out forwards;
+}
+
+.quiz-card-press:active {
+  animation: cardPress 0.1s ease-out;
+}
+
+.quiz-button-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-button-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.quiz-button-ripple:active::after {
+  width: 300px;
+  height: 300px;
+  animation: ripple 0.6s ease-out;
+}
+
+.quiz-confetti {
+  animation: confetti-fall 3s linear infinite, confetti-sway 1s ease-in-out infinite alternate;
+}
+
+.quiz-celebrate {
+  animation: celebrate 0.6s ease-in-out;
+}
+
+.quiz-trophy-bounce {
+  animation: trophy-bounce 1s ease-in-out infinite;
+}
+
+.quiz-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.quiz-spin-slow {
+  animation: spin-slow 2s linear infinite;
+}
+
+.quiz-focus-ring:focus {
+  animation: focusRing 0.3s ease-out;
+}
+
+.quiz-accessible-highlight {
+  animation: accessibleHighlight 0.5s ease-in-out;
+}
+
+.quiz-mobile-slide-up {
+  animation: mobileSlideUp 0.3s ease-out;
+}
+
+.quiz-mobile-slide-down {
+  animation: mobileSlideDown 0.3s ease-in;
+}
+
+/* Responsive animation adjustments */
+@media (max-width: 768px) {
+  /* Reduce animation duration on mobile for better performance */
+  .quiz-slide-in-right,
+  .quiz-slide-in-left,
+  .quiz-slide-out-right,
+  .quiz-slide-out-left {
+    animation-duration: 0.2s;
+  }
+  
+  /* Disable complex animations on low-end devices */
+  @media (prefers-reduced-motion: reduce) {
+    .quiz-slide-in-right,
+    .quiz-slide-in-left,
+    .quiz-slide-out-right,
+    .quiz-slide-out-left,
+    .quiz-correct-answer,
+    .quiz-incorrect-answer,
+    .quiz-card-hover,
+    .quiz-celebrate,
+    .quiz-confetti {
+      animation: none;
+    }
+    
+    /* Provide simple fade transitions instead */
+    .quiz-slide-in-right,
+    .quiz-slide-in-left {
+      opacity: 0;
+      animation: fadeIn 0.2s ease-out forwards;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+  .quiz-correct-answer {
+    background-color: rgba(0, 128, 0, 0.2) !important;
+  }
+  
+  .quiz-incorrect-answer {
+    background-color: rgba(255, 0, 0, 0.2) !important;
+  }
+  
+  .quiz-timer-warning {
+    color: #000 !important;
+    background-color: #ffff00 !important;
+  }
+  
+  .quiz-timer-critical {
+    color: #fff !important;
+    background-color: #ff0000 !important;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .quiz-skeleton {
+    background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+  }
+  
+  .quiz-correct-answer {
+    background-color: rgba(34, 197, 94, 0.2);
+  }
+  
+  .quiz-incorrect-answer {
+    background-color: rgba(239, 68, 68, 0.2);
+  }
+}

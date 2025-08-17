@@ -1,0 +1,76 @@
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-fetch"
+      ],
+      "env": {},
+      "disabled": true,
+      "autoApprove": []
+    },
+    "Playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "browser_click",
+        "browser_close",
+        "browser_navigate",
+        "browser_wait_for",
+        "browser_console_messages"
+      ],
+      "alwaysAllow": []
+    },
+    "Context 7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref=xlwyvohvpwrcqczqdwtz"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "sbp_62dae5583e21bdc62869e844a0a33a4eaf672f0a"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "execute_sql",
+        "get_project_url",
+        "list_tables",
+        "list_migrations",
+        "apply_migration"
+      ]
+    },
+    "supabase-custom": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\shiv2\\Desktop\\Exp\\supabase-mcp-server\\dist\\index.js"
+      ],
+      "env": {
+        "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhsd3l2b2h2cHdyY3FjenFkd3R6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA0MTQ3NjAsImV4cCI6MjA2NTk5MDc2MH0.rJ7Xjbzmp65UITEviLlLSktqz9bBuh8JPpqVeehqXLs",
+        "SUPABASE_URL": "https://xlwyvohvpwrcqczqdwtz.supabase.co"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "create_table",
+        "insert_data",
+        "select_data",
+        "update_data",
+        "delete_data",
+        "list_tables"
+      ]
+    }
+  }
+}

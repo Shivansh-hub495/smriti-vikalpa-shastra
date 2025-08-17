@@ -15,6 +15,7 @@ interface Folder {
   updated_at: string;
   // Computed fields
   deck_count?: number;
+  quiz_count?: number;
   subfolder_count?: number;
 }
 
@@ -41,6 +42,8 @@ const FolderCard = ({
 
   const handleOpen = () => {
     onOpen(folder.id);
+    // Ensure top after navigation for better UX
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
   };
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -140,6 +143,12 @@ const FolderCard = ({
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">{folder.deck_count}</div>
                 <div className="text-xs text-gray-600 dark:text-gray-300">Decks</div>
+              </div>
+            )}
+            {folder.quiz_count !== undefined && (
+              <div className="text-center">
+                <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">{folder.quiz_count}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-300">Quizzes</div>
               </div>
             )}
             {folder.subfolder_count !== undefined && (

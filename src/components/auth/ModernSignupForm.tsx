@@ -23,7 +23,7 @@ const ModernSignupForm: React.FC<ModernSignupFormProps> = ({ onToggleMode }) => 
     fullName?: string;
     email?: string;
     password?: string;
-    confirmPassword?: string;
+    confirmPassword?: string; 
   }>({});
 
   const { signUp } = useAuth();
