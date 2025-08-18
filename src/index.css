@@ -506,4 +506,23 @@
   .auth-card-breathe {
     animation: breathe 4s ease-in-out infinite;
   }
+
+  /* Rich text editor line break styles */
+  .ProseMirror {
+    white-space: pre-wrap;
+  }
+
+  .ProseMirror p {
+    margin: 0.5em 0;
+  }
+
+  .ProseMirror br {
+    content: "\A";
+    white-space: pre;
+  }
+
+  .break-line::after {
+    content: "\A";
+    white-space: pre;
+  }
 }

@@ -308,23 +308,36 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
   }, [backContent, backContentHtml, handleTextExpandOpen]);
 
   // Memoized content processing for performance
+
+  // Normalize HTML to ensure intentional blank lines are visible
+  const ensureEmptyParagraphsVisible = useCallback((html: string) => {
+    if (!html) return html;
+    // Convert completely empty paragraphs to a visible break so the user sees blank lines
+    return html.replace(/<p(\s[^>]*)?>\s*<\/p>/gi, '<p$1><br></p>');
+  }, []);
+
   const processedContent = useMemo(() => {
     const frontHasImage = !!frontImageUrl;
     const backHasImage = !!backImageUrl;
 
+    const front = getTruncatedText(frontContent, frontContentHtml, false, frontHasImage);
+    const back = getTruncatedText(backContent, backContentHtml, true, backHasImage);
+
     return {
       front: {
-        ...getTruncatedText(frontContent, frontContentHtml, false, frontHasImage),
+        ...front,
+        html: front.html ? ensureEmptyParagraphsVisible(front.html) : undefined,
         hasImage: frontHasImage,
         needsViewMore: needsTruncation(frontContent, frontContentHtml, frontHasImage, false)
       },
       back: {
-        ...getTruncatedText(backContent, backContentHtml, true, backHasImage),
+        ...back,
+        html: back.html ? ensureEmptyParagraphsVisible(back.html) : undefined,
         hasImage: backHasImage,
         needsViewMore: needsTruncation(backContent, backContentHtml, backHasImage, true)
       }
     };
-  }, [frontContent, frontContentHtml, frontImageUrl, backContent, backContentHtml, backImageUrl, getTruncatedText, needsTruncation]);
+  }, [frontContent, frontContentHtml, frontImageUrl, backContent, backContentHtml, backImageUrl, getTruncatedText, needsTruncation], [frontContent, frontContentHtml, frontImageUrl, backContent, backContentHtml, backImageUrl, getTruncatedText, needsTruncation, ensureEmptyParagraphsVisible]);
 
   // Memoized animation variants for performance
   const animationVariants = useMemo(() => ({
@@ -344,15 +357,15 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
   }), []);
 
   return (
-    <div 
+    <div
       className={`relative w-full h-full perspective-1000 ${className}`}
       style={style}
     >
       <motion.div
         className="relative w-full h-full cursor-pointer preserve-3d"
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ 
-          duration: 0.6, 
+        transition={{
+          duration: 0.6,
           ease: "easeInOut",
           type: "spring",
           stiffness: 100,

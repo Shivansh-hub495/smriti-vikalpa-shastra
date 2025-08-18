@@ -40,7 +40,19 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 }) => {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        paragraph: {
+          HTMLAttributes: {
+            class: 'my-1',
+          },
+        },
+        hardBreak: {
+          keepMarks: false,
+          HTMLAttributes: {
+            class: 'break-line',
+          },
+        },
+      }),
       Image.configure({
         HTMLAttributes: {
           class: 'max-w-full h-auto rounded-lg',
@@ -64,15 +76,24 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[80px] sm:min-h-[100px] p-3 sm:p-4 text-sm sm:text-base',
+        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[80px] sm:min-h-[100px] p-3 sm:p-4 text-sm sm:text-base whitespace-pre-wrap',
       },
     },
   });
 
   // Update editor content when content prop changes
   useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content || '');
+    if (editor && content !== undefined) {
+      const currentHTML = editor.getHTML();
+      const currentText = editor.getText();
+
+      // Only update if content is actually different
+      // Handle both HTML and plain text content properly
+      if (content !== currentHTML && content !== currentText) {
+        editor.commands.setContent(content || '', false, {
+          preserveWhitespace: 'full'
+        });
+      }
     }
   }, [editor, content]);
 
