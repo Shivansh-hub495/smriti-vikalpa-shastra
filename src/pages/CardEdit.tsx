@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { ArrowLeft, Save, X, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -178,9 +178,13 @@ const CardEdit: React.FC = () => {
               <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="touch-manipulation"
+                className="touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Save className="h-4 w-4 mr-2" />
+                {saving ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4 mr-2" />
+                )}
                 {saving ? 'Saving...' : 'Save'}
               </Button>
             </div>

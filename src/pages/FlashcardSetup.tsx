@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Save, ArrowLeft, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Plus, Save, ArrowLeft, Edit, Trash2, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { supabase } from '@/integrations/supabase/client';
@@ -381,9 +381,13 @@ const FlashcardSetup = () => {
                   <Button
                     onClick={saveFlashcard}
                     disabled={saving || !frontContent.trim() || !backContent.trim()}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white touch-manipulation w-full sm:w-auto"
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white touch-manipulation w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Save className="h-4 w-4 mr-2" />
+                    {saving ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4 mr-2" />
+                    )}
                     {saving ? 'Saving...' : editingCard ? 'Update Card' : 'Create Card'}
                   </Button>
 

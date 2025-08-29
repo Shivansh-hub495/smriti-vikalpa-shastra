@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,8 @@ import {
   EyeOff,
   BookOpen,
   Settings,
-  GripVertical
+  GripVertical,
+  Loader2
 } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useToast } from "@/hooks/use-toast";
@@ -37,6 +39,8 @@ const DeckEdit = () => {
   const [loading, setLoading] = useState(true);
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
   const [isCreatingCard, setIsCreatingCard] = useState(false);
+  const [isCreatingCardLoading, setIsCreatingCardLoading] = useState(false);
+  const [isUpdatingCardLoading, setIsUpdatingCardLoading] = useState(false);
   const [showAnswers, setShowAnswers] = useState(false);
 
   // Form state for new/editing flashcard
@@ -122,6 +126,7 @@ const DeckEdit = () => {
     }
 
     try {
+      setIsCreatingCardLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
@@ -144,7 +149,10 @@ const DeckEdit = () => {
 
       if (error) throw error;
 
-
+      toast({
+        title: "Success! ✨",
+        description: "Flashcard created successfully",
+      });
 
       setFrontContent("");
       setBackContent("");
@@ -161,6 +169,8 @@ const DeckEdit = () => {
         description: "Failed to create flashcard",
         variant: "destructive"
       });
+    } finally {
+      setIsCreatingCardLoading(false);
     }
   };
 
@@ -179,6 +189,7 @@ const DeckEdit = () => {
     }
 
     try {
+      setIsUpdatingCardLoading(true);
       const { error } = await supabase
         .from('flashcards')
         .update({
@@ -193,7 +204,10 @@ const DeckEdit = () => {
 
       if (error) throw error;
 
-
+      toast({
+        title: "Success! ✨",
+        description: "Flashcard updated successfully",
+      });
 
       setFrontContent("");
       setBackContent("");
@@ -210,6 +224,8 @@ const DeckEdit = () => {
         description: "Failed to update flashcard",
         variant: "destructive"
       });
+    } finally {
+      setIsUpdatingCardLoading(false);
     }
   };
 
@@ -523,10 +539,18 @@ const DeckEdit = () => {
                     </Button>
                     <Button
                       onClick={editingCard ? handleUpdateCard : handleCreateCard}
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white touch-manipulation w-full sm:w-auto"
+                      disabled={isCreatingCardLoading || isUpdatingCardLoading}
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white touch-manipulation w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Save className="h-4 w-4 mr-2" />
-                      {editingCard ? 'Update' : 'Create'} Card
+                      {(editingCard && isUpdatingCardLoading) || (!editingCard && isCreatingCardLoading) ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Save className="h-4 w-4 mr-2" />
+                      )}
+                      {editingCard 
+                        ? (isUpdatingCardLoading ? 'Updating...' : 'Update Card')
+                        : (isCreatingCardLoading ? 'Creating...' : 'Create Card')
+                      }
                     </Button>
                   </div>
                 </CardContent>
