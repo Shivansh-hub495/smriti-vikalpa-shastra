@@ -15,6 +15,8 @@ import {
   Strikethrough,
   Highlighter,
   List,
+  ListOrdered,
+  Minus,
   Image as ImageIcon,
   Type,
   AlignLeft,
@@ -64,7 +66,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
     editorProps: {
       attributes: {
-        class: 'mx-auto focus:outline-none min-h-[80px] sm:min-h-[100px] p-3 sm:p-4 text-sm sm:text-base',
+        class: 'flashcard-prose mx-auto focus:outline-none min-h-[80px] sm:min-h-[100px] p-3 sm:p-4 text-sm sm:text-base',
       },
     },
   });
@@ -198,8 +200,29 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           size="sm"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className="h-7 w-7 sm:h-8 sm:w-8 p-0 touch-manipulation"
+          title="Bullet List"
         >
           <List className="h-3 w-3 sm:h-4 sm:w-4" />
+        </Button>
+
+        <Button
+          variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          className="h-7 w-7 sm:h-8 sm:w-8 p-0 touch-manipulation"
+          title="Numbered List"
+        >
+          <ListOrdered className="h-3 w-3 sm:h-4 sm:w-4" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          className="h-7 w-7 sm:h-8 sm:w-8 p-0 touch-manipulation"
+          title="Horizontal Line"
+        >
+          <Minus className="h-3 w-3 sm:h-4 sm:w-4" />
         </Button>
 
         {/* Text Alignment Options */}

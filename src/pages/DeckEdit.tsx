@@ -600,7 +600,7 @@ const DeckEdit = () => {
                             />
                           )}
                           <div
-                            className="prose prose-xs sm:prose-sm max-w-none text-xs sm:text-sm break-words overflow-hidden"
+                            className="flashcard-prose flashcard-prose-sm max-w-none text-xs sm:text-sm break-words overflow-hidden"
                             dangerouslySetInnerHTML={{
                               __html: card.front_content_html || card.front_content
                             }}
@@ -619,7 +619,7 @@ const DeckEdit = () => {
                               />
                             )}
                             <div
-                              className="prose prose-xs sm:prose-sm max-w-none text-xs sm:text-sm break-words overflow-hidden"
+                              className="flashcard-prose flashcard-prose-sm max-w-none text-xs sm:text-sm break-words overflow-hidden"
                               dangerouslySetInnerHTML={{
                                 __html: card.back_content_html || card.back_content
                               }}

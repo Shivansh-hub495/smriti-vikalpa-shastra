@@ -438,7 +438,7 @@ const FlashcardSetup = () => {
                               />
                             )}
                             <div
-                              className="prose prose-xs sm:prose-sm max-w-none text-sm sm:text-base"
+                              className="flashcard-prose flashcard-prose-sm max-w-none text-sm sm:text-base"
                               dangerouslySetInnerHTML={{
                                 __html: card.front_content_html || card.front_content
                               }}
@@ -476,7 +476,7 @@ const FlashcardSetup = () => {
                                   />
                                 )}
                                 <div
-                                  className="prose prose-xs sm:prose-sm max-w-none text-sm sm:text-base"
+                                  className="flashcard-prose flashcard-prose-sm max-w-none text-sm sm:text-base"
                                   dangerouslySetInnerHTML={{
                                     __html: card.back_content_html || card.back_content
                                   }}

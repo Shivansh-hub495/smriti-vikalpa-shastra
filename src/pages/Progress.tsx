@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress as ProgressBar } from '@/components/ui/progress';
-import { TrendingUp, Target, Clock, BookOpen, Calendar, Award, FileQuestion, Percent, BarChart3 } from 'lucide-react';
+import { TrendingUp, Target, Clock, BookOpen, Calendar, Award, Brain, Percent, BarChart3 } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -459,7 +459,7 @@ const Progress = () => {
                   <p className="text-2xl lg:text-3xl font-bold text-indigo-600 dark:text-indigo-400">{quizStats.totalQuizzes}</p>
                 </div>
                 <div className="p-2 lg:p-3 bg-indigo-100 dark:bg-indigo-900/20 rounded-full">
-                  <FileQuestion className="h-5 w-5 lg:h-6 lg:w-6 text-indigo-600 dark:text-indigo-400" />
+                  <Brain className="h-5 w-5 lg:h-6 lg:w-6 text-indigo-600 dark:text-indigo-400" />
                 </div>
               </div>
             </CardContent>
@@ -627,7 +627,7 @@ const Progress = () => {
             {recentQuizAttempts.length === 0 ? (
               <div className="text-center py-8">
                 <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FileQuestion className="h-8 w-8 text-gray-400 dark:text-gray-500" />
+                  <Brain className="h-8 w-8 text-gray-400 dark:text-gray-500" />
                 </div>
                 <p className="text-gray-500 dark:text-gray-400">No quiz attempts yet</p>
               </div>

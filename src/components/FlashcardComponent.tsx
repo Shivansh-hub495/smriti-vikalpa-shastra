@@ -253,32 +253,48 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
 
   // Optimized modal handlers
   const handleImageZoomOpen = useCallback((imageUrl: string, alt: string) => {
-    setImageZoomModal({
-      isOpen: true,
-      imageUrl,
-      alt
-    });
-    onModalStateChange?.(true);
+    try {
+      setImageZoomModal({
+        isOpen: true,
+        imageUrl,
+        alt
+      });
+      onModalStateChange?.(true);
+    } catch (error) {
+      console.error('Error opening image zoom modal:', error);
+    }
   }, [onModalStateChange]);
 
   const handleImageZoomClose = useCallback(() => {
-    setImageZoomModal(prev => ({ ...prev, isOpen: false }));
-    onModalStateChange?.(false);
+    try {
+      setImageZoomModal(prev => ({ ...prev, isOpen: false }));
+      onModalStateChange?.(false);
+    } catch (error) {
+      console.error('Error closing image zoom modal:', error);
+    }
   }, [onModalStateChange]);
 
   const handleTextExpandOpen = useCallback((content: string, contentHtml: string | undefined, title: string) => {
-    setTextExpandModal({
-      isOpen: true,
-      content,
-      contentHtml,
-      title
-    });
-    onModalStateChange?.(true);
+    try {
+      setTextExpandModal({
+        isOpen: true,
+        content,
+        contentHtml,
+        title
+      });
+      onModalStateChange?.(true);
+    } catch (error) {
+      console.error('Error opening text expand modal:', error);
+    }
   }, [onModalStateChange]);
 
   const handleTextExpandClose = useCallback(() => {
-    setTextExpandModal(prev => ({ ...prev, isOpen: false }));
-    onModalStateChange?.(false);
+    try {
+      setTextExpandModal(prev => ({ ...prev, isOpen: false }));
+      onModalStateChange?.(false);
+    } catch (error) {
+      console.error('Error closing text expand modal:', error);
+    }
   }, [onModalStateChange]);
 
   // Memoized long press handlers for images
@@ -337,24 +353,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
         needsViewMore: needsTruncation(backContent, backContentHtml, backHasImage, true)
       }
     };
-  }, [frontContent, frontContentHtml, frontImageUrl, backContent, backContentHtml, backImageUrl, getTruncatedText, needsTruncation], [frontContent, frontContentHtml, frontImageUrl, backContent, backContentHtml, backImageUrl, getTruncatedText, needsTruncation, ensureEmptyParagraphsVisible]);
-
-  // Memoized animation variants for performance
-  const animationVariants = useMemo(() => ({
-    cardFlip: {
-      duration: ANIMATION_DURATIONS.CARD_FLIP / 1000,
-      ease: EASING.CARD_FLIP_SPRING.type,
-      ...EASING.CARD_FLIP_SPRING
-    },
-    entrance: {
-      initial: { scale: 0.8, opacity: 0, y: 50 },
-      animate: { scale: 1, opacity: 1, y: 0 },
-      transition: {
-        duration: ANIMATION_DURATIONS.CARD_ENTRANCE / 1000,
-        ...EASING.SPRING
-      }
-    }
-  }), []);
+  }, [frontContent, frontContentHtml, frontImageUrl, backContent, backContentHtml, backImageUrl, getTruncatedText, needsTruncation, ensureEmptyParagraphsVisible]);
 
   return (
     <div
@@ -373,16 +372,26 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
         }}
         onClick={onFlip}
         style={{ transformStyle: "preserve-3d" }}
+        role="button"
+        tabIndex={0}
+        aria-label={`Flashcard: ${isFlipped ? 'showing answer' : 'showing question'}. Press to flip.`}
+        onKeyDown={(e) => {
+          if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            onFlip();
+          }
+        }}
       >
         <>
           {/* Front Side */}
           <motion.div
-          className="absolute inset-0 w-full h-full backface-hidden bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700"
-          style={{
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden"
-          }}
-        >
+            className="absolute inset-0 w-full h-full backface-hidden bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700"
+            style={{
+              backfaceVisibility: "hidden",
+              WebkitBackfaceVisibility: "hidden"
+            }}
+            aria-hidden={isFlipped}
+          >
           {(() => {
             const frontHasText = !isContentEmpty(frontContent, frontContentHtml);
             const isImageOnly = frontImageUrl && !frontHasText;
@@ -402,6 +411,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         handleSpeak(frontContent);
                       }}
                       disabled={isSpeaking}
+                      aria-label="Read front content aloud"
                     >
                       <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-gray-600 dark:text-gray-300'}`} />
                     </Button>
@@ -416,6 +426,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                             e.stopPropagation();
                             handleEditClick();
                           }}
+                          aria-label="Edit this flashcard"
                         >
                           <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-300" />
                         </Button>
@@ -430,6 +441,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                             e.stopPropagation();
                             handleStarToggle();
                           }}
+                          aria-label={isStarred ? "Unstar this card" : "Star this card"}
                         >
                           {isStarred ? (
                             <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current" />
@@ -479,6 +491,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         handleSpeak(frontContent);
                       }}
                       disabled={isSpeaking}
+                      aria-label="Read front content aloud"
                     >
                       <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-gray-600 dark:text-gray-300'}`} />
                     </Button>
@@ -493,6 +506,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                             e.stopPropagation();
                             handleEditClick();
                           }}
+                          aria-label="Edit this flashcard"
                         >
                           <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-300" />
                         </Button>
@@ -507,6 +521,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                             e.stopPropagation();
                             handleStarToggle();
                           }}
+                          aria-label={isStarred ? "Unstar this card" : "Star this card"}
                         >
                           {isStarred ? (
                             <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current" />
@@ -551,11 +566,11 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                       <div className="w-full overflow-hidden">
                         {processedContent.front.html ? (
                           <div
-                            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 dark:text-gray-100 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none overflow-hidden"
+                            className="flashcard-prose flashcard-prose-lg flashcard-prose-center text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 dark:text-gray-100 max-w-none overflow-hidden"
                             dangerouslySetInnerHTML={{ __html: processedContent.front.html }}
                           />
                         ) : (
-                          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 dark:text-gray-100 leading-relaxed font-['Montserrat',sans-serif] break-words overflow-hidden">
+                          <p className="flashcard-prose flashcard-prose-lg flashcard-prose-center text-lg sm:text-xl md:text-2xl lg:text-3xl font-semibold text-gray-800 dark:text-gray-100 break-words overflow-hidden">
                             {processedContent.front.text}
                           </p>
                         )}
@@ -573,6 +588,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                             e.stopPropagation();
                             handleExpandFrontText();
                           }}
+                          aria-label="View full front content"
                         >
                           <Expand className="h-3 w-3 mr-1" />
                           <span>View More</span>
@@ -604,6 +620,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
             WebkitBackfaceVisibility: "hidden",
             transform: "rotateY(180deg)"
           }}
+          aria-hidden={!isFlipped}
         >
           {(() => {
             const backHasText = !isContentEmpty(backContent, backContentHtml);
@@ -624,6 +641,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         handleSpeak(backContent);
                       }}
                       disabled={isSpeaking}
+                      aria-label="Read back content aloud"
                     >
                       <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-blue-700 dark:text-blue-300'}`} />
                     </Button>
@@ -638,8 +656,9 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                             e.stopPropagation();
                             handleEditClick();
                           }}
+                          aria-label="Edit this flashcard"
                         >
-                          <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700" />
+                          <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700 dark:text-blue-300" />
                         </Button>
                       )}
 
@@ -647,16 +666,17 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="p-1.5 sm:p-2 rounded-full bg-white/80 hover:bg-white/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
+                          className="p-1.5 sm:p-2 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-white/90 dark:hover:bg-gray-700/90 backdrop-blur-sm transition-colors touch-manipulation shadow-sm"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleStarToggle();
                           }}
+                          aria-label={isStarred ? "Unstar this card" : "Star this card"}
                         >
                           {isStarred ? (
                             <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current" />
                           ) : (
-                            <StarOff className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700" />
+                            <StarOff className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700 dark:text-blue-300" />
                           )}
                         </Button>
                       )}
@@ -696,6 +716,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                         handleSpeak(backContent);
                       }}
                       disabled={isSpeaking}
+                      aria-label="Read back content aloud"
                     >
                       <Volume2 className={`h-4 w-4 sm:h-5 sm:w-5 ${isSpeaking ? 'text-blue-600' : 'text-blue-700 dark:text-blue-300'}`} />
                     </Button>
@@ -710,6 +731,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                             e.stopPropagation();
                             handleEditClick();
                           }}
+                          aria-label="Edit this flashcard"
                         >
                           <Edit className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700 dark:text-blue-300" />
                         </Button>
@@ -724,6 +746,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                             e.stopPropagation();
                             handleStarToggle();
                           }}
+                          aria-label={isStarred ? "Unstar this card" : "Star this card"}
                         >
                           {isStarred ? (
                             <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 fill-current" />
@@ -768,11 +791,11 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                       <div className="w-full overflow-hidden">
                         {processedContent.back.html ? (
                           <div
-                            className={`text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 dark:text-gray-100 leading-relaxed font-['Montserrat',sans-serif] prose prose-sm sm:prose-base md:prose-lg max-w-none ${processedContent.back.isTruncated ? 'text-left' : 'text-center'} overflow-hidden`}
+                            className={`flashcard-prose flashcard-prose-lg text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 dark:text-gray-100 max-w-none ${processedContent.back.isTruncated ? 'flashcard-prose-left' : 'flashcard-prose-center'} overflow-hidden`}
                             dangerouslySetInnerHTML={{ __html: processedContent.back.html }}
                           />
                         ) : (
-                          <p className={`text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 dark:text-gray-100 leading-relaxed font-['Montserrat',sans-serif] break-words ${processedContent.back.isTruncated ? 'text-left' : 'text-center'} overflow-hidden`}>
+                          <p className={`flashcard-prose flashcard-prose-lg text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-800 dark:text-gray-100 break-words ${processedContent.back.isTruncated ? 'text-left' : 'text-center'} overflow-hidden`}>
                             {processedContent.back.text}
                           </p>
                         )}
@@ -790,6 +813,7 @@ const FlashcardComponent: React.FC<FlashcardProps> = memo(({
                             e.stopPropagation();
                             handleExpandBackText();
                           }}
+                          aria-label="View full back content"
                         >
                           <Expand className="h-3 w-3 mr-1" />
                           <span>View More</span>

@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ChevronRight, Home, Folder, FileQuestion, History, Edit, Play } from 'lucide-react';
+import { ChevronRight, Home, Folder, Brain, History, Edit, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface BreadcrumbItem {
@@ -73,7 +73,7 @@ const QuizBreadcrumb: React.FC<QuizBreadcrumbProps> = ({
     if (currentPage === 'create') {
       breadcrumbs.push({
         label: 'Create Quiz',
-        icon: <FileQuestion className="h-4 w-4" />,
+        icon: <Brain className="h-4 w-4" />,
         isActive: true
       });
     } else if (quizId && quizTitle) {
@@ -81,7 +81,7 @@ const QuizBreadcrumb: React.FC<QuizBreadcrumbProps> = ({
       breadcrumbs.push({
         label: quizTitle,
         href: `/quiz/${quizId}/history`,
-        icon: <FileQuestion className="h-4 w-4" />
+        icon: <Brain className="h-4 w-4" />
       });
 
       // Add current page context

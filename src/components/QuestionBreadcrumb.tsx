@@ -7,9 +7,16 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Home, Folder, FileQuestion, Plus, Edit } from 'lucide-react';
+import { ChevronRight, Home, Folder, Brain, Plus, Edit } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Quiz } from '@/types/quiz';
+
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+  icon: React.ReactNode;
+  isActive?: boolean;
+}
 
 interface QuestionBreadcrumbProps {
   /** The quiz context */
@@ -37,7 +44,7 @@ const QuestionBreadcrumb: React.FC<QuestionBreadcrumbProps> = ({
   folderTitle,
   className
 }) => {
-  const breadcrumbItems = [
+  const breadcrumbItems: BreadcrumbItem[] = [
     {
       label: 'Dashboard',
       href: '/',
@@ -58,7 +65,7 @@ const QuestionBreadcrumb: React.FC<QuestionBreadcrumbProps> = ({
   breadcrumbItems.push({
     label: quiz.title,
     href: `/quiz/${quiz.id}/edit`,
-    icon: <FileQuestion className="h-4 w-4" />
+    icon: <Brain className="h-4 w-4" />
   });
 
   // Add current page context
@@ -115,7 +122,7 @@ const QuestionBreadcrumb: React.FC<QuestionBreadcrumbProps> = ({
       {/* Quiz Context Information */}
       <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
         <span className="flex items-center space-x-1">
-          <FileQuestion className="h-3 w-3" />
+          <Brain className="h-3 w-3" />
           <span>
             {totalQuestions !== undefined 
               ? `${totalQuestions} question${totalQuestions !== 1 ? 's' : ''}`

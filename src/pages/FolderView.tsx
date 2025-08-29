@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ArrowLeft, Plus, Search, BookOpen, MoreVertical, Edit, Trash2, Play, Settings, Tag, Folder, Move, FileQuestion } from 'lucide-react';
+import { ArrowLeft, Plus, Search, BookOpen, MoreVertical, Edit, Trash2, Play, Settings, Tag, Folder, Move, Brain } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { supabase } from '@/integrations/supabase/client';
@@ -667,7 +667,7 @@ const FolderView = () => {
                 className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 flex-1 sm:flex-initial sm:w-auto flex-shrink-0"
                 data-tour="create-quiz-button"
               >
-                <FileQuestion className="h-4 w-4 mr-2" />
+                <Brain className="h-4 w-4 mr-2" />
                 Create Quiz
               </Button>
             </div>

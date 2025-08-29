@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FileQuestion, Settings, Clock, RotateCcw, Trophy, Eye, HelpCircle, AlertTriangle } from 'lucide-react';
+import { Brain, Settings, Clock, RotateCcw, Trophy, Eye, HelpCircle, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { validateQuizData } from '@/lib/quiz-service';
 import { getErrorHandler, ValidationQuizError } from '@/lib/error-handling';
@@ -194,7 +194,7 @@ const QuizCreationModal: React.FC<QuizCreationModalProps> = ({
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-xl">
                 <div className="p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg">
-                  <FileQuestion className="h-5 w-5 text-pink-600 dark:text-pink-400" />
+                  <Brain className="h-5 w-5 text-pink-600 dark:text-pink-400" />
                 </div>
                 Create New Quiz
               </DialogTitle>
@@ -253,7 +253,7 @@ const QuizCreationModal: React.FC<QuizCreationModalProps> = ({
 
                 <TabsContent value="types" className="mt-3">
                   <div className="space-y-4" data-tour="question-types">
-                    <h3 className="text-lg font-semibold flex items-center gap-2"><FileQuestion className="h-4 w-4" />Question Types</h3>
+                    <h3 className="text-lg font-semibold flex items-center gap-2"><Brain className="h-4 w-4" />Question Types</h3>
                     <div className="space-y-3">
                       <p className="text-sm text-gray-600 dark:text-gray-400">Select the types of questions you want to include in this quiz:</p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

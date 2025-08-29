@@ -8,7 +8,7 @@
 import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
-import { FileQuestion, Loader2 } from 'lucide-react';
+import { Brain, Loader2 } from 'lucide-react';
 
 // Direct re-exports (lazy loading removed)
 export { default as LazyQuizCreationModal } from '@/components/QuizCreationModal';
@@ -24,7 +24,7 @@ export const QuizCardSkeleton: React.FC = () => (
     <CardContent className="p-4 md:p-6 min-w-0">
       <div className="flex items-start justify-between mb-4 gap-2">
         <div className="p-2 md:p-3 bg-pink-100 dark:bg-pink-900/30 rounded-full flex-shrink-0">
-          <FileQuestion className="h-5 w-5 md:h-6 md:w-6 text-pink-600 dark:text-pink-400" />
+          <Brain className="h-5 w-5 md:h-6 md:w-6 text-pink-600 dark:text-pink-400" />
         </div>
         <Skeleton className="h-8 w-8 rounded" />
       </div>

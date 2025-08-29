@@ -96,11 +96,11 @@ const TextExpandModal: React.FC<TextExpandModalProps> = ({
             <div className="p-6 overflow-y-auto max-h-[60vh]">
               {contentHtml ? (
                 <div
-                  className="text-lg leading-relaxed text-gray-800 font-['Montserrat',sans-serif] prose prose-lg max-w-none"
+                  className="flashcard-prose flashcard-prose-lg text-lg text-gray-800 font-['Montserrat',sans-serif] max-w-none"
                   dangerouslySetInnerHTML={{ __html: contentHtml }}
                 />
               ) : (
-                <p className="text-lg leading-relaxed text-gray-800 font-['Montserrat',sans-serif]">
+                <p className="flashcard-prose flashcard-prose-lg text-lg text-gray-800 font-['Montserrat',sans-serif]">
                   {content}
                 </p>
               )}

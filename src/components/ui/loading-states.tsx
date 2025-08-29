@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Loader2, FileQuestion, Clock, Users, BarChart3 } from 'lucide-react';
+import { Loader2, Brain, Clock, Users, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -363,7 +363,7 @@ export const StatsLoadingSkeleton: React.FC = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {[
-        { icon: FileQuestion, label: 'Quizzes' },
+        { icon: Brain, label: 'Quizzes' },
         { icon: Clock, label: 'Time' },
         { icon: Users, label: 'Attempts' },
         { icon: BarChart3, label: 'Score' }

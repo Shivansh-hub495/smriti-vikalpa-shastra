@@ -29,7 +29,7 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Play,
-  FileQuestion,
+  Brain,
   Clock,
   Target,
   BarChart3,
@@ -454,7 +454,7 @@ export const QUIZ_TOUR_STEPS: TourStep[] = [
     description: 'Click here to create a new quiz. You can add different types of questions and customize settings.',
     target: '[data-tour="create-quiz-button"]',
     position: 'bottom',
-    icon: <FileQuestion className="h-5 w-5" />
+    icon: <Brain className="h-5 w-5" />
   },
   {
     id: 'question-types',
@@ -495,7 +495,7 @@ export const QUIZ_TOUR_STEPS: TourStep[] = [
  */
 export const QUIZ_FEATURES = [
   {
-    icon: <FileQuestion className="h-5 w-5" />,
+    icon: <Brain className="h-5 w-5" />,
     title: 'Multiple Question Types',
     description: 'Create diverse quizzes with MCQ, fill-in-the-blank, true/false, and matching questions.'
   },

@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { FileQuestion, MoreVertical, Play, Edit, Settings, Trash2 } from 'lucide-react';
+import { Brain, MoreVertical, Play, Edit, Settings, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { QUIZ_ROUTES, navigateToQuizRoute } from '@/utils/routeUtils';
 
@@ -41,7 +41,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, onDelete }) => {
       <CardContent className="p-4 md:p-6 min-w-0">
         <div className="flex items-start justify-between mb-4 gap-2">
           <div className="p-2 md:p-3 bg-pink-100 dark:bg-pink-900/30 rounded-full group-hover:bg-pink-200 dark:group-hover:bg-pink-800/40 transition-colors flex-shrink-0">
-            <FileQuestion className="h-5 w-5 md:h-6 md:w-6 text-pink-600 dark:text-pink-400" />
+            <Brain className="h-5 w-5 md:h-6 md:w-6 text-pink-600 dark:text-pink-400" />
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Copy, FileQuestion } from 'lucide-react';
+import { Copy, Brain } from 'lucide-react';
 import type { Quiz } from '@/types/quiz';
 
 interface QuizDuplicateModalProps {
@@ -112,7 +112,7 @@ const QuizDuplicateModal: React.FC<QuizDuplicateModalProps> = ({
             <CardContent className="p-4">
               <div className="flex items-start space-x-3">
                 <div className="p-2 bg-pink-100 rounded-full">
-                  <FileQuestion className="h-5 w-5 text-pink-600" />
+                  <Brain className="h-5 w-5 text-pink-600" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 mb-1">
