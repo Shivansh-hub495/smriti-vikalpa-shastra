@@ -227,13 +227,37 @@
   /* Enhanced line height and spacing */
   .flashcard-prose p {
     line-height: 1.6;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     letter-spacing: 0.01em;
     word-spacing: 0.05em;
   }
 
   .flashcard-prose p:last-child {
     margin-bottom: 0;
+  }
+
+  /* Hard break (br) styling for natural line breaks */
+  .flashcard-prose br {
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    display: inline;
+  }
+
+  /* Ensure natural line spacing in editor */
+  .rich-editor .ProseMirror {
+    line-height: 1.6 !important;
+  }
+
+  .rich-editor .ProseMirror p {
+    margin: 0 0 0.5rem 0 !important;
+    line-height: 1.6 !important;
+  }
+
+  .rich-editor .ProseMirror br {
+    line-height: 1.6 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   /* Improved bullet points and lists */

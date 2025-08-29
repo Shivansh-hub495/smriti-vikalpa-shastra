@@ -43,9 +43,18 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        // Configure HardBreak to use Enter key for line breaks
+        // Configure paragraph to not add extra spacing
+        paragraph: {
+          HTMLAttributes: {
+            class: 'leading-normal m-0',
+          },
+        },
+        // Configure HardBreak for line breaks
         hardBreak: {
           keepMarks: false,
+          HTMLAttributes: {
+            class: 'leading-normal',
+          },
         },
       }),
       Image.configure({
@@ -71,24 +80,28 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
     editorProps: {
       attributes: {
-        class: 'flashcard-prose mx-auto focus:outline-none min-h-[80px] sm:min-h-[100px] p-3 sm:p-4 text-sm sm:text-base',
+        class: 'flashcard-prose mx-auto focus:outline-none min-h-[80px] sm:min-h-[100px] p-3 sm:p-4 text-sm sm:text-base leading-normal',
       },
       handleKeyDown: (view, event) => {
         // Handle Enter key behavior: single Enter = line break, double Enter = paragraph
         if (event.key === 'Enter' && !event.shiftKey) {
-          // Check if the current line is empty (just pressed Enter on empty line)
-          const { state } = view;
+          const { state, dispatch } = view;
           const { selection } = state;
           const { $from } = selection;
           
-          // If we're at the start of an empty paragraph, create a new paragraph
-          if ($from.parent.type.name === 'paragraph' && $from.parent.textContent === '') {
-            return false; // Let default paragraph behavior happen
-          }
+          // Check if we're in an empty paragraph
+          const isEmptyParagraph = $from.parent.type.name === 'paragraph' && 
+                                   $from.parent.textContent.trim() === '';
           
-          // Otherwise, insert a hard break (line break)
-          view.dispatch(state.tr.replaceSelectionWith(state.schema.nodes.hardBreak.create()));
-          return true;
+          if (isEmptyParagraph && $from.parentOffset === 0) {
+            // If we're at the start of an empty paragraph, create a new paragraph
+            return false; // Let default behavior happen (creates new paragraph)
+          } else {
+            // Otherwise, insert a hard break (simple line break)
+            const tr = state.tr.replaceSelectionWith(state.schema.nodes.hardBreak.create());
+            dispatch(tr);
+            return true;
+          }
         }
         return false;
       },
