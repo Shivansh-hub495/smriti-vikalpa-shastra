@@ -42,7 +42,12 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 }) => {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        // Configure HardBreak to use Enter key for line breaks
+        hardBreak: {
+          keepMarks: false,
+        },
+      }),
       Image.configure({
         HTMLAttributes: {
           class: 'max-w-full h-auto rounded-lg',
@@ -67,6 +72,25 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     editorProps: {
       attributes: {
         class: 'flashcard-prose mx-auto focus:outline-none min-h-[80px] sm:min-h-[100px] p-3 sm:p-4 text-sm sm:text-base',
+      },
+      handleKeyDown: (view, event) => {
+        // Handle Enter key behavior: single Enter = line break, double Enter = paragraph
+        if (event.key === 'Enter' && !event.shiftKey) {
+          // Check if the current line is empty (just pressed Enter on empty line)
+          const { state } = view;
+          const { selection } = state;
+          const { $from } = selection;
+          
+          // If we're at the start of an empty paragraph, create a new paragraph
+          if ($from.parent.type.name === 'paragraph' && $from.parent.textContent === '') {
+            return false; // Let default paragraph behavior happen
+          }
+          
+          // Otherwise, insert a hard break (line break)
+          view.dispatch(state.tr.replaceSelectionWith(state.schema.nodes.hardBreak.create()));
+          return true;
+        }
+        return false;
       },
     },
   });
